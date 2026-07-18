@@ -545,6 +545,23 @@
         <div class="ver-stats" id="ver-stats"></div>
       </div>
 
+      <div class="ver-desk">
+        <div class="ver-desk-header">
+          <h2>Ask Ver</h2>
+          <span class="sub">Grounded in TVGSUOS's real docs and what's open right now — not generic advice.</span>
+        </div>
+        <form id="ask-ver-form" class="strategy-form" style="margin:0;">
+          <label for="ask-ver-question" style="position:absolute; left:-9999px;">Question for Ver</label>
+          <div style="display:flex; gap:10px;">
+            <input type="text" id="ask-ver-question" required placeholder="e.g. What should I focus on today?" style="flex:1;" />
+            <button type="submit" id="ask-ver-btn" style="margin:0; white-space:nowrap;">Ask Ver</button>
+          </div>
+          <p id="ask-ver-status"></p>
+        </form>
+        <div id="ask-ver-answer" class="decision" style="display:none; margin-top:14px;"></div>
+        <ul class="decision-list" id="ask-ver-history" style="margin-top:16px;"></ul>
+      </div>
+
       <section>
         <button type="button" class="section-toggle"><h2>Strategy — cross-venture decisions</h2><span class="chevron">▶</span></button>
         <div class="section-body">
@@ -840,6 +857,7 @@
       loadIntelligence();
       loadNeedsAttention();
       loadVerDesk();
+      loadVerHistory();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -1411,6 +1429,73 @@
           <p class="stat-label">${escapeHtml(s.label)}</p>
           <p class="stat-value">${escapeHtml(s.value)}</p>
         </div>
+      `).join('');
+    }
+
+    // Ask Ver: calls the new /api/ask-ver (this repo's own endpoint,
+    // ported from katiwala-owner-os-'s answer-ver-query.js but
+    // synchronous — ask, get an answer in the same request, instead
+    // of that repo's submit-then-answered-later queue). Answer is
+    // saved server-side into ver_queries, so the history list below
+    // just re-reads the same table.
+    document.getElementById('ask-ver-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('ask-ver-question');
+      const btn = document.getElementById('ask-ver-btn');
+      const statusEl = document.getElementById('ask-ver-status');
+      const answerEl = document.getElementById('ask-ver-answer');
+      const question = input.value.trim();
+      if (!question) return;
+      btn.disabled = true;
+      btn.textContent = 'Asking…';
+      statusEl.textContent = '';
+      answerEl.style.display = 'none';
+      try {
+        const res = await fetch('/api/ask-ver', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question }),
+        });
+        const body = await res.json();
+        if (body.notConfigured) {
+          statusEl.textContent = body.error;
+          return;
+        }
+        if (body.error) throw new Error(body.error);
+        answerEl.textContent = body.answer;
+        answerEl.style.display = 'block';
+        input.value = '';
+        loadVerHistory();
+      } catch (err) {
+        console.error('[ask-ver] client error:', err);
+        statusEl.style.color = 'var(--danger)';
+        statusEl.textContent = "Couldn't get an answer — try again in a moment.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Ask Ver';
+      }
+    });
+
+    async function loadVerHistory() {
+      const listEl = document.getElementById('ask-ver-history');
+      const { data, error } = await sb
+        .from('ver_queries')
+        .select('question, answer, answered_at')
+        .eq('status', 'answered')
+        .order('answered_at', { ascending: false })
+        .limit(5);
+      if (error || !data || !data.length) {
+        listEl.innerHTML = '';
+        return;
+      }
+      listEl.innerHTML = data.map(q => `
+        <li class="decision">
+          <div class="decision-top">
+            <span class="decision-title">${escapeHtml(q.question)}</span>
+            <span class="decision-venture">${q.answered_at ? new Date(q.answered_at).toLocaleDateString() : ''}</span>
+          </div>
+          <p class="decision-context">${escapeHtml(q.answer)}</p>
+        </li>
       `).join('');
     }
 
