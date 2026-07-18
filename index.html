@@ -145,6 +145,31 @@
     white-space: nowrap;
   }
   .attention-empty { color: var(--good); font-size: 14px; font-weight: 600; }
+  .quick-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .quick-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--brand-blue);
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+  }
+  .quick-links a:hover { border-color: var(--brand-blue); }
+  .quick-links a .sub-label {
+    font-weight: 400;
+    color: var(--slate);
+    font-size: 13px;
+  }
   .ver-desk {
     border: 1px solid var(--border);
     border-left: 4px solid var(--brand-blue);
@@ -500,6 +525,11 @@
         </div>
       </div>
       <span class="status"><span class="dot"></span>Phase 4 — all 9 governance areas live, deployed 2026-07-18</span>
+
+      <div class="quick-links">
+        <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open KOS / Katiwala AI <span class="sub-label">→</span></a>
+        <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open ODO <span class="sub-label">→</span></a>
+      </div>
 
       <div class="attention-panel">
         <h2>Needs your attention</h2>
@@ -1173,7 +1203,7 @@
     // Read-only, same projects/project_status join Product already
     // uses. Kept visible here rather than just disappearing once
     // Product was scoped down to the active list.
-    const RND_SLUGS = ['wpos', 'cofeshop', 'verde-cafe', 'green-apple-hotel'];
+    const RND_SLUGS = ['cofeshop', 'verde-cafe', 'green-apple-hotel'];
 
     async function loadRnd() {
       const bodyEl = document.getElementById('rd-table-body');
