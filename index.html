@@ -145,72 +145,134 @@
     white-space: nowrap;
   }
   .attention-empty { color: var(--good); font-size: 14px; font-weight: 600; }
-  .quick-links {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+  .mode-switcher {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
     margin-bottom: 24px;
   }
-  .quick-links a {
+  .mode-switcher a, .mode-switcher span {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--white);
-    color: var(--brand-blue);
-    font-weight: 600;
-    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.02em;
     text-decoration: none;
   }
-  .quick-links a:hover { border-color: var(--brand-blue); }
-  .quick-links a .sub-label {
-    font-weight: 400;
+  .mode-switcher .mode-active {
+    background: var(--brand-blue);
+    color: var(--white);
+  }
+  .mode-switcher a {
     color: var(--slate);
-    font-size: 13px;
   }
-  .ver-desk {
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--brand-blue);
-    border-radius: 10px;
-    padding: 18px 20px;
-    background: var(--surface);
-    margin-bottom: 32px;
-  }
-  .ver-desk-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-  .ver-desk-header h2 { margin: 0; }
-  .ver-desk-header .sub { font-size: 12px; color: var(--slate); }
-  .ver-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 10px;
-  }
-  .ver-stat {
+  .mode-switcher a:hover {
     background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
+    color: var(--brand-blue);
   }
-  .ver-stat .stat-label {
+  /* Ver — floating assistant, same fixed-button + slide-in-drawer
+     pattern as katiwala-owner-os-'s Ask Kath assistant, so the two
+     feel like one ecosystem rather than two different conventions. */
+  #ver-toggle-btn {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 90;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: var(--brand-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px 10px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(10,29,77,0.35);
+  }
+  #ver-toggle-btn .logo-mark { width: 26px; height: auto; }
+  #ver-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 440px;
+    max-width: 92vw;
+    background: var(--white);
+    border-left: 1px solid var(--border);
+    z-index: 95;
+    display: none;
+    flex-direction: column;
+    box-shadow: -8px 0 24px rgba(0,0,0,0.25);
+  }
+  #ver-drawer.open { display: flex; }
+  @media (max-width: 600px) {
+    #ver-drawer { width: 100vw; max-width: 100vw; border-left: none; }
+  }
+  .ver-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .ver-drawer-header h3 { margin: 0; font-size: 15px; color: var(--brand-blue); }
+  #ver-drawer-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--slate);
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+  }
+  .ver-drawer-body { flex: 1; overflow-y: auto; padding: 18px; }
+  .ver-drawer-section { margin-bottom: 28px; }
+  .ver-drawer-section h4 {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     color: var(--slate);
     margin: 0 0 4px;
   }
-  .ver-stat .stat-value {
-    font-size: 14px;
+  .ver-drawer-section .sub { font-size: 12px; color: var(--slate); margin: 0 0 12px; }
+  .ver-nav-list { display: flex; flex-direction: column; gap: 6px; }
+  .ver-nav-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+  }
+  .ver-nav-item:hover { border-color: var(--brand-blue); }
+  .ver-nav-item .stat-label {
+    font-size: 12px;
     font-weight: 600;
     color: var(--ink);
     margin: 0;
+  }
+  .ver-nav-item .stat-value {
+    font-size: 12px;
+    color: var(--slate);
+    margin: 0;
+    text-align: right;
+    flex-shrink: 0;
   }
   .areas {
     display: grid;
@@ -526,9 +588,10 @@
       </div>
       <span class="status"><span class="dot"></span>Phase 4 — all 9 governance areas live, deployed 2026-07-18</span>
 
-      <div class="quick-links">
-        <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open KOS / Katiwala AI <span class="sub-label">→</span></a>
-        <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open ODO <span class="sub-label">→</span></a>
+      <div class="mode-switcher">
+        <span class="mode-active">FOS</span>
+        <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">KOS</a>
+        <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">ODO</a>
       </div>
 
       <div class="attention-panel">
@@ -537,33 +600,8 @@
         <p class="attention-empty" id="attention-empty" style="display:none;">Nothing open across the ecosystem right now.</p>
       </div>
 
-      <div class="ver-desk">
-        <div class="ver-desk-header">
-          <h2>Ver's Desk</h2>
-          <span class="sub">One line per governance area — expand a section below for the full detail.</span>
-        </div>
-        <div class="ver-stats" id="ver-stats"></div>
-      </div>
-
-      <div class="ver-desk">
-        <div class="ver-desk-header">
-          <h2>Ask Ver</h2>
-          <span class="sub">Grounded in TVGSUOS's real docs and what's open right now — not generic advice.</span>
-        </div>
-        <form id="ask-ver-form" class="strategy-form" style="margin:0;">
-          <label for="ask-ver-question" style="position:absolute; left:-9999px;">Question for Ver</label>
-          <div style="display:flex; gap:10px;">
-            <input type="text" id="ask-ver-question" required placeholder="e.g. What should I focus on today?" style="flex:1;" />
-            <button type="submit" id="ask-ver-btn" style="margin:0; white-space:nowrap;">Ask Ver</button>
-          </div>
-          <p id="ask-ver-status"></p>
-        </form>
-        <div id="ask-ver-answer" class="decision" style="display:none; margin-top:14px;"></div>
-        <ul class="decision-list" id="ask-ver-history" style="margin-top:16px;"></ul>
-      </div>
-
       <section>
-        <button type="button" class="section-toggle"><h2>Strategy — cross-venture decisions</h2><span class="chevron">▶</span></button>
+        <button type="button" class="section-toggle" data-topic="Strategy"><h2>Strategy — cross-venture decisions</h2><span class="chevron">▶</span></button>
         <div class="section-body">
         <div class="strategy-form">
           <form id="decision-form">
@@ -585,7 +623,7 @@
       </section>
 
       <section>
-        <button type="button" class="section-toggle"><h2>Product — portfolio consistency rollup</h2><span class="chevron">▶</span></button>
+        <button type="button" class="section-toggle" data-topic="Product"><h2>Product — portfolio consistency rollup</h2><span class="chevron">▶</span></button>
         <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Every venture's stage and build readiness in one place — catches drift, not a duplicate of each venture's own feature work (that stays with Kath/Vera).</p>
         <div class="table-wrap">
@@ -601,7 +639,7 @@
       </section>
 
       <section>
-        <button type="button" class="section-toggle"><h2>Security / Privacy / Compliance</h2><span class="chevron">▶</span></button>
+        <button type="button" class="section-toggle" data-topic="Security / Privacy / Compliance"><h2>Security / Privacy / Compliance</h2><span class="chevron">▶</span></button>
         <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Live posture check against the shared Supabase project, plus Ver's day-to-day governance risk log from Founder's Space.</p>
         <div class="strategy-form">
@@ -616,7 +654,7 @@
       </section>
 
       <section>
-        <button type="button" class="section-toggle"><h2>Marketing — go-to-market oversight</h2><span class="chevron">▶</span></button>
+        <button type="button" class="section-toggle" data-topic="Marketing"><h2>Marketing — go-to-market oversight</h2><span class="chevron">▶</span></button>
         <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Top-of-funnel visibility across ventures — the public waitlist (KOS) currently only has its own standalone admin page, no dashboard; ODO's weekly lead snapshot, same idea.</p>
 
@@ -645,7 +683,7 @@
       </section>
 
       <section>
-        <button type="button" class="section-toggle"><h2>R&amp;D</h2><span class="chevron">▶</span></button>
+        <button type="button" class="section-toggle" data-topic="R&D"><h2>R&amp;D</h2><span class="chevron">▶</span></button>
         <div class="section-body">
         <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Log a new idea</h3>
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Writes straight into the same signal feed Intelligence reads below — a founder-originated idea sits alongside whatever Kath and Vera surface, not in a separate silo.</p>
@@ -677,7 +715,7 @@
       </section>
 
       <section>
-        <button type="button" class="section-toggle"><h2>Finance — cross-venture cash visibility</h2><span class="chevron">▶</span></button>
+        <button type="button" class="section-toggle" data-topic="Finance"><h2>Finance — cross-venture cash visibility</h2><span class="chevron">▶</span></button>
         <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Same venture structure as Product, different columns — cash pulse, burn rate, and runway from each venture's own project_status.</p>
         <div class="table-wrap">
@@ -693,7 +731,7 @@
       </section>
 
       <section>
-        <button type="button" class="section-toggle"><h2>Intelligence — signal synthesis</h2><span class="chevron">▶</span></button>
+        <button type="button" class="section-toggle" data-topic="Intelligence"><h2>Intelligence — signal synthesis</h2><span class="chevron">▶</span></button>
         <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">What Kath and Vera are surfacing from real usage — requests, bottlenecks, and what needs founder attention. This is the "Weekly Innovation Summary" signal katiwala-owner-os- built a home for but never populated; it's real and live here.</p>
         <div class="table-wrap">
@@ -709,7 +747,7 @@
       </section>
 
       <section>
-        <button type="button" class="section-toggle"><h2>People / Admin / Governance</h2><span class="chevron">▶</span></button>
+        <button type="button" class="section-toggle" data-topic="People / Admin / Governance"><h2>People / Admin / Governance</h2><span class="chevron">▶</span></button>
         <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">The governance rules this whole app runs on — not a database view, the actual rules from docs/GOVERNANCE_MODEL.md, surfaced here instead of staying buried in the repo.</p>
         <div class="hierarchy" style="margin-bottom:16px;">
@@ -804,6 +842,36 @@
     </div>
   </div>
 
+  <button id="ver-toggle-btn" type="button">
+    <svg class="logo-mark" viewBox="0 0 200 224"><use href="#tvg-shield-def"/></svg>
+    Ver
+  </button>
+  <div id="ver-drawer">
+    <div class="ver-drawer-header">
+      <h3>Ver</h3>
+      <button id="ver-drawer-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="ver-drawer-body">
+      <div class="ver-drawer-section">
+        <h4>Ver's Desk</h4>
+        <p class="sub">One line per area — click one to jump straight there.</p>
+        <div class="ver-nav-list" id="ver-stats"></div>
+      </div>
+      <div class="ver-drawer-section">
+        <h4>Ask Ver</h4>
+        <p class="sub">Grounded in TVGSUOS's real docs and what's open right now.</p>
+        <form id="ask-ver-form" class="strategy-form" style="margin:0;">
+          <label for="ask-ver-question" style="position:absolute; left:-9999px;">Question for Ver</label>
+          <input type="text" id="ask-ver-question" required placeholder="e.g. What should I focus on today?" style="margin-bottom:10px;" />
+          <button type="submit" id="ask-ver-btn" style="width:100%;">Ask Ver</button>
+          <p id="ask-ver-status"></p>
+        </form>
+        <div id="ask-ver-answer" class="decision" style="display:none; margin-top:14px;"></div>
+        <ul class="decision-list" id="ask-ver-history" style="margin-top:16px;"></ul>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module">
     // Same Supabase project as katiwala-owner-os- — TVGSUOS has no
@@ -837,6 +905,24 @@
       });
     });
 
+    // Ver's Desk items in the drawer aren't a second copy of the same
+    // data — clicking one expands and scrolls to the matching section
+    // instead, so the drawer is a navigator, not a redundant summary.
+    function jumpToTopic(topic) {
+      const btn = document.querySelector(`.section-toggle[data-topic="${CSS.escape(topic)}"]`);
+      if (!btn) return;
+      if (!btn.classList.contains('expanded')) btn.click();
+      document.getElementById('ver-drawer').classList.remove('open');
+      btn.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.getElementById('ver-toggle-btn').addEventListener('click', () => {
+      document.getElementById('ver-drawer').classList.add('open');
+    });
+    document.getElementById('ver-drawer-close').addEventListener('click', () => {
+      document.getElementById('ver-drawer').classList.remove('open');
+    });
+
     function showLoginSubview(which) {
       // which: 'login' | 'forgot' | 'set-password'
       loginForm.style.display = which === 'login' ? 'block' : 'none';
@@ -848,6 +934,7 @@
     function showApp() {
       loginScreen.style.display = 'none';
       appEl.style.display = 'block';
+      document.getElementById('ver-toggle-btn').style.display = 'flex';
       loadDecisions();
       loadProductRollup();
       loadGovernanceLog();
@@ -862,6 +949,8 @@
     function showLogin() {
       loginScreen.style.display = 'block';
       appEl.style.display = 'none';
+      document.getElementById('ver-toggle-btn').style.display = 'none';
+      document.getElementById('ver-drawer').classList.remove('open');
       showLoginSubview('login');
     }
 
@@ -1421,15 +1510,18 @@
         { label: 'R&D', value: `${ideaCount.count ?? 0} idea${ideaCount.count === 1 ? '' : 's'} logged` },
         { label: 'Finance', value: `${cashCount}/${VER_DESK_ACTIVE_SLUGS.length} ventures have cash data` },
         { label: 'Intelligence', value: `${openSignals.count ?? 0} open (${bottleneckSignals.count ?? 0} bottleneck${bottleneckSignals.count === 1 ? '' : 's'})` },
-        { label: 'People / Admin / Governance', value: 'Rules documented — see below' },
+        { label: 'People / Admin / Governance', value: 'Rules documented' },
       ];
 
       el.innerHTML = stats.map(s => `
-        <div class="ver-stat">
-          <p class="stat-label">${escapeHtml(s.label)}</p>
-          <p class="stat-value">${escapeHtml(s.value)}</p>
-        </div>
+        <button type="button" class="ver-nav-item" data-topic="${escapeHtml(s.label)}">
+          <span class="stat-label">${escapeHtml(s.label)}</span>
+          <span class="stat-value">${escapeHtml(s.value)}</span>
+        </button>
       `).join('');
+      el.querySelectorAll('.ver-nav-item').forEach(btn => {
+        btn.addEventListener('click', () => jumpToTopic(btn.dataset.topic));
+      });
     }
 
     // Ask Ver: calls the new /api/ask-ver (this repo's own endpoint,
