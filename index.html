@@ -87,9 +87,64 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--slate);
-    margin: 0 0 16px;
+    margin: 0;
   }
-  section { margin-bottom: 48px; }
+  section { margin-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 14px 0;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+  }
+  .section-toggle .chevron {
+    color: var(--slate);
+    font-size: 13px;
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+  .section-toggle.expanded .chevron { transform: rotate(90deg); }
+  .section-body { display: none; padding-bottom: 24px; }
+  .section-body.expanded { display: block; }
+  .attention-panel {
+    border: 1px solid var(--border);
+    border-left: 4px solid #B45309;
+    border-radius: 10px;
+    padding: 18px 20px;
+    background: var(--surface);
+    margin-bottom: 32px;
+  }
+  .attention-panel h2 { color: #B45309; margin-bottom: 12px; }
+  .attention-list { list-style: none; margin: 0; padding: 0; }
+  .attention-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .attention-list li:last-child { border-bottom: none; }
+  .attention-tag {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #B45309;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 9px;
+    white-space: nowrap;
+  }
+  .attention-empty { color: var(--good); font-size: 14px; font-weight: 600; }
   .areas {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -404,8 +459,15 @@
       </div>
       <span class="status"><span class="dot"></span>Phase 4 — all 9 governance areas live, deployed 2026-07-18</span>
 
+      <div class="attention-panel">
+        <h2>Needs your attention</h2>
+        <ul class="attention-list" id="attention-list"></ul>
+        <p class="attention-empty" id="attention-empty" style="display:none;">Nothing open across the ecosystem right now.</p>
+      </div>
+
       <section>
-        <h2>Strategy — cross-venture decisions</h2>
+        <button type="button" class="section-toggle"><h2>Strategy — cross-venture decisions</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <div class="strategy-form">
           <form id="decision-form">
             <label for="decision-project">Venture</label>
@@ -422,10 +484,12 @@
         </div>
         <ul class="decision-list" id="decision-list"></ul>
         <p id="decisions-empty" style="display:none;">No decisions logged yet across any venture.</p>
+        </div>
       </section>
 
       <section>
-        <h2>Product — portfolio consistency rollup</h2>
+        <button type="button" class="section-toggle"><h2>Product — portfolio consistency rollup</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Every venture's stage and build readiness in one place — catches drift, not a duplicate of each venture's own feature work (that stays with Kath/Vera).</p>
         <div class="table-wrap">
           <table id="product-table">
@@ -436,10 +500,12 @@
           </table>
         </div>
         <p id="product-empty" style="display:none;">No venture data available.</p>
+        </div>
       </section>
 
       <section>
-        <h2>Security / Privacy / Compliance</h2>
+        <button type="button" class="section-toggle"><h2>Security / Privacy / Compliance</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Live posture check against the shared Supabase project, plus Ver's day-to-day governance risk log from Founder's Space.</p>
         <div class="strategy-form">
           <button type="button" id="security-check-btn">Run security &amp; compliance check</button>
@@ -449,10 +515,12 @@
         <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">Recent governance risk notes (Ver, Founder's Space)</h3>
         <ul class="decision-list" id="governance-log-list"></ul>
         <p id="governance-log-empty" style="display:none;">No governance risk notes logged yet.</p>
+        </div>
       </section>
 
       <section>
-        <h2>Marketing — go-to-market oversight</h2>
+        <button type="button" class="section-toggle"><h2>Marketing — go-to-market oversight</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Top-of-funnel visibility across ventures — the public waitlist (KOS) currently only has its own standalone admin page, no dashboard; ODO's weekly lead snapshot, same idea.</p>
 
         <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Katiwala AI waitlist <span id="waitlist-total-badge"></span></h3>
@@ -476,11 +544,12 @@
           </table>
         </div>
         <p id="odo-leads-empty" style="display:none;">No ODO weekly lead snapshots logged yet.</p>
+        </div>
       </section>
 
       <section>
-        <h2>R&amp;D</h2>
-
+        <button type="button" class="section-toggle"><h2>R&amp;D</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Log a new idea</h3>
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Writes straight into the same signal feed Intelligence reads below — a founder-originated idea sits alongside whatever Kath and Vera surface, not in a separate silo.</p>
         <div class="strategy-form">
@@ -507,10 +576,12 @@
           </table>
         </div>
         <p id="rd-empty" style="display:none;">Nothing in early-stage/dormant exploration right now.</p>
+        </div>
       </section>
 
       <section>
-        <h2>Finance — cross-venture cash visibility</h2>
+        <button type="button" class="section-toggle"><h2>Finance — cross-venture cash visibility</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Same venture structure as Product, different columns — cash pulse, burn rate, and runway from each venture's own project_status.</p>
         <div class="table-wrap">
           <table id="finance-table">
@@ -521,10 +592,12 @@
           </table>
         </div>
         <p id="finance-empty" style="display:none;">No financial data available.</p>
+        </div>
       </section>
 
       <section>
-        <h2>Intelligence — signal synthesis</h2>
+        <button type="button" class="section-toggle"><h2>Intelligence — signal synthesis</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">What Kath and Vera are surfacing from real usage — requests, bottlenecks, and what needs founder attention. This is the "Weekly Innovation Summary" signal katiwala-owner-os- built a home for but never populated; it's real and live here.</p>
         <div class="table-wrap">
           <table id="intelligence-table">
@@ -535,10 +608,12 @@
           </table>
         </div>
         <p id="intelligence-empty" style="display:none;">No improvement signals logged yet.</p>
+        </div>
       </section>
 
       <section>
-        <h2>People / Admin / Governance</h2>
+        <button type="button" class="section-toggle"><h2>People / Admin / Governance</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">The governance rules this whole app runs on — not a database view, the actual rules from docs/GOVERNANCE_MODEL.md, surfaced here instead of staying buried in the repo.</p>
         <div class="hierarchy" style="margin-bottom:16px;">
           <div style="margin-bottom:10px;"><span class="name">Ver</span> <span class="role">— founder priorities, cross-venture synthesis, daily baseline review, security posture, data privacy compliance, business continuity, escalation, policy enforcement.</span></div>
@@ -552,10 +627,12 @@
           <li>Kath and Vera escalate to Ver: blockers needing founder-level resourcing or cross-venture coordination — not routine operations.</li>
           <li>Non-redundancy rule: Ver never duplicates Kath/Vera domain reasoning; Kath/Vera never own founder-level orchestration.</li>
         </ul>
+        </div>
       </section>
 
       <section>
-        <h2>All 9 governance areas</h2>
+        <button type="button" class="section-toggle"><h2>All 9 governance areas</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <div class="areas">
           <div class="area built">
             <p class="area-name">Founder's Space</p>
@@ -594,19 +671,23 @@
             <p class="area-state">Built — above</p>
           </div>
         </div>
+        </div>
       </section>
 
       <section>
-        <h2>Agent hierarchy</h2>
+        <button type="button" class="section-toggle"><h2>Agent hierarchy</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <div class="hierarchy">
           <div><span class="name">Ver</span> <span class="role">— chief of staff, TVGSUOS layer</span></div>
           <div style="padding-left: 20px;"><span class="name">Kath</span> <span class="role">— KOS / Katiwala AI</span></div>
           <div style="padding-left: 20px;"><span class="name">Vera</span> <span class="role">— OWDO / ODO</span></div>
         </div>
+        </div>
       </section>
 
       <div class="ventures">
-        <h2>Governed ventures</h2>
+        <button type="button" class="section-toggle"><h2>Governed ventures</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <ul class="venture-list">
           <li>
             <span>KOS / Katiwala AI <span class="venture-note">— Founder's Space, CEO's Space, HR &amp; Payroll, Simple P&amp;L, Ops</span></span>
@@ -617,6 +698,7 @@
             <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open →</a>
           </li>
         </ul>
+        </div>
       </div>
 
       <footer>
@@ -646,6 +728,18 @@
     const forgotForm = document.getElementById('forgot-password-form');
     const setPasswordForm = document.getElementById('set-password-form');
 
+    // Every section collapses to just its header by default — the
+    // founder asked to see everything at a glance, then expand only
+    // what needs a closer look, rather than scrolling a long fully-
+    // expanded page.
+    document.querySelectorAll('.section-toggle').forEach(btn => {
+      const body = btn.nextElementSibling;
+      btn.addEventListener('click', () => {
+        const expanded = btn.classList.toggle('expanded');
+        body.classList.toggle('expanded', expanded);
+      });
+    });
+
     function showLoginSubview(which) {
       // which: 'login' | 'forgot' | 'set-password'
       loginForm.style.display = which === 'login' ? 'block' : 'none';
@@ -664,6 +758,7 @@
       loadRnd();
       loadFinance();
       loadIntelligence();
+      loadNeedsAttention();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -1137,6 +1232,44 @@
           <td>${s.attention_score ?? '—'}</td>
           <td>${escapeHtml(s.status) || '—'}</td>
         </tr>
+      `).join('');
+    }
+
+    // Needs Attention: the top-of-page panel, like CEO's Space's own
+    // "needs attention" pattern in katiwala-owner-os- — pulls what's
+    // still open across the areas that actually have an open/closed
+    // concept (Strategy's decisions, Intelligence's signals). Not a
+    // new data source — same tables those sections already load,
+    // just filtered to what's unresolved and surfaced before anyone
+    // has to expand a section to find it.
+    async function loadNeedsAttention() {
+      const listEl = document.getElementById('attention-list');
+      const emptyEl = document.getElementById('attention-empty');
+      // Joins projects directly rather than relying on the shared
+      // projectsCache/projectNameById (populated by loadDecisions,
+      // which runs independently and isn't guaranteed to finish
+      // first) — avoids a load-order race on venture names.
+      const [decisionsRes, signalsRes] = await Promise.all([
+        sb.from('decisions').select('id, title, created_at, projects(name)').eq('status', 'open').order('created_at', { ascending: false }).limit(10),
+        sb.from('improvement_signals').select('project_scope, signal_summary, bottleneck_flag, status').eq('status', 'open').order('attention_score', { ascending: false, nullsFirst: false }).limit(10),
+      ]);
+      const items = [];
+      (decisionsRes.data || []).forEach(d => {
+        const proj = Array.isArray(d.projects) ? d.projects[0] : d.projects;
+        items.push({ tag: 'Strategy', label: `${(proj && proj.name) || 'Unknown venture'}: ${d.title}` });
+      });
+      (signalsRes.data || []).forEach(s => items.push({
+        tag: s.bottleneck_flag ? 'Bottleneck' : 'Intelligence',
+        label: `${s.project_scope || 'Unscoped'}: ${s.signal_summary || 'Untitled signal'}`,
+      }));
+      if (!items.length) {
+        listEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      listEl.innerHTML = items.map(i => `
+        <li><span>${escapeHtml(i.label)}</span><span class="attention-tag">${escapeHtml(i.tag)}</span></li>
       `).join('');
     }
 
