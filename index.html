@@ -2115,6 +2115,10 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           return;
         }
         const h = body.health;
+        const b = body.business;
+        const escrowSummary = b && b.escrowBreakdown && Object.keys(b.escrowBreakdown).length
+          ? Object.entries(b.escrowBreakdown).map(([state, count]) => `${count} ${state}`).join(', ')
+          : 'None yet';
         odoEl.innerHTML = [
           ventureMetricRow('Vera signals (72h)', String(body.signalsCount ?? 0)),
           ventureMetricRow('Negative signals', String(body.negativeCount ?? 0)),
@@ -2122,6 +2126,10 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           ventureMetricRow('Pulse score', h && h.pulse_score != null ? String(h.pulse_score) : 'No data'),
           ventureMetricRow('Open critical/high/medium', h ? `${h.open_critical ?? 0} / ${h.open_high ?? 0} / ${h.open_medium ?? 0}` : 'No data'),
           ventureMetricRow('Active / closed (7d) deals', h ? `${h.deals_active ?? 0} / ${h.deals_closed_7d ?? 0}` : 'No data'),
+          ventureMetricRow('Active listings', b ? `${b.activeListings} of ${b.totalListings} total` : 'No data'),
+          ventureMetricRow('GMV', b ? `₱${Number(b.gmvPhp).toLocaleString()}` : 'No data'),
+          ventureMetricRow('Escrow / protection cases', b ? escrowSummary : 'No data'),
+          ventureMetricRow('Waitlist signups', b ? String(b.waitlistCount) : 'No data'),
         ].join('');
       } catch (err) {
         odoEl.innerHTML = `<p class="cockpit-not-connected">Couldn't reach ODO status — ${escapeHtml(err.message)}</p>`;
