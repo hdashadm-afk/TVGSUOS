@@ -74,7 +74,7 @@
     padding: 6px 14px;
     margin-bottom: 40px;
   }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: #D97706; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
   h2 {
     font-size: 13px;
     font-weight: 600;
@@ -395,7 +395,7 @@
         </div>
       </div>
       <p class="lede">The founder command layer for strategy, execution, control, and continuity — sitting above every governed venture, not one product app among them.</p>
-      <span class="status"><span class="dot"></span>Phase 3 — Strategy + Product live, deployed 2026-07-18</span>
+      <span class="status"><span class="dot"></span>Phase 4 — all 9 governance areas live, deployed 2026-07-18</span>
 
       <section>
         <h2>Strategy — cross-venture decisions</h2>
@@ -486,7 +486,52 @@
       </section>
 
       <section>
-        <h2>Other governance areas</h2>
+        <h2>Finance — cross-venture cash visibility</h2>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Same venture structure as Product, different columns — cash pulse, burn rate, and runway from each venture's own project_status.</p>
+        <div class="table-wrap">
+          <table id="finance-table">
+            <thead>
+              <tr><th>Venture</th><th>Cash pulse</th><th>Burn rate</th><th>Runway (months)</th></tr>
+            </thead>
+            <tbody id="finance-table-body"></tbody>
+          </table>
+        </div>
+        <p id="finance-empty" style="display:none;">No financial data available.</p>
+      </section>
+
+      <section>
+        <h2>Intelligence — signal synthesis</h2>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">What Kath and Vera are surfacing from real usage — requests, bottlenecks, and what needs founder attention. This is the "Weekly Innovation Summary" signal katiwala-owner-os- built a home for but never populated; it's real and live here.</p>
+        <div class="table-wrap">
+          <table id="intelligence-table">
+            <thead>
+              <tr><th>Scope</th><th>Feature area</th><th>Signal</th><th>Requests</th><th>Attention</th><th>Status</th></tr>
+            </thead>
+            <tbody id="intelligence-table-body"></tbody>
+          </table>
+        </div>
+        <p id="intelligence-empty" style="display:none;">No improvement signals logged yet.</p>
+      </section>
+
+      <section>
+        <h2>People / Admin / Governance</h2>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">The governance rules this whole app runs on — not a database view, the actual rules from docs/GOVERNANCE_MODEL.md, surfaced here instead of staying buried in the repo.</p>
+        <div class="hierarchy" style="margin-bottom:16px;">
+          <div style="margin-bottom:10px;"><span class="name">Ver</span> <span class="role">— founder priorities, cross-venture synthesis, daily baseline review, security posture, data privacy compliance, business continuity, escalation, policy enforcement.</span></div>
+          <div style="margin-bottom:10px;"><span class="name">Kath</span> <span class="role">— KOS memory, gas station owner decision support, CEO's Space signals, HR/payroll intelligence, gas station operational loops.</span></div>
+          <div><span class="name">Vera</span> <span class="role">— OWDO memory, trust loops, verification workflows, buyer/seller/provider progression, marketplace reliability signals.</span></div>
+        </div>
+        <p style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 8px;">Decision rights &amp; escalation</p>
+        <ul style="margin:0; padding-left:20px; font-size:14px; color:var(--ink); line-height:1.8;">
+          <li>The founder is final authority on strategy and anything not already settled by the master docs.</li>
+          <li>Ver escalates to the founder: security/privacy/compliance risks, cross-venture conflicts, anything changing baseline direction.</li>
+          <li>Kath and Vera escalate to Ver: blockers needing founder-level resourcing or cross-venture coordination — not routine operations.</li>
+          <li>Non-redundancy rule: Ver never duplicates Kath/Vera domain reasoning; Kath/Vera never own founder-level orchestration.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>All 9 governance areas</h2>
         <div class="areas">
           <div class="area built">
             <p class="area-name">Founder's Space</p>
@@ -504,7 +549,10 @@
             <p class="area-name">Security / Privacy / Compliance</p>
             <p class="area-state">Built — above</p>
           </div>
-          <div class="area"><p class="area-name">Finance</p><p class="area-state">Not yet built</p></div>
+          <div class="area built">
+            <p class="area-name">Finance</p>
+            <p class="area-state">Built — above</p>
+          </div>
           <div class="area built">
             <p class="area-name">Marketing</p>
             <p class="area-state">Built — above</p>
@@ -513,8 +561,14 @@
             <p class="area-name">R&amp;D</p>
             <p class="area-state">Built — above</p>
           </div>
-          <div class="area"><p class="area-name">Intelligence</p><p class="area-state">Not yet built</p></div>
-          <div class="area"><p class="area-name">People / Admin / Governance</p><p class="area-state">Not yet built</p></div>
+          <div class="area built">
+            <p class="area-name">Intelligence</p>
+            <p class="area-state">Built — above</p>
+          </div>
+          <div class="area built">
+            <p class="area-name">People / Admin / Governance</p>
+            <p class="area-state">Built — above</p>
+          </div>
         </div>
       </section>
 
@@ -584,6 +638,8 @@
       loadGovernanceLog();
       loadMarketing();
       loadRnd();
+      loadFinance();
+      loadIntelligence();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -980,6 +1036,82 @@
           </tr>
         `;
       }).join('');
+    }
+
+    // Finance: same venture structure as Product (PRODUCT_ROLLUP_ROWS),
+    // different columns from the same project_status rows — cash_pulse/
+    // burn_rate/runway_months instead of stage/build_readiness. No new
+    // schema, no redundancy (disjoint columns from the same source).
+    async function loadFinance() {
+      const bodyEl = document.getElementById('finance-table-body');
+      const emptyEl = document.getElementById('finance-empty');
+      const { data, error } = await sb
+        .from('projects')
+        .select('id, name, slug, project_status(cash_pulse, burn_rate, runway_months)');
+      if (error) {
+        bodyEl.innerHTML = '';
+        emptyEl.textContent = "Couldn't load financial data — " + error.message;
+        emptyEl.style.display = 'block';
+        return;
+      }
+      const bySlug = {};
+      (data || []).forEach(p => { bySlug[p.slug] = p; });
+      const rows = PRODUCT_ROLLUP_ROWS.map(r => ({ ...r, source: bySlug[r.sourceSlug] }));
+      if (!rows.some(r => r.source)) {
+        bodyEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      bodyEl.innerHTML = rows.map(r => {
+        const p = r.source;
+        const status = p ? (Array.isArray(p.project_status) ? p.project_status[0] : p.project_status) : null;
+        return `
+          <tr>
+            <td>${escapeHtml(r.label)}</td>
+            <td>${(status && escapeHtml(status.cash_pulse)) || '—'}</td>
+            <td>${(status && status.burn_rate != null) ? escapeHtml(String(status.burn_rate)) : '—'}</td>
+            <td>${(status && status.runway_months != null) ? escapeHtml(String(status.runway_months)) : '—'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Intelligence: improvement_signals — the "Weekly Innovation
+    // Summary" katiwala-owner-os- built a home for but never
+    // populated (sat empty waiting for Kath/Vera to auto-fill it).
+    // Real, already-populated table; read-only rollup here, no new
+    // schema.
+    async function loadIntelligence() {
+      const bodyEl = document.getElementById('intelligence-table-body');
+      const emptyEl = document.getElementById('intelligence-empty');
+      const { data, error } = await sb
+        .from('improvement_signals')
+        .select('project_scope, feature_area, signal_summary, bottleneck_flag, request_count, attention_score, status')
+        .order('attention_score', { ascending: false, nullsFirst: false })
+        .limit(25);
+      if (error) {
+        bodyEl.innerHTML = '';
+        emptyEl.textContent = "Couldn't load intelligence signals — " + error.message;
+        emptyEl.style.display = 'block';
+        return;
+      }
+      if (!data || !data.length) {
+        bodyEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      bodyEl.innerHTML = data.map(s => `
+        <tr>
+          <td>${escapeHtml(s.project_scope) || '—'}</td>
+          <td>${escapeHtml(s.feature_area) || '—'}</td>
+          <td>${escapeHtml(s.signal_summary) || '—'}${s.bottleneck_flag ? ' <span class="decision-venture" style="color:var(--danger); border-color:var(--danger);">Bottleneck</span>' : ''}</td>
+          <td>${s.request_count ?? '—'}</td>
+          <td>${s.attention_score ?? '—'}</td>
+          <td>${escapeHtml(s.status) || '—'}</td>
+        </tr>
+      `).join('');
     }
 
     document.getElementById('decision-form').addEventListener('submit', async (e) => {
