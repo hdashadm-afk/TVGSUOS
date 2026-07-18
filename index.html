@@ -167,6 +167,28 @@
     margin-top: 12px;
     display: none;
   }
+  #login-forgot-link {
+    text-align: center;
+    font-size: 13px;
+    color: var(--slate);
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 14px;
+  }
+  #forgot-password-form, #set-password-form { display: none; }
+  #forgot-password-status, #set-password-status {
+    font-size: 13px;
+    color: var(--slate);
+    margin-top: 8px;
+  }
+  #forgot-password-back-link {
+    text-align: center;
+    font-size: 13px;
+    color: var(--slate);
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 14px;
+  }
   #app { display: none; }
 
   /* Strategy section */
@@ -270,6 +292,30 @@
       <button type="submit" id="login-btn">Sign in</button>
       <p id="login-error"></p>
     </form>
+    <p id="login-forgot-link">Forgot password?</p>
+
+    <!-- Email-based reset (auth.resetPasswordForEmail) — same
+         Supabase project/flow as katiwala-owner-os-'s login screen.
+         Landing back here from that email fires a PASSWORD_RECOVERY
+         auth event, handled below via #set-password-form. -->
+    <form id="forgot-password-form">
+      <p style="font-size:14px; color:var(--slate); margin:0 0 16px;">Enter your email — we'll send a link to reset your password.</p>
+      <label for="forgot-password-email">Email</label>
+      <input type="email" id="forgot-password-email" required autocomplete="username" />
+      <button type="submit" id="forgot-password-btn">Send reset link</button>
+      <p id="forgot-password-status"></p>
+      <p id="forgot-password-back-link">Back to sign in</p>
+    </form>
+
+    <form id="set-password-form">
+      <p style="font-size:14px; color:var(--slate); margin:0 0 16px;">Set a new password.</p>
+      <label for="set-password-new">New password</label>
+      <input type="password" id="set-password-new" required minlength="8" autocomplete="new-password" />
+      <label for="set-password-confirm">Confirm new password</label>
+      <input type="password" id="set-password-confirm" required minlength="8" autocomplete="new-password" />
+      <button type="submit" id="set-password-btn">Set password</button>
+      <p id="set-password-status"></p>
+    </form>
   </div>
 
   <div id="app">
@@ -368,6 +414,17 @@
     const loginError = document.getElementById('login-error');
     const loginBtn = document.getElementById('login-btn');
 
+    const forgotForm = document.getElementById('forgot-password-form');
+    const setPasswordForm = document.getElementById('set-password-form');
+
+    function showLoginSubview(which) {
+      // which: 'login' | 'forgot' | 'set-password'
+      loginForm.style.display = which === 'login' ? 'block' : 'none';
+      document.getElementById('login-forgot-link').style.display = which === 'login' ? 'block' : 'none';
+      forgotForm.style.display = which === 'forgot' ? 'block' : 'none';
+      setPasswordForm.style.display = which === 'set-password' ? 'block' : 'none';
+    }
+
     function showApp() {
       loginScreen.style.display = 'none';
       appEl.style.display = 'block';
@@ -376,6 +433,7 @@
     function showLogin() {
       loginScreen.style.display = 'block';
       appEl.style.display = 'none';
+      showLoginSubview('login');
     }
 
     loginForm.addEventListener('submit', async (e) => {
@@ -393,6 +451,56 @@
         loginError.style.display = 'block';
         return;
       }
+      showApp();
+    });
+
+    document.getElementById('login-forgot-link').addEventListener('click', () => {
+      document.getElementById('forgot-password-email').value = document.getElementById('login-email').value;
+      document.getElementById('forgot-password-status').textContent = '';
+      showLoginSubview('forgot');
+    });
+    document.getElementById('forgot-password-back-link').addEventListener('click', () => showLoginSubview('login'));
+
+    forgotForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('forgot-password-status');
+      const btn = document.getElementById('forgot-password-btn');
+      const email = document.getElementById('forgot-password-email').value.trim();
+      if (!email) return;
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      statusEl.textContent = '';
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname,
+      });
+      btn.disabled = false;
+      btn.textContent = 'Send reset link';
+      statusEl.textContent = error
+        ? "Couldn't send the reset email — try again in a moment."
+        : 'Check your email for a reset link. It can take a few minutes to arrive.';
+    });
+
+    setPasswordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('set-password-status');
+      const btn = document.getElementById('set-password-btn');
+      const newPassword = document.getElementById('set-password-new').value;
+      const confirmPassword = document.getElementById('set-password-confirm').value;
+      if (newPassword !== confirmPassword) {
+        statusEl.textContent = "Passwords don't match.";
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Setting…';
+      statusEl.textContent = '';
+      const { error } = await sb.auth.updateUser({ password: newPassword });
+      btn.disabled = false;
+      btn.textContent = 'Set password';
+      if (error) {
+        statusEl.textContent = "Couldn't set the new password — try again.";
+        return;
+      }
+      history.replaceState(null, '', window.location.pathname + window.location.search);
       showApp();
     });
 
@@ -500,9 +608,26 @@
     // Session check on load — same Supabase project as
     // katiwala-owner-os- but a different browser origin, so the
     // founder needs to sign in here separately even if already
-    // signed in there.
+    // signed in there. PASSWORD_RECOVERY fires when landing back
+    // here from the reset-link email (resetPasswordForEmail above) —
+    // intercept it before the normal SIGNED_IN handling so the
+    // founder sets a new password instead of just dropping into the
+    // app on the temporary recovery session.
+    let isPasswordRecovery = false;
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY' && session) {
+        isPasswordRecovery = true;
+        loginScreen.style.display = 'block';
+        appEl.style.display = 'none';
+        showLoginSubview('set-password');
+      } else if (event === 'SIGNED_IN' && session && !isPasswordRecovery) {
+        showApp();
+      } else if (event === 'SIGNED_OUT') {
+        showLogin();
+      }
+    });
     sb.auth.getSession().then(({ data }) => {
-      if (data.session) showApp(); else showLogin();
+      if (!data.session) showLogin();
     });
   </script>
 </body>
