@@ -472,8 +472,25 @@
       </section>
 
       <section>
-        <h2>R&amp;D — early-stage / dormant exploration</h2>
-        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Ventures that exist in the shared database but sit outside the active governed structure above — archived verticals and early ideas, kept visible rather than silently disappearing when Product's rollup was scoped down to just the active modules.</p>
+        <h2>R&amp;D</h2>
+
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Log a new idea</h3>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Writes straight into the same signal feed Intelligence reads below — a founder-originated idea sits alongside whatever Kath and Vera surface, not in a separate silo.</p>
+        <div class="strategy-form">
+          <form id="idea-form">
+            <label for="idea-scope">Venture / scope</label>
+            <input type="text" id="idea-scope" required placeholder="e.g. KOS, ODO, TVGSUOS, Cross-venture" />
+            <label for="idea-feature-area">Feature area <span style="font-weight:400;">(optional)</span></label>
+            <input type="text" id="idea-feature-area" placeholder="e.g. onboarding, pricing, compliance" />
+            <label for="idea-summary">Idea</label>
+            <textarea id="idea-summary" required placeholder="What's the idea, and why now?"></textarea>
+            <button type="submit" id="idea-submit-btn">Log idea</button>
+            <p id="idea-form-status"></p>
+          </form>
+        </div>
+
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">Early-stage / dormant exploration</h3>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Ventures that exist in the shared database but sit outside the active governed structure above — archived verticals, kept visible rather than silently disappearing when Product's rollup was scoped down to just the active modules.</p>
         <div class="table-wrap">
           <table id="rd-table">
             <thead>
@@ -1087,7 +1104,7 @@
       const emptyEl = document.getElementById('intelligence-empty');
       const { data, error } = await sb
         .from('improvement_signals')
-        .select('project_scope, feature_area, signal_summary, bottleneck_flag, request_count, attention_score, status')
+        .select('project_scope, feature_area, signal_type, signal_summary, bottleneck_flag, request_count, attention_score, status')
         .order('attention_score', { ascending: false, nullsFirst: false })
         .limit(25);
       if (error) {
@@ -1106,13 +1123,54 @@
         <tr>
           <td>${escapeHtml(s.project_scope) || '—'}</td>
           <td>${escapeHtml(s.feature_area) || '—'}</td>
-          <td>${escapeHtml(s.signal_summary) || '—'}${s.bottleneck_flag ? ' <span class="decision-venture" style="color:var(--danger); border-color:var(--danger);">Bottleneck</span>' : ''}</td>
+          <td>
+            ${s.signal_type ? `<span class="decision-venture">${escapeHtml(s.signal_type === 'idea' ? 'R&D idea' : s.signal_type)}</span> ` : ''}${escapeHtml(s.signal_summary) || '—'}${s.bottleneck_flag ? ' <span class="decision-venture" style="color:var(--danger); border-color:var(--danger);">Bottleneck</span>' : ''}
+          </td>
           <td>${s.request_count ?? '—'}</td>
           <td>${s.attention_score ?? '—'}</td>
           <td>${escapeHtml(s.status) || '—'}</td>
         </tr>
       `).join('');
     }
+
+    // R&D's write side: logs straight into improvement_signals — the
+    // same table Intelligence reads — with signal_type: 'idea' to
+    // distinguish founder-originated ideas from whatever Kath/Vera
+    // eventually auto-populate (signal_type: 'recurring_request' on
+    // the existing seed rows). Refreshes Intelligence's rollup too so
+    // the link between the two areas is visible immediately, not just
+    // documented.
+    document.getElementById('idea-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('idea-form-status');
+      const btn = document.getElementById('idea-submit-btn');
+      const scope = document.getElementById('idea-scope').value.trim();
+      const featureArea = document.getElementById('idea-feature-area').value.trim();
+      const summary = document.getElementById('idea-summary').value.trim();
+      if (!scope || !summary) return;
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+      statusEl.textContent = '';
+      const { error } = await sb.from('improvement_signals').insert({
+        project_scope: scope,
+        feature_area: featureArea || null,
+        signal_type: 'idea',
+        signal_summary: summary,
+        bottleneck_flag: false,
+        status: 'open',
+      });
+      btn.disabled = false;
+      btn.textContent = 'Log idea';
+      if (error) {
+        statusEl.style.color = 'var(--danger)';
+        statusEl.textContent = "Couldn't save — " + error.message;
+        return;
+      }
+      statusEl.style.color = 'var(--good)';
+      statusEl.textContent = 'Logged — see it in Intelligence below.';
+      document.getElementById('idea-form').reset();
+      loadIntelligence();
+    });
 
     document.getElementById('decision-form').addEventListener('submit', async (e) => {
       e.preventDefault();
