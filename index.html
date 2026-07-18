@@ -112,15 +112,6 @@
   .section-toggle.expanded .chevron { transform: rotate(90deg); }
   .section-body { display: none; padding-bottom: 24px; }
   .section-body.expanded { display: block; }
-  .attention-panel {
-    border: 1px solid var(--border);
-    border-left: 4px solid #B45309;
-    border-radius: 10px;
-    padding: 18px 20px;
-    background: var(--surface);
-    margin-bottom: 32px;
-  }
-  .attention-panel h2 { color: #B45309; margin-bottom: 12px; }
   .attention-list { list-style: none; margin: 0; padding: 0; }
   .attention-list li {
     display: flex;
@@ -145,6 +136,120 @@
     white-space: nowrap;
   }
   .attention-empty { color: var(--good); font-size: 14px; font-weight: 600; }
+
+  /* Founder Cockpit dashboard: KPI strip + 3-row story (KPIs / status
+     & trends / action zone). Real data only — cards for anything
+     without a live source read "Not connected" rather than a fake
+     number. Compact, bordered, tabular-nums, no hero/marketing
+     styling, per the founder's own spec. */
+  .cockpit-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--slate);
+    margin: 28px 0 10px;
+  }
+  .cockpit-label:first-of-type { margin-top: 0; }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .kpi-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--slate);
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: var(--white);
+  }
+  .kpi-card.kpi-good { border-left-color: var(--good); }
+  .kpi-card.kpi-warn { border-left-color: #B45309; }
+  .kpi-card.kpi-bad { border-left-color: var(--danger); }
+  .kpi-card.kpi-off { border-left-color: var(--border); opacity: 0.65; }
+  .kpi-name {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--slate);
+    margin: 0 0 6px;
+  }
+  .kpi-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    margin: 0 0 3px;
+    line-height: 1.2;
+  }
+  .kpi-value.kpi-value-off { font-size: 13px; font-weight: 600; color: var(--slate); }
+  .kpi-sub { font-size: 11px; color: var(--slate); margin: 0; }
+  .cockpit-row2, .cockpit-row3 {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .cockpit-row2 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .cockpit-row3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .cockpit-panel {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: var(--surface);
+  }
+  .cockpit-panel h3 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .cockpit-not-connected {
+    font-size: 12px;
+    color: var(--slate);
+    font-style: italic;
+  }
+  .health-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .health-row:last-child { border-bottom: none; }
+  .health-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 7px;
+  }
+  .quick-capture textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    min-height: 56px;
+    margin-bottom: 8px;
+  }
+  .quick-capture button {
+    width: 100%;
+    padding: 7px;
+    background: var(--brand-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
   .mode-switcher {
     display: inline-flex;
     gap: 2px;
@@ -594,10 +699,58 @@
         <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">ODO</a>
       </div>
 
-      <div class="attention-panel">
-        <h2>Needs your attention</h2>
-        <ul class="attention-list" id="attention-list"></ul>
-        <p class="attention-empty" id="attention-empty" style="display:none;">Nothing open across the ecosystem right now.</p>
+      <!-- Row 1: KPI strip. Every card is real data from what's
+           already built this session (Strategy/Product/Finance/
+           Marketing/R&D/Intelligence/Security) or compliance_items
+           (read-only rollup — detailed compliance management stays
+           Kath's, this just surfaces the count). Nothing fabricated:
+           anything without a live source shows "Not connected." -->
+      <p class="cockpit-label">Today</p>
+      <div class="kpi-grid" id="kpi-grid"></div>
+
+      <!-- Row 2: status & trends. -->
+      <p class="cockpit-label">Status</p>
+      <div class="cockpit-row2">
+        <div class="cockpit-panel">
+          <h3>Critical Alerts</h3>
+          <ul class="attention-list" id="attention-list"></ul>
+          <p class="attention-empty" id="attention-empty" style="display:none;">Nothing open across the ecosystem right now.</p>
+        </div>
+        <div class="cockpit-panel">
+          <h3>Project Health — KOS Gas / ODO-TV / ODO-RV</h3>
+          <div id="project-health-list"></div>
+        </div>
+        <div class="cockpit-panel">
+          <h3>Weekly Trend Summary</h3>
+          <p class="cockpit-not-connected">Not connected — no historical daily/weekly snapshots are stored yet for finance, operations, or project velocity. Would need a scheduled snapshot job before real trend lines are possible.</p>
+        </div>
+      </div>
+
+      <!-- Row 3: founder action zone. -->
+      <p class="cockpit-label">Act On</p>
+      <div class="cockpit-row3">
+        <div class="cockpit-panel">
+          <h3>Decision Queue</h3>
+          <ul class="attention-list" id="decision-queue-list"></ul>
+          <p class="attention-empty" id="decision-queue-empty" style="display:none;">No decisions waiting.</p>
+        </div>
+        <div class="cockpit-panel">
+          <h3>Priority Tasks</h3>
+          <ul class="attention-list" id="priority-tasks-list"></ul>
+          <p class="attention-empty" id="priority-tasks-empty" style="display:none;">No open signals right now.</p>
+        </div>
+        <div class="cockpit-panel">
+          <h3>Today's Calendar</h3>
+          <p class="cockpit-not-connected">Not connected — no calendar integration in TVGSUOS. katiwala-owner-os-'s Google OAuth is Calendar-scoped but tied to that app, not this one.</p>
+        </div>
+        <div class="cockpit-panel quick-capture">
+          <h3>Founder Notes / Quick Capture</h3>
+          <form id="quick-capture-form">
+            <textarea id="quick-capture-text" placeholder="Jot something down — saved as a note, separate from R&D's ideas." required></textarea>
+            <button type="submit" id="quick-capture-btn">Save note</button>
+          </form>
+          <p id="quick-capture-status" style="font-size:12px; margin:6px 0 0;"></p>
+        </div>
       </div>
 
       <section>
@@ -942,7 +1095,11 @@
       loadRnd();
       loadFinance();
       loadIntelligence();
-      loadNeedsAttention();
+      loadCriticalAlerts();
+      loadDecisionQueue();
+      loadPriorityTasks();
+      loadKpiGrid();
+      loadProjectHealth();
       loadVerDesk();
       loadVerHistory();
     }
@@ -1444,30 +1601,17 @@
     // new data source — same tables those sections already load,
     // just filtered to what's unresolved and surfaced before anyone
     // has to expand a section to find it.
-    async function loadNeedsAttention() {
-      const listEl = document.getElementById('attention-list');
-      const emptyEl = document.getElementById('attention-empty');
-      // Joins projects directly rather than relying on the shared
-      // projectsCache/projectNameById (populated by loadDecisions,
-      // which runs independently and isn't guaranteed to finish
-      // first) — avoids a load-order race on venture names.
-      const [decisionsRes, signalsRes] = await Promise.all([
-        sb.from('decisions').select('id, title, created_at, projects(name)').eq('status', 'open').order('created_at', { ascending: false }).limit(10),
-        sb.from('improvement_signals').select('project_scope, signal_summary, bottleneck_flag, status').eq('status', 'open').order('attention_score', { ascending: false, nullsFirst: false }).limit(10),
-      ]);
-      const items = [];
-      (decisionsRes.data || []).forEach(d => {
-        const proj = Array.isArray(d.projects) ? d.projects[0] : d.projects;
-        if (proj && isWposScope(proj.name)) return;
-        items.push({ tag: 'Strategy', label: `${(proj && proj.name) || 'Unknown venture'}: ${d.title}` });
-      });
-      (signalsRes.data || []).forEach(s => {
-        if (isWposScope(s.project_scope)) return;
-        items.push({
-          tag: s.bottleneck_flag ? 'Bottleneck' : 'Intelligence',
-          label: `${s.project_scope || 'Unscoped'}: ${s.signal_summary || 'Untitled signal'}`,
-        });
-      });
+    // Three non-overlapping breakdowns of what's open, instead of one
+    // panel repeating everything: Critical Alerts = bottleneck-
+    // flagged signals only (the actual red items); Decision Queue =
+    // open Strategy decisions; Priority Tasks = open signals that
+    // AREN'T bottleneck-flagged (lower urgency than a bottleneck, but
+    // still open). Same underlying tables as before — decisions and
+    // improvement_signals — just split by severity instead of merged
+    // into one list.
+    function renderAttentionList(listId, emptyId, items) {
+      const listEl = document.getElementById(listId);
+      const emptyEl = document.getElementById(emptyId);
       if (!items.length) {
         listEl.innerHTML = '';
         emptyEl.style.display = 'block';
@@ -1475,9 +1619,205 @@
       }
       emptyEl.style.display = 'none';
       listEl.innerHTML = items.map(i => `
-        <li><span>${escapeHtml(i.label)}</span><span class="attention-tag">${escapeHtml(i.tag)}</span></li>
+        <li><span>${escapeHtml(i.label)}</span>${i.tag ? `<span class="attention-tag">${escapeHtml(i.tag)}</span>` : ''}</li>
       `).join('');
     }
+
+    async function loadCriticalAlerts() {
+      const { data } = await sb
+        .from('improvement_signals')
+        .select('project_scope, signal_summary')
+        .eq('status', 'open')
+        .eq('bottleneck_flag', true)
+        .order('attention_score', { ascending: false, nullsFirst: false })
+        .limit(10);
+      const items = (data || [])
+        .filter(s => !isWposScope(s.project_scope))
+        .map(s => ({ tag: 'Bottleneck', label: `${s.project_scope || 'Unscoped'}: ${s.signal_summary || 'Untitled signal'}` }));
+      renderAttentionList('attention-list', 'attention-empty', items);
+    }
+
+    async function loadDecisionQueue() {
+      // Joins projects directly rather than relying on the shared
+      // projectsCache/projectNameById (populated by loadDecisions,
+      // which runs independently and isn't guaranteed to finish
+      // first) — avoids a load-order race on venture names.
+      const { data } = await sb
+        .from('decisions')
+        .select('id, title, created_at, projects(name)')
+        .eq('status', 'open')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      const items = (data || [])
+        .map(d => ({ d, proj: Array.isArray(d.projects) ? d.projects[0] : d.projects }))
+        .filter(({ proj }) => !(proj && isWposScope(proj.name)))
+        .map(({ d, proj }) => ({ label: `${(proj && proj.name) || 'Unknown venture'}: ${d.title}` }));
+      renderAttentionList('decision-queue-list', 'decision-queue-empty', items);
+    }
+
+    async function loadPriorityTasks() {
+      const { data } = await sb
+        .from('improvement_signals')
+        .select('project_scope, signal_summary, signal_type')
+        .eq('status', 'open')
+        .eq('bottleneck_flag', false)
+        .order('attention_score', { ascending: false, nullsFirst: false })
+        .limit(10);
+      const items = (data || [])
+        .filter(s => !isWposScope(s.project_scope))
+        .map(s => ({
+          tag: s.signal_type === 'idea' ? 'R&D idea' : (s.signal_type || null),
+          label: `${s.project_scope || 'Unscoped'}: ${s.signal_summary || 'Untitled signal'}`,
+        }));
+      renderAttentionList('priority-tasks-list', 'priority-tasks-empty', items);
+    }
+
+    function kpiStatusClass(count, warnAt, badAt) {
+      if (count >= badAt) return 'kpi-bad';
+      if (count >= warnAt) return 'kpi-warn';
+      return 'kpi-good';
+    }
+
+    function renderKpi(name, value, statusClass, sub) {
+      const isOff = statusClass === 'kpi-off';
+      return `
+        <div class="kpi-card ${statusClass}">
+          <p class="kpi-name">${escapeHtml(name)}</p>
+          <p class="kpi-value${isOff ? ' kpi-value-off' : ''}">${escapeHtml(String(value))}</p>
+          ${sub ? `<p class="kpi-sub">${escapeHtml(sub)}</p>` : ''}
+        </div>
+      `;
+    }
+
+    // Row 1 KPI strip — 12 cards, real data only. Anything without a
+    // live source (KOS daily fuel volume/margin from Station
+    // Verified, payroll readiness from StaffVerified, ODO
+    // consultations/escrow from ODO's own separate Supabase project)
+    // reads "Not connected" rather than a fabricated number — same
+    // rule as everything else built this session. compliance_items
+    // is read here as a rollup count only (detail/management stays
+    // Kath's per docs/GOVERNANCE_MODEL.md's ownership table); pulling
+    // one live number for founder visibility doesn't duplicate that.
+    async function loadKpiGrid() {
+      const el = document.getElementById('kpi-grid');
+      const [
+        openDecisions,
+        criticalCount,
+        complianceRes,
+        activeModules,
+        ideaCount,
+        waitlistCount,
+        kosStatusRes,
+        gasOpsRes,
+        tvRes,
+        rvRes,
+        lastGovernanceNote,
+      ] = await Promise.all([
+        sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open').neq('project_id', WPOS_PROJECT_ID),
+        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true).not('project_scope', 'ilike', '%wp%os%'),
+        sb.from('compliance_items').select('due_date, status'),
+        sb.from('projects').select('project_status(build_readiness)').in('slug', VER_DESK_ACTIVE_SLUGS),
+        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('signal_type', 'idea'),
+        sb.from('waitlist_leads').select('id', { count: 'exact', head: true }),
+        sb.from('projects').select('project_status(cash_pulse, burn_rate, runway_months)').eq('slug', 'kos').maybeSingle(),
+        sb.from('projects').select('stage').eq('slug', 'gas_ops').maybeSingle(),
+        sb.from('projects').select('stage').eq('slug', 'tv').maybeSingle(),
+        sb.from('projects').select('stage').eq('slug', 'rv').maybeSingle(),
+        sb.from('daily_baseline_checks').select('check_date, governance_risk_note').not('governance_risk_note', 'is', null).order('check_date', { ascending: false }).limit(1),
+      ]);
+
+      const now = new Date();
+      const weekOut = new Date(now.getTime() + 7 * 86400000);
+      const complianceDue = (complianceRes.data || []).filter(c => c.status !== 'complete' && c.due_date && new Date(c.due_date) <= weekOut).length;
+
+      const trackedCount = (activeModules.data || []).filter(p => {
+        const s = Array.isArray(p.project_status) ? p.project_status[0] : p.project_status;
+        return s && s.build_readiness;
+      }).length;
+      const atRiskCount = VER_DESK_ACTIVE_SLUGS.length - trackedCount;
+
+      const kosStatus = kosStatusRes.data ? (Array.isArray(kosStatusRes.data.project_status) ? kosStatusRes.data.project_status[0] : kosStatusRes.data.project_status) : null;
+      const noteRow = (lastGovernanceNote.data || [])[0];
+
+      const cards = [
+        renderKpi('Cash position', 'Not connected', 'kpi-off', 'No cash_pulse-to-ledger integration yet'),
+        renderKpi('Open decisions', openDecisions.count ?? 0, kpiStatusClass(openDecisions.count ?? 0, 1, 4), 'Strategy — awaiting founder call'),
+        renderKpi('Critical alerts', criticalCount.count ?? 0, kpiStatusClass(criticalCount.count ?? 0, 1, 3), 'Bottleneck-flagged signals'),
+        renderKpi('Projects at risk', atRiskCount, kpiStatusClass(atRiskCount, 1, 3), `${trackedCount}/${VER_DESK_ACTIVE_SLUGS.length} modules have status data`),
+        renderKpi('Compliance due (7d)', complianceDue, kpiStatusClass(complianceDue, 1, 3), 'From compliance_items'),
+        renderKpi('Payroll readiness', 'Not connected', 'kpi-off', 'Lives in StaffVerified, not wired here'),
+        renderKpi('KOS runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data', kosStatus && kosStatus.runway_months != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels'),
+        renderKpi('KOS burn rate', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data', kosStatus && kosStatus.burn_rate != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels, monthly'),
+        renderKpi('KOS Gas daily volume vs target', 'Not connected', 'kpi-off', 'Lives in Station Verified/fuel-ops, not wired here'),
+        renderKpi('ODO-TV stage', (tvRes.data && tvRes.data.stage) || 'No data', 'kpi-good', 'Property track'),
+        renderKpi('ODO-RV stage', (rvRes.data && rvRes.data.stage) || 'No data', 'kpi-good', 'Vehicle track'),
+        renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'Governance risk log'),
+      ];
+      el.innerHTML = cards.join('');
+    }
+
+    // Row 2 Project Health — compact health cards for exactly the
+    // three tracks the founder named: KOS Gas (StationVerified/
+    // gas_ops), ODO-TV (property), ODO-RV (vehicle). Real stage/
+    // build_readiness data, same source Product/Finance already use.
+    const PROJECT_HEALTH_ROWS = [
+      { label: 'KOS Gas', slug: 'gas_ops' },
+      { label: 'ODO-TV', slug: 'tv' },
+      { label: 'ODO-RV', slug: 'rv' },
+    ];
+    async function loadProjectHealth() {
+      const el = document.getElementById('project-health-list');
+      const { data } = await sb
+        .from('projects')
+        .select('slug, stage, project_status(build_readiness)')
+        .in('slug', PROJECT_HEALTH_ROWS.map(r => r.slug));
+      const bySlug = {};
+      (data || []).forEach(p => { bySlug[p.slug] = p; });
+      el.innerHTML = PROJECT_HEALTH_ROWS.map(r => {
+        const p = bySlug[r.slug];
+        const status = p ? (Array.isArray(p.project_status) ? p.project_status[0] : p.project_status) : null;
+        const readiness = status && status.build_readiness;
+        const dotColor = readiness === 'launched' ? 'var(--good)' : readiness === 'building' ? '#B45309' : 'var(--slate)';
+        return `
+          <div class="health-row">
+            <span><span class="health-dot" style="background:${dotColor};"></span>${escapeHtml(r.label)}</span>
+            <span>${escapeHtml((p && p.stage) || 'No data')}${readiness ? ` · ${escapeHtml(readiness)}` : ''}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Quick Capture: founder scratch notes, real inserts into
+    // improvement_signals with signal_type: 'note' — distinct from
+    // R&D's 'idea' type, same table, no new schema.
+    document.getElementById('quick-capture-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const textEl = document.getElementById('quick-capture-text');
+      const statusEl = document.getElementById('quick-capture-status');
+      const btn = document.getElementById('quick-capture-btn');
+      const text = textEl.value.trim();
+      if (!text) return;
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+      const { error } = await sb.from('improvement_signals').insert({
+        project_scope: 'TVGSUOS',
+        signal_type: 'note',
+        signal_summary: text,
+        bottleneck_flag: false,
+        status: 'open',
+      });
+      btn.disabled = false;
+      btn.textContent = 'Save note';
+      if (error) {
+        statusEl.style.color = 'var(--danger)';
+        statusEl.textContent = "Couldn't save — " + error.message;
+        return;
+      }
+      statusEl.style.color = 'var(--good)';
+      statusEl.textContent = 'Saved.';
+      textEl.value = '';
+      loadPriorityTasks();
+    });
 
     // Ver's Desk: one line per governance area, answering "where is
     // Ver" — a synthesis view distinct from Needs Attention (which
