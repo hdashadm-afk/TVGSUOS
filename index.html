@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TVGSUOS</title>
+<style>
+  :root {
+    --brand-blue: #0A1D4D;
+    --ink: #0F172A;
+    --slate: #475569;
+    --border: #CBD5E1;
+    --surface: #F8FAFC;
+    --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--white);
+  }
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin: 0 0 12px;
+  }
+  h1 {
+    font-size: 34px;
+    line-height: 1.2;
+    margin: 0 0 8px;
+    color: var(--brand-blue);
+  }
+  .lede {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--slate);
+    max-width: 640px;
+    margin: 0 0 40px;
+  }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-blue);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    margin-bottom: 40px;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #D97706; }
+  h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin: 0 0 16px;
+  }
+  section { margin-bottom: 48px; }
+  .areas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .area {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    background: var(--white);
+  }
+  .area-name { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  .area-state { font-size: 13px; color: var(--slate); margin: 0; }
+  .area.built { border-color: var(--brand-blue); background: var(--surface); }
+  .area.built .area-state { color: var(--brand-blue); font-weight: 600; }
+  .hierarchy {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    background: var(--surface);
+    font-size: 15px;
+    line-height: 1.9;
+  }
+  .hierarchy .name { font-weight: 600; color: var(--brand-blue); }
+  .hierarchy .role { color: var(--slate); font-size: 14px; }
+  .ventures { border-top: 1px solid var(--border); padding-top: 32px; }
+  .venture-list { list-style: none; margin: 0; padding: 0; }
+  .venture-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+  .venture-list li:last-child { border-bottom: none; }
+  .venture-list a { color: var(--brand-blue); font-weight: 600; text-decoration: none; }
+  .venture-list a:hover { text-decoration: underline; }
+  .venture-note { color: var(--slate); font-size: 14px; }
+  footer {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+  footer code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">The Verified Group — Layer 1</p>
+    <h1>TVGSUOS</h1>
+    <p class="lede">The founder command layer for strategy, execution, control, and continuity — sitting above every governed venture, not one product app among them.</p>
+    <span class="status"><span class="dot"></span>Phase 1 — scaffold live, deployed 2026-07-18</span>
+
+    <section>
+      <h2>Governance areas</h2>
+      <div class="areas">
+        <div class="area built">
+          <p class="area-name">Founder's Space</p>
+          <p class="area-state">Built — lives in Katiwala AI for now</p>
+        </div>
+        <div class="area"><p class="area-name">Strategy</p><p class="area-state">Not yet built — priority 1</p></div>
+        <div class="area"><p class="area-name">Finance</p><p class="area-state">Not yet built</p></div>
+        <div class="area"><p class="area-name">Marketing</p><p class="area-state">Not yet built — priority 4</p></div>
+        <div class="area"><p class="area-name">Product</p><p class="area-state">Not yet built — priority 2</p></div>
+        <div class="area"><p class="area-name">R&amp;D</p><p class="area-state">Not yet built — priority 5</p></div>
+        <div class="area"><p class="area-name">Security / Privacy / Compliance</p><p class="area-state">Not yet built — priority 3</p></div>
+        <div class="area"><p class="area-name">Intelligence</p><p class="area-state">Not yet built</p></div>
+        <div class="area"><p class="area-name">People / Admin / Governance</p><p class="area-state">Not yet built</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Agent hierarchy</h2>
+      <div class="hierarchy">
+        <div><span class="name">Ver</span> <span class="role">— chief of staff, TVGSUOS layer</span></div>
+        <div style="padding-left: 20px;"><span class="name">Kath</span> <span class="role">— KOS / Katiwala AI</span></div>
+        <div style="padding-left: 20px;"><span class="name">Vera</span> <span class="role">— OWDO / ODO</span></div>
+      </div>
+    </section>
+
+    <div class="ventures">
+      <h2>Governed ventures</h2>
+      <ul class="venture-list">
+        <li>
+          <span>KOS / Katiwala AI <span class="venture-note">— Founder's Space, CEO's Space, HR &amp; Payroll, Simple P&amp;L, Ops</span></span>
+          <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open →</a>
+        </li>
+        <li>
+          <span>OWDO / ODO <span class="venture-note">— property &amp; vehicle trust marketplace</span></span>
+          <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open →</a>
+        </li>
+      </ul>
+    </div>
+
+    <footer>
+      Founder's Space, Ver, and the Daily Baseline Check are still live inside Katiwala AI's own app — they have not moved here yet. See <code>FOUNDER_OS.md</code> and <code>docs/MASTER_DIRECTION.md</code> in this repo for exactly what's built, what's open, and why.
+    </footer>
+  </div>
+</body>
+</html>
