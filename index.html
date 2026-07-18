@@ -821,17 +821,21 @@
       <!-- Venture Updates: KOS and ODO's project status, native to
            TVGSUOS instead of only living inside KOS's own app. Each
            card links out to the real production domain for actual
-           admin work — this panel is status only. -->
+           admin work — this panel is status only. Mode-aware since
+           the ecosystem toggle above: only the active mode's card is
+           shown/fetched, so this doesn't sit below the toggle
+           showing both ventures at once (the "mix" the founder
+           flagged after the first toggle pass). -->
       <p class="cockpit-label">Venture Updates</p>
       <div class="venture-updates">
-        <div class="venture-card">
+        <div class="venture-card" id="kos-update-card">
           <div class="venture-card-header">
             <h3>KOS / Katiwala AI</h3>
             <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open katiwalaai.app →</a>
           </div>
           <div id="kos-update-body"></div>
         </div>
-        <div class="venture-card">
+        <div class="venture-card" id="odo-update-card">
           <div class="venture-card-header">
             <h3>ODO / OwnerDirect</h3>
             <a href="https://ownerdirect.online" target="_blank" rel="noopener">Open ownerdirect.online →</a>
@@ -1899,17 +1903,13 @@
           renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'Governance risk log'),
         ];
       } else {
-        let odoHealth = null;
-        let odoErr = null;
-        try {
-          const res = await fetch('/api/odo-status');
-          const body = await res.json();
-          if (body.notConfigured || body.error) odoErr = body.error || 'Not configured';
-          else odoHealth = body.health;
-        } catch (err) {
-          odoErr = err.message;
-        }
-        const riskAlerts = odoHealth ? (Number(odoHealth.open_critical || 0) + Number(odoHealth.open_high || 0) + Number(odoHealth.open_medium || 0)) : null;
+        // ODO risk alerts / active-closed deals were dropped from
+        // here — they duplicated api/odo-status.js's health_snapshots
+        // data that Venture Updates' ODO card already shows (in more
+        // detail: Vera signals, negative sentiment, topics too), a
+        // redundancy the founder flagged after the first toggle pass.
+        // That card is the one place for ODO's live health detail now;
+        // this strip stays to structural/schema-backed counts only.
         cards = [
           renderKpi('Cash position', 'Not connected', 'kpi-off', 'No cash_pulse-to-ledger integration yet'),
           renderKpi('Open decisions (ODO)', openDecisions.count ?? 0, kpiStatusClass(openDecisions.count ?? 0, 1, 4), 'Strategy — awaiting founder call'),
@@ -1921,9 +1921,7 @@
           renderKpi('ODO-TV active property projects', 'Not connected', 'kpi-off', 'No per-listing schema here — only one status row per vertical'),
           renderKpi('ODO-RV active vehicle projects', 'Not connected', 'kpi-off', 'No per-listing schema here — only one status row per vertical'),
           renderKpi('ODO verification completion rate', 'Not connected', 'kpi-off', "Lives in ODO's own Supabase project, not wired here"),
-          renderKpi('ODO documentation gaps', 'Not connected', 'kpi-off', "Lives in ODO's own Supabase project, not wired here"),
-          renderKpi('ODO risk alerts', riskAlerts != null ? riskAlerts : 'Not connected', riskAlerts != null ? kpiStatusClass(riskAlerts, 1, 3) : 'kpi-off', odoErr || 'Open critical/high/medium, from ODO health_snapshots'),
-          renderKpi('ODO active/closed deals (7d)', odoHealth ? `${odoHealth.deals_active ?? 0} / ${odoHealth.deals_closed_7d ?? 0}` : 'Not connected', odoHealth ? 'kpi-good' : 'kpi-off', odoErr || 'Closest live proxy for escrow/protection cases — not a literal match'),
+          renderKpi('ODO documentation gaps', 'Not connected', 'kpi-off', "Lives in ODO's own Supabase project, not wired here — see Venture Updates below for live ODO risk/deal signals"),
           renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'Governance risk log'),
         ];
       }
@@ -1935,6 +1933,8 @@
       loadKpiGrid();
       loadProjectHealth();
       loadCriticalAlerts();
+      loadVentureUpdates();
+      loadYcSnapshot();
     }
 
     document.querySelectorAll('.ecosystem-toggle-btn').forEach(btn => {
@@ -2012,18 +2012,22 @@
         tbody.innerHTML = `<tr><td colspan="3">Couldn't load YC Snapshot.</td></tr>`;
         return;
       }
+      // Cache keeps both ventures regardless of mode — the edit form
+      // below still lets the founder update either one (editing is a
+      // tool, not a filtered view). Only the read-only table row is
+      // scoped to the active ecosystem, so this doesn't sit below the
+      // toggle showing both ventures at once.
       ycSnapshotCache = Object.fromEntries(data.map(p => {
         const s = Array.isArray(p.project_status) ? p.project_status[0] : p.project_status;
         return [p.slug, { projectId: p.id, stage: s && s.yc_stage_label, metric: s && s.yc_key_metric_label }];
       }));
-      tbody.innerHTML = ['kos', 'odo'].map(slug => {
-        const entry = ycSnapshotCache[slug];
-        return `<tr>
-          <td>${escapeHtml(YC_SNAPSHOT_DISPLAY_NAME[slug])}</td>
-          <td>${escapeHtml((entry && entry.stage) || '—')}</td>
-          <td>${escapeHtml((entry && entry.metric) || '—')}</td>
-        </tr>`;
-      }).join('');
+      const entry = ycSnapshotCache[currentEcosystem];
+      tbody.innerHTML = `<tr>
+        <td>${escapeHtml(YC_SNAPSHOT_DISPLAY_NAME[currentEcosystem])}</td>
+        <td>${escapeHtml((entry && entry.stage) || '—')}</td>
+        <td>${escapeHtml((entry && entry.metric) || '—')}</td>
+      </tr>`;
+      document.getElementById('yc-snapshot-slug').value = currentEcosystem;
       ycSnapshotPrefillForm();
     }
 
@@ -2073,32 +2077,40 @@
       return `<div class="venture-metric-row"><span class="metric-label">${escapeHtml(label)}</span><span class="metric-value">${escapeHtml(value)}</span></div>`;
     }
 
+    // Mode-aware: only the active ecosystem's card is shown and
+    // fetched. This is also the one place ODO's live health_snapshots
+    // data (Vera signals, pulse score, open critical/high/medium,
+    // active/closed deals) gets shown — the KPI strip deliberately
+    // doesn't duplicate it in a second, thinner card anymore.
     async function loadVentureUpdates() {
-      const kosEl = document.getElementById('kos-update-body');
+      const kosCard = document.getElementById('kos-update-card');
+      const odoCard = document.getElementById('odo-update-card');
+      kosCard.style.display = currentEcosystem === 'kos' ? '' : 'none';
+      odoCard.style.display = currentEcosystem === 'odo' ? '' : 'none';
+
+      if (currentEcosystem === 'kos') {
+        const kosEl = document.getElementById('kos-update-body');
+        const { data: kosRow } = await sb
+          .from('projects')
+          .select('stage, project_status(build_readiness, cash_pulse, burn_rate, runway_months)')
+          .eq('slug', 'kos')
+          .maybeSingle();
+        const kosStatus = kosRow ? (Array.isArray(kosRow.project_status) ? kosRow.project_status[0] : kosRow.project_status) : null;
+        kosEl.innerHTML = [
+          ventureMetricRow('Stage', (kosRow && kosRow.stage) || 'No data'),
+          ventureMetricRow('Build readiness', (kosStatus && kosStatus.build_readiness) || 'No data'),
+          ventureMetricRow('Cash pulse', (kosStatus && kosStatus.cash_pulse) || 'No data'),
+          ventureMetricRow('Burn rate', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data'),
+          ventureMetricRow('Runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data'),
+        ].join('');
+        return;
+      }
+
       const odoEl = document.getElementById('odo-update-body');
-
-      const { data: kosRow } = await sb
-        .from('projects')
-        .select('stage, project_status(build_readiness, cash_pulse, burn_rate, runway_months)')
-        .eq('slug', 'kos')
-        .maybeSingle();
-      const kosStatus = kosRow ? (Array.isArray(kosRow.project_status) ? kosRow.project_status[0] : kosRow.project_status) : null;
-      kosEl.innerHTML = [
-        ventureMetricRow('Stage', (kosRow && kosRow.stage) || 'No data'),
-        ventureMetricRow('Build readiness', (kosStatus && kosStatus.build_readiness) || 'No data'),
-        ventureMetricRow('Cash pulse', (kosStatus && kosStatus.cash_pulse) || 'No data'),
-        ventureMetricRow('Burn rate', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data'),
-        ventureMetricRow('Runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data'),
-      ].join('');
-
       try {
         const res = await fetch('/api/odo-status');
         const body = await res.json();
-        if (body.notConfigured) {
-          odoEl.innerHTML = `<p class="cockpit-not-connected">${escapeHtml(body.error)}</p>`;
-          return;
-        }
-        if (body.error) {
+        if (body.notConfigured || body.error) {
           odoEl.innerHTML = `<p class="cockpit-not-connected">${escapeHtml(body.error)}</p>`;
           return;
         }
