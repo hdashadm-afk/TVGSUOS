@@ -1050,13 +1050,26 @@
       return p ? p.name : 'Unknown venture';
     }
 
+    // WP OS: out of focus everywhere in TVGSUOS, not just R&D's
+    // dormant-ventures table — the founder still surfaced it via
+    // Needs Attention (an open decision) and Intelligence (an open
+    // signal), since those pull straight from decisions/
+    // improvement_signals with no venture filter at all. Same
+    // archive-don't-delete precedent as before: filtered from every
+    // live view client-side, the underlying rows are untouched.
+    const WPOS_PROJECT_ID = '987a586b-9f15-433c-aa33-33734cb4c882';
+    function isWposScope(scope) {
+      return !!scope && /wp[\s_-]?os/i.test(scope);
+    }
+
     async function loadDecisions() {
       await loadProjectsIntoSelect();
-      const { data, error } = await sb
+      const { data: rawData, error } = await sb
         .from('decisions')
         .select('id, project_id, title, context, expected_outcome, status, created_at')
         .order('created_at', { ascending: false })
         .limit(50);
+      const data = rawData ? rawData.filter(d => d.project_id !== WPOS_PROJECT_ID) : rawData;
       const listEl = document.getElementById('decision-list');
       const emptyEl = document.getElementById('decisions-empty');
       if (error) {
@@ -1392,11 +1405,12 @@
     async function loadIntelligence() {
       const bodyEl = document.getElementById('intelligence-table-body');
       const emptyEl = document.getElementById('intelligence-empty');
-      const { data, error } = await sb
+      const { data: rawData, error } = await sb
         .from('improvement_signals')
         .select('project_scope, feature_area, signal_type, signal_summary, bottleneck_flag, request_count, attention_score, status')
         .order('attention_score', { ascending: false, nullsFirst: false })
         .limit(25);
+      const data = rawData ? rawData.filter(s => !isWposScope(s.project_scope)) : rawData;
       if (error) {
         bodyEl.innerHTML = '';
         emptyEl.textContent = "Couldn't load intelligence signals — " + error.message;
@@ -1444,12 +1458,16 @@
       const items = [];
       (decisionsRes.data || []).forEach(d => {
         const proj = Array.isArray(d.projects) ? d.projects[0] : d.projects;
+        if (proj && isWposScope(proj.name)) return;
         items.push({ tag: 'Strategy', label: `${(proj && proj.name) || 'Unknown venture'}: ${d.title}` });
       });
-      (signalsRes.data || []).forEach(s => items.push({
-        tag: s.bottleneck_flag ? 'Bottleneck' : 'Intelligence',
-        label: `${s.project_scope || 'Unscoped'}: ${s.signal_summary || 'Untitled signal'}`,
-      }));
+      (signalsRes.data || []).forEach(s => {
+        if (isWposScope(s.project_scope)) return;
+        items.push({
+          tag: s.bottleneck_flag ? 'Bottleneck' : 'Intelligence',
+          label: `${s.project_scope || 'Unscoped'}: ${s.signal_summary || 'Untitled signal'}`,
+        });
+      });
       if (!items.length) {
         listEl.innerHTML = '';
         emptyEl.style.display = 'block';
@@ -1482,14 +1500,14 @@
         openSignals,
         bottleneckSignals,
       ] = await Promise.all([
-        sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+        sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open').neq('project_id', WPOS_PROJECT_ID),
         sb.from('projects').select('project_status(build_readiness)').in('slug', VER_DESK_ACTIVE_SLUGS),
         sb.from('daily_baseline_checks').select('check_date, governance_risk_note').not('governance_risk_note', 'is', null).order('check_date', { ascending: false }).limit(1),
         sb.from('waitlist_leads').select('id', { count: 'exact', head: true }),
         sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('signal_type', 'idea'),
         sb.from('projects').select('project_status(cash_pulse)').in('slug', VER_DESK_ACTIVE_SLUGS),
-        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('status', 'open'),
-        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true),
+        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('status', 'open').not('project_scope', 'ilike', '%wp%os%'),
+        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true).not('project_scope', 'ilike', '%wp%os%'),
       ]);
 
       const trackedCount = (activeModules.data || []).filter(p => {
