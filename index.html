@@ -266,6 +266,30 @@
   .decision-meta .status-decided { color: var(--good); font-weight: 600; }
   .decision-meta .status-archived { color: var(--slate); font-weight: 600; }
   #decisions-empty { color: var(--slate); font-size: 14px; }
+  #product-empty { color: var(--slate); font-size: 14px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+  #product-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  #product-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--slate);
+    background: var(--surface);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  #product-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  #product-table tr:last-child td { border-bottom: none; }
+  .readiness-launched { color: var(--good); font-weight: 600; }
+  .readiness-building { color: #B45309; font-weight: 600; }
+  .readiness-needs_spec { color: var(--slate); font-weight: 600; }
   #sign-out-btn {
     background: none;
     border: 1px solid var(--border);
@@ -324,7 +348,7 @@
       <p class="eyebrow">The Verified Group — Layer 1</p>
       <h1>TVGSUOS</h1>
       <p class="lede">The founder command layer for strategy, execution, control, and continuity — sitting above every governed venture, not one product app among them.</p>
-      <span class="status"><span class="dot"></span>Phase 2 — Strategy live, deployed 2026-07-18</span>
+      <span class="status"><span class="dot"></span>Phase 3 — Strategy + Product live, deployed 2026-07-18</span>
 
       <section>
         <h2>Strategy — cross-venture decisions</h2>
@@ -347,6 +371,20 @@
       </section>
 
       <section>
+        <h2>Product — portfolio consistency rollup</h2>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Every venture's stage and build readiness in one place — catches drift, not a duplicate of each venture's own feature work (that stays with Kath/Vera).</p>
+        <div class="table-wrap">
+          <table id="product-table">
+            <thead>
+              <tr><th>Venture</th><th>Stage</th><th>Build readiness</th><th>Research depth</th><th>Status updated</th></tr>
+            </thead>
+            <tbody id="product-table-body"></tbody>
+          </table>
+        </div>
+        <p id="product-empty" style="display:none;">No venture data available.</p>
+      </section>
+
+      <section>
         <h2>Other governance areas</h2>
         <div class="areas">
           <div class="area built">
@@ -357,9 +395,12 @@
             <p class="area-name">Strategy</p>
             <p class="area-state">Built — above</p>
           </div>
+          <div class="area built">
+            <p class="area-name">Product</p>
+            <p class="area-state">Built — above</p>
+          </div>
           <div class="area"><p class="area-name">Finance</p><p class="area-state">Not yet built</p></div>
           <div class="area"><p class="area-name">Marketing</p><p class="area-state">Not yet built — priority 4</p></div>
-          <div class="area"><p class="area-name">Product</p><p class="area-state">Not yet built — priority 2</p></div>
           <div class="area"><p class="area-name">R&amp;D</p><p class="area-state">Not yet built — priority 5</p></div>
           <div class="area"><p class="area-name">Security / Privacy / Compliance</p><p class="area-state">Not yet built — priority 3</p></div>
           <div class="area"><p class="area-name">Intelligence</p><p class="area-state">Not yet built</p></div>
@@ -429,6 +470,7 @@
       loginScreen.style.display = 'none';
       appEl.style.display = 'block';
       loadDecisions();
+      loadProductRollup();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -571,6 +613,44 @@
       const div = document.createElement('div');
       div.textContent = str || '';
       return div.innerHTML;
+    }
+
+    // Product: cross-venture stage/build-readiness rollup. Read-only —
+    // catching drift across ventures is the point, not a second
+    // decision log (that's Strategy's job, above). Left-joins
+    // project_status since not every project row necessarily has one.
+    async function loadProductRollup() {
+      const bodyEl = document.getElementById('product-table-body');
+      const emptyEl = document.getElementById('product-empty');
+      const { data, error } = await sb
+        .from('projects')
+        .select('id, name, stage, project_status(build_readiness, research_depth, updated_at)')
+        .order('name', { ascending: true });
+      if (error) {
+        bodyEl.innerHTML = '';
+        emptyEl.textContent = "Couldn't load the product rollup — " + error.message;
+        emptyEl.style.display = 'block';
+        return;
+      }
+      if (!data || !data.length) {
+        bodyEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      bodyEl.innerHTML = data.map(p => {
+        const status = Array.isArray(p.project_status) ? p.project_status[0] : p.project_status;
+        const readiness = status && status.build_readiness;
+        return `
+          <tr>
+            <td>${escapeHtml(p.name)}</td>
+            <td>${escapeHtml(p.stage) || '—'}</td>
+            <td>${readiness ? `<span class="readiness-${readiness}">${escapeHtml(readiness)}</span>` : '—'}</td>
+            <td>${(status && escapeHtml(status.research_depth)) || '—'}</td>
+            <td>${(status && status.updated_at) ? new Date(status.updated_at).toLocaleDateString() : '—'}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     document.getElementById('decision-form').addEventListener('submit', async (e) => {
