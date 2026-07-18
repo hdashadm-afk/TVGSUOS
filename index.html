@@ -472,6 +472,20 @@
       </section>
 
       <section>
+        <h2>R&amp;D — early-stage / dormant exploration</h2>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Ventures that exist in the shared database but sit outside the active governed structure above — archived verticals and early ideas, kept visible rather than silently disappearing when Product's rollup was scoped down to just the active modules.</p>
+        <div class="table-wrap">
+          <table id="rd-table">
+            <thead>
+              <tr><th>Venture</th><th>Stage</th><th>Build readiness</th></tr>
+            </thead>
+            <tbody id="rd-table-body"></tbody>
+          </table>
+        </div>
+        <p id="rd-empty" style="display:none;">Nothing in early-stage/dormant exploration right now.</p>
+      </section>
+
+      <section>
         <h2>Other governance areas</h2>
         <div class="areas">
           <div class="area built">
@@ -495,7 +509,10 @@
             <p class="area-name">Marketing</p>
             <p class="area-state">Built — above</p>
           </div>
-          <div class="area"><p class="area-name">R&amp;D</p><p class="area-state">Not yet built — priority 5</p></div>
+          <div class="area built">
+            <p class="area-name">R&amp;D</p>
+            <p class="area-state">Built — above</p>
+          </div>
           <div class="area"><p class="area-name">Intelligence</p><p class="area-state">Not yet built</p></div>
           <div class="area"><p class="area-name">People / Admin / Governance</p><p class="area-state">Not yet built</p></div>
         </div>
@@ -566,6 +583,7 @@
       loadProductRollup();
       loadGovernanceLog();
       loadMarketing();
+      loadRnd();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -920,6 +938,48 @@
           <td>${w.service_provider_leads_count ?? '—'}</td>
         </tr>
       `).join('');
+    }
+
+    // R&D: ventures in the shared `projects` table that fall outside
+    // the active governed structure Product shows (KOS's 4 modules +
+    // ODO's 2 verticals) — the same rows PRODUCT_ROLLUP_ROWS doesn't
+    // reference, i.e. WP OS, Cofeshop, Verde Cafe, Green Apple Hotel.
+    // Read-only, same projects/project_status join Product already
+    // uses. Kept visible here rather than just disappearing once
+    // Product was scoped down to the active list.
+    const RND_SLUGS = ['wpos', 'cofeshop', 'verde-cafe', 'green-apple-hotel'];
+
+    async function loadRnd() {
+      const bodyEl = document.getElementById('rd-table-body');
+      const emptyEl = document.getElementById('rd-empty');
+      const { data, error } = await sb
+        .from('projects')
+        .select('id, name, slug, stage, project_status(build_readiness)')
+        .in('slug', RND_SLUGS)
+        .order('name', { ascending: true });
+      if (error) {
+        bodyEl.innerHTML = '';
+        emptyEl.textContent = "Couldn't load R&D — " + error.message;
+        emptyEl.style.display = 'block';
+        return;
+      }
+      if (!data || !data.length) {
+        bodyEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      bodyEl.innerHTML = data.map(p => {
+        const status = Array.isArray(p.project_status) ? p.project_status[0] : p.project_status;
+        const readiness = status && status.build_readiness;
+        return `
+          <tr>
+            <td>${escapeHtml(p.name)}</td>
+            <td>${escapeHtml(p.stage) || '—'}</td>
+            <td>${readiness ? `<span class="readiness-${readiness}">${escapeHtml(readiness)}</span>` : '—'}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     document.getElementById('decision-form').addEventListener('submit', async (e) => {
