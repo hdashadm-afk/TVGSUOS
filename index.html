@@ -145,6 +145,48 @@
     white-space: nowrap;
   }
   .attention-empty { color: var(--good); font-size: 14px; font-weight: 600; }
+  .ver-desk {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--brand-blue);
+    border-radius: 10px;
+    padding: 18px 20px;
+    background: var(--surface);
+    margin-bottom: 32px;
+  }
+  .ver-desk-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .ver-desk-header h2 { margin: 0; }
+  .ver-desk-header .sub { font-size: 12px; color: var(--slate); }
+  .ver-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .ver-stat {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .ver-stat .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--slate);
+    margin: 0 0 4px;
+  }
+  .ver-stat .stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+  }
   .areas {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -465,6 +507,14 @@
         <p class="attention-empty" id="attention-empty" style="display:none;">Nothing open across the ecosystem right now.</p>
       </div>
 
+      <div class="ver-desk">
+        <div class="ver-desk-header">
+          <h2>Ver's Desk</h2>
+          <span class="sub">One line per governance area — expand a section below for the full detail.</span>
+        </div>
+        <div class="ver-stats" id="ver-stats"></div>
+      </div>
+
       <section>
         <button type="button" class="section-toggle"><h2>Strategy — cross-venture decisions</h2><span class="chevron">▶</span></button>
         <div class="section-body">
@@ -759,6 +809,7 @@
       loadFinance();
       loadIntelligence();
       loadNeedsAttention();
+      loadVerDesk();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -1270,6 +1321,66 @@
       emptyEl.style.display = 'none';
       listEl.innerHTML = items.map(i => `
         <li><span>${escapeHtml(i.label)}</span><span class="attention-tag">${escapeHtml(i.tag)}</span></li>
+      `).join('');
+    }
+
+    // Ver's Desk: one line per governance area, answering "where is
+    // Ver" — a synthesis view distinct from Needs Attention (which
+    // only lists open items). Independent lightweight queries per
+    // area, same tables each section already loads — no new schema.
+    // The 6 distinct active-module slugs behind Product/Finance's
+    // 7-row display (kos counted once, not twice for CEO Space +
+    // PnLVerified).
+    const VER_DESK_ACTIVE_SLUGS = ['kos', 'staff_verified', 'gas_ops', 'tv', 'rv', 'tvgsuos'];
+
+    async function loadVerDesk() {
+      const el = document.getElementById('ver-stats');
+      const [
+        openDecisions,
+        activeModules,
+        lastGovernanceNote,
+        waitlistCount,
+        ideaCount,
+        cashDataCount,
+        openSignals,
+        bottleneckSignals,
+      ] = await Promise.all([
+        sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+        sb.from('projects').select('project_status(build_readiness)').in('slug', VER_DESK_ACTIVE_SLUGS),
+        sb.from('daily_baseline_checks').select('check_date, governance_risk_note').not('governance_risk_note', 'is', null).order('check_date', { ascending: false }).limit(1),
+        sb.from('waitlist_leads').select('id', { count: 'exact', head: true }),
+        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('signal_type', 'idea'),
+        sb.from('projects').select('project_status(cash_pulse)').in('slug', VER_DESK_ACTIVE_SLUGS),
+        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true),
+      ]);
+
+      const trackedCount = (activeModules.data || []).filter(p => {
+        const s = Array.isArray(p.project_status) ? p.project_status[0] : p.project_status;
+        return s && s.build_readiness;
+      }).length;
+      const cashCount = (cashDataCount.data || []).filter(p => {
+        const s = Array.isArray(p.project_status) ? p.project_status[0] : p.project_status;
+        return s && s.cash_pulse;
+      }).length;
+      const noteRow = (lastGovernanceNote.data || [])[0];
+
+      const stats = [
+        { label: 'Strategy', value: `${openDecisions.count ?? 0} open decision${openDecisions.count === 1 ? '' : 's'}` },
+        { label: 'Product', value: `${trackedCount}/${VER_DESK_ACTIVE_SLUGS.length} modules have status data` },
+        { label: 'Security / Privacy / Compliance', value: noteRow ? `Last flag ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No governance risk flagged' },
+        { label: 'Marketing', value: `${waitlistCount.count ?? 0} waitlist signups` },
+        { label: 'R&D', value: `${ideaCount.count ?? 0} idea${ideaCount.count === 1 ? '' : 's'} logged` },
+        { label: 'Finance', value: `${cashCount}/${VER_DESK_ACTIVE_SLUGS.length} ventures have cash data` },
+        { label: 'Intelligence', value: `${openSignals.count ?? 0} open (${bottleneckSignals.count ?? 0} bottleneck${bottleneckSignals.count === 1 ? '' : 's'})` },
+        { label: 'People / Admin / Governance', value: 'Rules documented — see below' },
+      ];
+
+      el.innerHTML = stats.map(s => `
+        <div class="ver-stat">
+          <p class="stat-label">${escapeHtml(s.label)}</p>
+          <p class="stat-value">${escapeHtml(s.value)}</p>
+        </div>
       `).join('');
     }
 
