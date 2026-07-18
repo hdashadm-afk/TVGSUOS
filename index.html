@@ -765,13 +765,13 @@
            flagship ventures, framed for a YC application/update
            rather than internal stage vocabulary — same reasoning as
            Venture Updates below (native to TVGSUOS, not buried
-           inside KOS's own app). Reads project_status.yc_stage_label/
-           yc_key_metric_label directly (migration 094,
+           inside KOS's own app). Reads/writes project_status.
+           yc_stage_label/yc_key_metric_label directly (migration 094,
            katiwala-owner-os-) — same shared Supabase project as
            everything else on this page, no new schema. Manual entry
-           only; renders "—" until the founder fills them in via
-           Supabase (no in-app edit form, matching how cash_pulse
-           etc. already work). -->
+           via the inline form below (founder asked for this instead
+           of editing Supabase's table editor directly); still "—"
+           until filled in, never a fabricated number. -->
       <p class="cockpit-label">YC Snapshot</p>
       <div class="table-wrap">
         <table id="yc-snapshot-table">
@@ -780,6 +780,21 @@
           </thead>
           <tbody id="yc-snapshot-table-body"></tbody>
         </table>
+      </div>
+      <div class="strategy-form" style="margin-top:10px;">
+        <form id="yc-snapshot-form">
+          <label for="yc-snapshot-slug">Product</label>
+          <select id="yc-snapshot-slug" required>
+            <option value="kos">Katiwala AI</option>
+            <option value="odo">OwnerDirect</option>
+          </select>
+          <label for="yc-snapshot-stage-input">Stage</label>
+          <input type="text" id="yc-snapshot-stage-input" placeholder="e.g. Pre-revenue, seeking YC" required>
+          <label for="yc-snapshot-metric-input">Key Metric</label>
+          <input type="text" id="yc-snapshot-metric-input" placeholder="e.g. MRR, pilot conversions" required>
+          <button type="submit" id="yc-snapshot-save-btn">Save</button>
+        </form>
+        <p id="yc-snapshot-status" style="font-size:12px; margin:6px 0 0;"></p>
       </div>
 
       <!-- Venture Updates: KOS and ODO's project status, native to
@@ -1874,26 +1889,79 @@
     // api/odo-status.js round trip.
     const YC_SNAPSHOT_DISPLAY_NAME = { kos: 'Katiwala AI', odo: 'OwnerDirect' };
 
+    // Cache of { slug: { projectId, stage, metric } } — populated by
+    // loadYcSnapshot, read by the edit form below so
+    // switching the Product dropdown can prefill current values and
+    // the Save handler knows which project_status row to update
+    // without a second round trip.
+    let ycSnapshotCache = {};
+
+    function ycSnapshotPrefillForm() {
+      const slug = document.getElementById('yc-snapshot-slug').value;
+      const entry = ycSnapshotCache[slug];
+      document.getElementById('yc-snapshot-stage-input').value = (entry && entry.stage) || '';
+      document.getElementById('yc-snapshot-metric-input').value = (entry && entry.metric) || '';
+    }
+
     async function loadYcSnapshot() {
       const tbody = document.getElementById('yc-snapshot-table-body');
       const { data, error } = await sb
         .from('projects')
-        .select('slug, project_status(yc_stage_label, yc_key_metric_label)')
+        .select('id, slug, project_status(yc_stage_label, yc_key_metric_label)')
         .in('slug', ['kos', 'odo']);
       if (error || !data) {
         tbody.innerHTML = `<tr><td colspan="3">Couldn't load YC Snapshot.</td></tr>`;
         return;
       }
-      const bySlug = Object.fromEntries(data.map(p => [p.slug, Array.isArray(p.project_status) ? p.project_status[0] : p.project_status]));
+      ycSnapshotCache = Object.fromEntries(data.map(p => {
+        const s = Array.isArray(p.project_status) ? p.project_status[0] : p.project_status;
+        return [p.slug, { projectId: p.id, stage: s && s.yc_stage_label, metric: s && s.yc_key_metric_label }];
+      }));
       tbody.innerHTML = ['kos', 'odo'].map(slug => {
-        const s = bySlug[slug];
+        const entry = ycSnapshotCache[slug];
         return `<tr>
           <td>${escapeHtml(YC_SNAPSHOT_DISPLAY_NAME[slug])}</td>
-          <td>${escapeHtml((s && s.yc_stage_label) || '—')}</td>
-          <td>${escapeHtml((s && s.yc_key_metric_label) || '—')}</td>
+          <td>${escapeHtml((entry && entry.stage) || '—')}</td>
+          <td>${escapeHtml((entry && entry.metric) || '—')}</td>
         </tr>`;
       }).join('');
+      ycSnapshotPrefillForm();
     }
+
+    document.getElementById('yc-snapshot-slug').addEventListener('change', ycSnapshotPrefillForm);
+
+    document.getElementById('yc-snapshot-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const slug = document.getElementById('yc-snapshot-slug').value;
+      const stageEl = document.getElementById('yc-snapshot-stage-input');
+      const metricEl = document.getElementById('yc-snapshot-metric-input');
+      const statusEl = document.getElementById('yc-snapshot-status');
+      const btn = document.getElementById('yc-snapshot-save-btn');
+      const entry = ycSnapshotCache[slug];
+      if (!entry) {
+        statusEl.style.color = 'var(--danger)';
+        statusEl.textContent = "Couldn't find that venture — try reloading the page.";
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+      const { error } = await sb
+        .from('project_status')
+        .update({ yc_stage_label: stageEl.value.trim(), yc_key_metric_label: metricEl.value.trim() })
+        .eq('project_id', entry.projectId);
+      btn.disabled = false;
+      btn.textContent = 'Save';
+      if (error) {
+        statusEl.style.color = 'var(--danger)';
+        statusEl.textContent = "Couldn't save — " + error.message;
+        return;
+      }
+      statusEl.style.color = 'var(--good)';
+      statusEl.textContent = 'Saved.';
+      await loadYcSnapshot();
+      document.getElementById('yc-snapshot-slug').value = slug;
+      ycSnapshotPrefillForm();
+    });
 
     // Venture Updates: KOS's and ODO's own "project update" views,
     // native to TVGSUOS instead of embedded inside KOS's app. KOS reads
