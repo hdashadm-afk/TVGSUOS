@@ -619,42 +619,60 @@
     // catching drift across ventures is the point, not a second
     // decision log (that's Strategy's job, above). Left-joins
     // project_status since not every project row necessarily has one.
-    // Ventures out of current focus (per docs/KATIWALA_GAS_STATION_MASTER_DIRECTION.md's
-    // scope constraint in katiwala-owner-os-: execution now concentrates
-    // on gas stations/KOS/Helium Fuels). Hidden from this rollup only —
-    // the underlying `projects` rows are untouched, same "archive, don't
-    // delete" precedent already used for CafeVerified/HotelVerified
-    // elsewhere in the ecosystem. Un-hide by removing a slug here if
-    // focus changes again.
-    const PRODUCT_ROLLUP_HIDDEN_SLUGS = ['wpos', 'cofeshop', 'gas_ops', 'verde-cafe', 'green-apple-hotel'];
+    // Founder-confirmed portfolio structure (2026-07-18): the two main
+    // businesses shown by their real connected modules/verticals rather
+    // than one generic venture label each — KOS's four connected
+    // modules (CEO's Space, StaffVerified, PnLVerified/P&L (Simple),
+    // StationVerified/Ops — per docs/KATIWALA_GAS_STATION_MASTER_DIRECTION.md's
+    // Product Architecture section) and ODO's two verticals (Property =
+    // TV, Vehicle = RV — per katiwala-owner-os-'s docs/MASTER_DIRECTION.md).
+    // Display-only remap: CEO Space and PnLVerified don't have their own
+    // `projects` rows (they're both part of the single 'kos' row, not
+    // separate ventures) so they intentionally show identical stage/
+    // status — that's accurate, not a display bug, since KOS tracks one
+    // venture-level status today. StaffVerified/StationVerified/TV/RV
+    // are real separate rows, just relabeled to their branded names.
+    // Everything else (WP OS, Cofeshop, Verde Cafe, Green Apple Hotel,
+    // the plain ODO/Gas Ops rows) is intentionally out of this list.
+    const PRODUCT_ROLLUP_ROWS = [
+      { label: 'TVGSUOS', sourceSlug: 'tvgsuos' },
+      { label: "Kos CEO Space", sourceSlug: 'kos' },
+      { label: 'Kos StaffVerified', sourceSlug: 'staff_verified' },
+      { label: 'Kos PnLVerified', sourceSlug: 'kos' },
+      { label: 'Kos StationVerified', sourceSlug: 'gas_ops' },
+      { label: 'Odo Property/TV', sourceSlug: 'tv' },
+      { label: 'Odo Vehicle/RV', sourceSlug: 'rv' },
+    ];
 
     async function loadProductRollup() {
       const bodyEl = document.getElementById('product-table-body');
       const emptyEl = document.getElementById('product-empty');
-      const { data: rawData, error } = await sb
+      const { data, error } = await sb
         .from('projects')
-        .select('id, name, slug, stage, project_status(build_readiness, research_depth, updated_at)')
-        .order('name', { ascending: true });
-      const data = rawData ? rawData.filter(p => !PRODUCT_ROLLUP_HIDDEN_SLUGS.includes(p.slug)) : rawData;
+        .select('id, name, slug, stage, project_status(build_readiness, research_depth, updated_at)');
       if (error) {
         bodyEl.innerHTML = '';
         emptyEl.textContent = "Couldn't load the product rollup — " + error.message;
         emptyEl.style.display = 'block';
         return;
       }
-      if (!data || !data.length) {
+      const bySlug = {};
+      (data || []).forEach(p => { bySlug[p.slug] = p; });
+      const rows = PRODUCT_ROLLUP_ROWS.map(r => ({ ...r, source: bySlug[r.sourceSlug] }));
+      if (!rows.some(r => r.source)) {
         bodyEl.innerHTML = '';
         emptyEl.style.display = 'block';
         return;
       }
       emptyEl.style.display = 'none';
-      bodyEl.innerHTML = data.map(p => {
-        const status = Array.isArray(p.project_status) ? p.project_status[0] : p.project_status;
+      bodyEl.innerHTML = rows.map(r => {
+        const p = r.source;
+        const status = p ? (Array.isArray(p.project_status) ? p.project_status[0] : p.project_status) : null;
         const readiness = status && status.build_readiness;
         return `
           <tr>
-            <td>${escapeHtml(p.name)}</td>
-            <td>${escapeHtml(p.stage) || '—'}</td>
+            <td>${escapeHtml(r.label)}</td>
+            <td>${(p && escapeHtml(p.stage)) || '—'}</td>
             <td>${readiness ? `<span class="readiness-${readiness}">${escapeHtml(readiness)}</span>` : '—'}</td>
             <td>${(status && escapeHtml(status.research_depth)) || '—'}</td>
             <td>${(status && status.updated_at) ? new Date(status.updated_at).toLocaleDateString() : '—'}</td>
