@@ -1,0 +1,19 @@
+<svg viewBox="0 0 200 224" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Verified Group shield mark">
+  <defs>
+    <linearGradient id="tvgGoldFill" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#F8E7A6"/>
+      <stop offset="42%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#93701E"/>
+    </linearGradient>
+    <linearGradient id="tvgGoldStroke" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FCF3D2"/>
+      <stop offset="100%" stop-color="#8A6A1E"/>
+    </linearGradient>
+  </defs>
+  <path d="M100 8 L176 40 L176 108 C176 158 142 194 100 214 C58 194 24 158 24 108 L24 40 Z"
+        fill="url(#tvgGoldFill)" stroke="url(#tvgGoldStroke)" stroke-width="4"/>
+  <path d="M100 22 L164 48 L164 106 C164 148 136 178 100 196 C64 178 36 148 36 106 L36 48 Z"
+        fill="none" stroke="#FCF3D2" stroke-width="1.5" opacity="0.5"/>
+  <path d="M62 96 L98 146 L150 68" fill="none" stroke="#0A1D4D" stroke-width="18"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

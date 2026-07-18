@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>TVGSUOS</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <style>
   :root {
     --brand-blue: #0A1D4D;
@@ -35,6 +36,18 @@
     color: var(--slate);
     margin: 0 0 12px;
   }
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 4px;
+  }
+  .brand-row .logo-mark {
+    width: 40px;
+    height: auto;
+    flex-shrink: 0;
+  }
+  .brand-row .eyebrow { margin: 0 0 4px; }
   h1 {
     font-size: 34px;
     line-height: 1.2;
@@ -305,9 +318,38 @@
 </head>
 <body>
 
+  <!-- TVG shield mark — defined once, reused via <use> wherever the
+       logo appears (login header, app header) so the gold gradient
+       defs aren't duplicated. Gold shield = verification/authority;
+       checkmark is TVG Navy (#0A1D4D), the same Brand Blue already
+       used across Katiwala AI/ODO — not a new color. -->
+  <svg width="0" height="0" style="position:absolute;">
+    <defs>
+      <linearGradient id="tvgGoldFill" x1="15%" y1="0%" x2="85%" y2="100%">
+        <stop offset="0%" stop-color="#F8E7A6"/>
+        <stop offset="42%" stop-color="#D4AF37"/>
+        <stop offset="100%" stop-color="#93701E"/>
+      </linearGradient>
+      <linearGradient id="tvgGoldStroke" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#FCF3D2"/>
+        <stop offset="100%" stop-color="#8A6A1E"/>
+      </linearGradient>
+      <g id="tvg-shield-def">
+        <path d="M100 8 L176 40 L176 108 C176 158 142 194 100 214 C58 194 24 158 24 108 L24 40 Z" fill="url(#tvgGoldFill)" stroke="url(#tvgGoldStroke)" stroke-width="4"/>
+        <path d="M100 22 L164 48 L164 106 C164 148 136 178 100 196 C64 178 36 148 36 106 L36 48 Z" fill="none" stroke="#FCF3D2" stroke-width="1.5" opacity="0.5"/>
+        <path d="M62 96 L98 146 L150 68" fill="none" stroke="#0A1D4D" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </defs>
+  </svg>
+
   <div id="login-screen">
-    <p class="eyebrow">The Verified Group — Layer 1</p>
-    <h1>TVGSUOS</h1>
+    <div class="brand-row">
+      <svg class="logo-mark" viewBox="0 0 200 224"><use href="#tvg-shield-def"/></svg>
+      <div>
+        <p class="eyebrow">The Verified Group — Layer 1</p>
+        <h1 style="margin:0;">TVGSUOS</h1>
+      </div>
+    </div>
     <form id="login-form">
       <label for="login-email">Email</label>
       <input type="email" id="login-email" required autocomplete="username" />
@@ -345,8 +387,13 @@
   <div id="app">
     <div class="wrap">
       <button id="sign-out-btn">Sign out</button>
-      <p class="eyebrow">The Verified Group — Layer 1</p>
-      <h1>TVGSUOS</h1>
+      <div class="brand-row">
+        <svg class="logo-mark" viewBox="0 0 200 224"><use href="#tvg-shield-def"/></svg>
+        <div>
+          <p class="eyebrow">The Verified Group — Layer 1</p>
+          <h1 style="margin:0;">TVGSUOS</h1>
+        </div>
+      </div>
       <p class="lede">The founder command layer for strategy, execution, control, and continuity — sitting above every governed venture, not one product app among them.</p>
       <span class="status"><span class="dot"></span>Phase 3 — Strategy + Product live, deployed 2026-07-18</span>
 
