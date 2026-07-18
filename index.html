@@ -12,6 +12,8 @@
     --border: #CBD5E1;
     --surface: #F8FAFC;
     --white: #FFFFFF;
+    --danger: #B91C1C;
+    --good: #166534;
   }
   * { box-sizing: border-box; }
   body {
@@ -122,59 +124,386 @@
     padding: 1px 5px;
     font-size: 12px;
   }
+
+  /* Login gate */
+  #login-screen {
+    max-width: 360px;
+    margin: 96px auto;
+    padding: 0 24px;
+  }
+  #login-screen h1 { font-size: 24px; margin-bottom: 24px; }
+  #login-screen label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--slate);
+    margin-bottom: 6px;
+  }
+  #login-screen input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 16px;
+    font-family: inherit;
+  }
+  #login-screen button {
+    width: 100%;
+    padding: 11px;
+    background: var(--brand-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  #login-screen button:disabled { opacity: 0.6; cursor: default; }
+  #login-error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+  }
+  #app { display: none; }
+
+  /* Strategy section */
+  .strategy-form {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    background: var(--surface);
+    margin-bottom: 24px;
+  }
+  .strategy-form label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--slate);
+    margin: 12px 0 6px;
+  }
+  .strategy-form label:first-child { margin-top: 0; }
+  .strategy-form input,
+  .strategy-form textarea,
+  .strategy-form select {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 15px;
+    font-family: inherit;
+    background: var(--white);
+  }
+  .strategy-form textarea { min-height: 60px; resize: vertical; }
+  .strategy-form button {
+    margin-top: 14px;
+    padding: 9px 18px;
+    background: var(--brand-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .strategy-form button:disabled { opacity: 0.6; cursor: default; }
+  #strategy-form-status { font-size: 13px; margin-top: 8px; }
+  .decision-list { list-style: none; margin: 0; padding: 0; }
+  .decision {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .decision-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .decision-title { font-size: 15px; font-weight: 600; }
+  .decision-venture {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--brand-blue);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 9px;
+    white-space: nowrap;
+  }
+  .decision-context { font-size: 14px; color: var(--slate); margin: 4px 0 0; line-height: 1.5; }
+  .decision-meta { font-size: 12px; color: var(--slate); margin-top: 8px; }
+  .decision-meta .status-open { color: #B45309; font-weight: 600; }
+  .decision-meta .status-decided { color: var(--good); font-weight: 600; }
+  .decision-meta .status-archived { color: var(--slate); font-weight: 600; }
+  #decisions-empty { color: var(--slate); font-size: 14px; }
+  #sign-out-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 5px 12px;
+    font-size: 13px;
+    color: var(--slate);
+    cursor: pointer;
+    font-family: inherit;
+    float: right;
+  }
 </style>
 </head>
 <body>
-  <div class="wrap">
+
+  <div id="login-screen">
     <p class="eyebrow">The Verified Group — Layer 1</p>
     <h1>TVGSUOS</h1>
-    <p class="lede">The founder command layer for strategy, execution, control, and continuity — sitting above every governed venture, not one product app among them.</p>
-    <span class="status"><span class="dot"></span>Phase 1 — scaffold live, deployed 2026-07-18</span>
-
-    <section>
-      <h2>Governance areas</h2>
-      <div class="areas">
-        <div class="area built">
-          <p class="area-name">Founder's Space</p>
-          <p class="area-state">Built — lives in Katiwala AI for now</p>
-        </div>
-        <div class="area"><p class="area-name">Strategy</p><p class="area-state">Not yet built — priority 1</p></div>
-        <div class="area"><p class="area-name">Finance</p><p class="area-state">Not yet built</p></div>
-        <div class="area"><p class="area-name">Marketing</p><p class="area-state">Not yet built — priority 4</p></div>
-        <div class="area"><p class="area-name">Product</p><p class="area-state">Not yet built — priority 2</p></div>
-        <div class="area"><p class="area-name">R&amp;D</p><p class="area-state">Not yet built — priority 5</p></div>
-        <div class="area"><p class="area-name">Security / Privacy / Compliance</p><p class="area-state">Not yet built — priority 3</p></div>
-        <div class="area"><p class="area-name">Intelligence</p><p class="area-state">Not yet built</p></div>
-        <div class="area"><p class="area-name">People / Admin / Governance</p><p class="area-state">Not yet built</p></div>
-      </div>
-    </section>
-
-    <section>
-      <h2>Agent hierarchy</h2>
-      <div class="hierarchy">
-        <div><span class="name">Ver</span> <span class="role">— chief of staff, TVGSUOS layer</span></div>
-        <div style="padding-left: 20px;"><span class="name">Kath</span> <span class="role">— KOS / Katiwala AI</span></div>
-        <div style="padding-left: 20px;"><span class="name">Vera</span> <span class="role">— OWDO / ODO</span></div>
-      </div>
-    </section>
-
-    <div class="ventures">
-      <h2>Governed ventures</h2>
-      <ul class="venture-list">
-        <li>
-          <span>KOS / Katiwala AI <span class="venture-note">— Founder's Space, CEO's Space, HR &amp; Payroll, Simple P&amp;L, Ops</span></span>
-          <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open →</a>
-        </li>
-        <li>
-          <span>OWDO / ODO <span class="venture-note">— property &amp; vehicle trust marketplace</span></span>
-          <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open →</a>
-        </li>
-      </ul>
-    </div>
-
-    <footer>
-      Founder's Space, Ver, and the Daily Baseline Check are still live inside Katiwala AI's own app — they have not moved here yet. See <code>FOUNDER_OS.md</code> and <code>docs/MASTER_DIRECTION.md</code> in this repo for exactly what's built, what's open, and why.
-    </footer>
+    <form id="login-form">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" required autocomplete="username" />
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" required autocomplete="current-password" />
+      <button type="submit" id="login-btn">Sign in</button>
+      <p id="login-error"></p>
+    </form>
   </div>
+
+  <div id="app">
+    <div class="wrap">
+      <button id="sign-out-btn">Sign out</button>
+      <p class="eyebrow">The Verified Group — Layer 1</p>
+      <h1>TVGSUOS</h1>
+      <p class="lede">The founder command layer for strategy, execution, control, and continuity — sitting above every governed venture, not one product app among them.</p>
+      <span class="status"><span class="dot"></span>Phase 2 — Strategy live, deployed 2026-07-18</span>
+
+      <section>
+        <h2>Strategy — cross-venture decisions</h2>
+        <div class="strategy-form">
+          <form id="decision-form">
+            <label for="decision-project">Venture</label>
+            <select id="decision-project" required></select>
+            <label for="decision-title">Decision</label>
+            <input type="text" id="decision-title" required placeholder="e.g. Prioritize KOS Phase 2 (HR & Payroll) before Gas Ops integration" />
+            <label for="decision-context">Context <span style="font-weight:400;">(optional)</span></label>
+            <textarea id="decision-context" placeholder="Why this, why now"></textarea>
+            <label for="decision-outcome">Expected outcome <span style="font-weight:400;">(optional)</span></label>
+            <textarea id="decision-outcome"></textarea>
+            <button type="submit" id="decision-submit-btn">Log decision</button>
+            <p id="strategy-form-status"></p>
+          </form>
+        </div>
+        <ul class="decision-list" id="decision-list"></ul>
+        <p id="decisions-empty" style="display:none;">No decisions logged yet across any venture.</p>
+      </section>
+
+      <section>
+        <h2>Other governance areas</h2>
+        <div class="areas">
+          <div class="area built">
+            <p class="area-name">Founder's Space</p>
+            <p class="area-state">Built — lives in Katiwala AI for now</p>
+          </div>
+          <div class="area built">
+            <p class="area-name">Strategy</p>
+            <p class="area-state">Built — above</p>
+          </div>
+          <div class="area"><p class="area-name">Finance</p><p class="area-state">Not yet built</p></div>
+          <div class="area"><p class="area-name">Marketing</p><p class="area-state">Not yet built — priority 4</p></div>
+          <div class="area"><p class="area-name">Product</p><p class="area-state">Not yet built — priority 2</p></div>
+          <div class="area"><p class="area-name">R&amp;D</p><p class="area-state">Not yet built — priority 5</p></div>
+          <div class="area"><p class="area-name">Security / Privacy / Compliance</p><p class="area-state">Not yet built — priority 3</p></div>
+          <div class="area"><p class="area-name">Intelligence</p><p class="area-state">Not yet built</p></div>
+          <div class="area"><p class="area-name">People / Admin / Governance</p><p class="area-state">Not yet built</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Agent hierarchy</h2>
+        <div class="hierarchy">
+          <div><span class="name">Ver</span> <span class="role">— chief of staff, TVGSUOS layer</span></div>
+          <div style="padding-left: 20px;"><span class="name">Kath</span> <span class="role">— KOS / Katiwala AI</span></div>
+          <div style="padding-left: 20px;"><span class="name">Vera</span> <span class="role">— OWDO / ODO</span></div>
+        </div>
+      </section>
+
+      <div class="ventures">
+        <h2>Governed ventures</h2>
+        <ul class="venture-list">
+          <li>
+            <span>KOS / Katiwala AI <span class="venture-note">— Founder's Space, CEO's Space, HR &amp; Payroll, Simple P&amp;L, Ops</span></span>
+            <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open →</a>
+          </li>
+          <li>
+            <span>OWDO / ODO <span class="venture-note">— property &amp; vehicle trust marketplace</span></span>
+            <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open →</a>
+          </li>
+        </ul>
+      </div>
+
+      <footer>
+        Founder's Space, Ver, and the Daily Baseline Check are still live inside Katiwala AI's own app — they have not moved here yet. See <code>FOUNDER_OS.md</code> and <code>docs/MASTER_DIRECTION.md</code> in this repo for exactly what's built, what's open, and why.
+      </footer>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    // Same Supabase project as katiwala-owner-os- — TVGSUOS has no
+    // database of its own. Public URL + anon key, safe client-side
+    // (RLS gates actual access), identical values to that repo's
+    // index.html.
+    const SUPABASE_URL = 'https://jbhfdmujqrtqkhacfegl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpiaGZkbXVqcXJ0cWtoYWNmZWdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzOTE0NjksImV4cCI6MjA5ODk2NzQ2OX0.yjGuawybNLSCCbviGJ7hXiNLyG6OZ7_RthdTuUulDX8';
+
+    const { createClient } = supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const loginScreen = document.getElementById('login-screen');
+    const appEl = document.getElementById('app');
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+    const loginBtn = document.getElementById('login-btn');
+
+    function showApp() {
+      loginScreen.style.display = 'none';
+      appEl.style.display = 'block';
+      loadDecisions();
+    }
+    function showLogin() {
+      loginScreen.style.display = 'block';
+      appEl.style.display = 'none';
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.style.display = 'none';
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Signing in…';
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Sign in';
+      if (error) {
+        loginError.textContent = error.message || 'Sign-in failed.';
+        loginError.style.display = 'block';
+        return;
+      }
+      showApp();
+    });
+
+    document.getElementById('sign-out-btn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      showLogin();
+    });
+
+    // Cross-venture Strategy: reads/writes the same `projects` and
+    // `decisions` tables katiwala-owner-os-'s Founder Crossroads
+    // uses. This view rolls up decisions across EVERY venture in
+    // one place (portfolio-level, not one venture's own view) —
+    // that's the actual point of the Strategy governance area.
+    let projectsCache = [];
+
+    async function loadProjectsIntoSelect() {
+      const { data, error } = await sb.from('projects').select('id, name, slug').order('name', { ascending: true });
+      if (error) { console.error('[projects] load error:', error); return; }
+      projectsCache = data || [];
+      const select = document.getElementById('decision-project');
+      select.innerHTML = projectsCache.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      // Default to the TVGSUOS row itself for genuinely cross-venture calls.
+      const tvgsuosRow = projectsCache.find(p => p.slug === 'tvgsuos');
+      if (tvgsuosRow) select.value = tvgsuosRow.id;
+    }
+
+    function projectNameById(id) {
+      const p = projectsCache.find(p => p.id === id);
+      return p ? p.name : 'Unknown venture';
+    }
+
+    async function loadDecisions() {
+      await loadProjectsIntoSelect();
+      const { data, error } = await sb
+        .from('decisions')
+        .select('id, project_id, title, context, expected_outcome, status, created_at')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      const listEl = document.getElementById('decision-list');
+      const emptyEl = document.getElementById('decisions-empty');
+      if (error) {
+        listEl.innerHTML = '';
+        emptyEl.textContent = "Couldn't load decisions — " + error.message;
+        emptyEl.style.display = 'block';
+        return;
+      }
+      if (!data || !data.length) {
+        listEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      listEl.innerHTML = data.map(d => `
+        <li class="decision">
+          <div class="decision-top">
+            <span class="decision-title">${escapeHtml(d.title)}</span>
+            <span class="decision-venture">${escapeHtml(projectNameById(d.project_id))}</span>
+          </div>
+          ${d.context ? `<p class="decision-context">${escapeHtml(d.context)}</p>` : ''}
+          <div class="decision-meta">
+            <span class="status-${d.status}">${d.status}</span> · ${new Date(d.created_at).toLocaleDateString()}
+          </div>
+        </li>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+
+    document.getElementById('decision-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('strategy-form-status');
+      const btn = document.getElementById('decision-submit-btn');
+      const projectId = document.getElementById('decision-project').value;
+      const title = document.getElementById('decision-title').value.trim();
+      const context = document.getElementById('decision-context').value.trim();
+      const expectedOutcome = document.getElementById('decision-outcome').value.trim();
+      if (!projectId || !title) return;
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+      statusEl.textContent = '';
+      const { error } = await sb.from('decisions').insert({
+        project_id: projectId,
+        title,
+        context: context || null,
+        expected_outcome: expectedOutcome || null,
+        status: 'open',
+      });
+      btn.disabled = false;
+      btn.textContent = 'Log decision';
+      if (error) {
+        statusEl.style.color = 'var(--danger)';
+        statusEl.textContent = "Couldn't save — " + error.message;
+        return;
+      }
+      statusEl.style.color = 'var(--good)';
+      statusEl.textContent = 'Logged.';
+      document.getElementById('decision-form').reset();
+      loadDecisions();
+    });
+
+    // Session check on load — same Supabase project as
+    // katiwala-owner-os- but a different browser origin, so the
+    // founder needs to sign in here separately even if already
+    // signed in there.
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) showApp(); else showLogin();
+    });
+  </script>
 </body>
 </html>
