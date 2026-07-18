@@ -14,16 +14,17 @@ TVGSUOS governs. Ventures execute below it.
 
 ---
 
-## 2) Four-layer ecosystem
+## 2) Three-layer ecosystem
+
+**TVGSUOS *is* Founder's OS** — not a separate layer. An earlier four-layer model (Founder's OS as its own Layer 2, embedded in `katiwala-owner-os-`, "migrating here long-term") is superseded: Founder's Space is one of TVGSUOS's 9 governance areas (§3), built and live here, not a layer still to migrate.
 
 | Layer | System | Domain | Repo |
 |---|---|---|---|
-| 1 | TVGSUOS | `theverifiedgroup.org` | `TVGSUOS` (this repo) |
-| 2 | Founder's OS | *(no dedicated domain yet)* | `katiwala-owner-os-` (embedded, migrating here long-term) |
-| 3 | Katiwala AI / KOS | `katiwalaai.app` | `katiwala-owner-os-` |
-| 4 | ODO / OwnerDirect Online | `ownerdirect.online` | separate repo (not yet in this session's scope) |
+| 1 | TVGSUOS (incl. Founder's Space) | `theverifiedgroup.org` | `TVGSUOS` (this repo) |
+| 2 | Katiwala AI / KOS | `katiwalaai.app` | `katiwala-owner-os-` |
+| 3 | ODO / OwnerDirect Online | `ownerdirect.online` | separate repo (not yet in this session's scope) |
 
-TVGSUOS sits at Layer 1. Layers 2–4 are governed, not peers — they execute their own domains and report upward through the agent hierarchy (§4).
+TVGSUOS sits at Layer 1. Layers 2–3 are governed, not peers — they execute their own domains and report upward through the agent hierarchy (§4).
 
 ---
 
@@ -97,7 +98,7 @@ The founder uses two Claude accounts interchangeably. Full protocol — what to 
 This section covered only the first few hours of this repo's existence (Phase 0, docs-only) and was never updated as the same day's work continued past it — see `FOUNDER_OS.md`'s dated log for what actually happened next. Corrected below rather than left to mislead a future session:
 
 - **Built:** all Phase 0 docs (README, this file, `docs/GOVERNANCE_MODEL.md`, `docs/PORTFOLIO_MAP.md`, `docs/HANDOFF_PROTOCOL.md`) — plus real app code: a login-gated `index.html` (Founder Cockpit dashboard, all 9 governance-area sections as a collapsed accordion, a floating "Ask Ver" assistant), `api/ask-ver.js`, `api/security-check.js`, `api/odo-status.js`, and `vercel.json`. Deployed to `tvgsuosweb.vercel.app` (GitHub-connected, auto-deploys from `main`).
-- **Not built here:** `theverifiedgroup.org` DNS is not wired yet (still Vercel-assigned URL only). Founder's Space itself (Daily Baseline Check) has not moved — it is still live inside `katiwala-owner-os-`, unchanged.
+- **Not built here:** `theverifiedgroup.org` DNS is not wired yet (still Vercel-assigned URL only). The Daily Baseline Check's actual scheduled routine (Ver's daily orchestration loop, run on a schedule, writing to the shared `daily_baseline_checks` table) still executes via `katiwala-owner-os-` — that's a routine-execution detail, separate from the layer model above (§2), which is already resolved: Founder's Space is a TVGSUOS governance area, not a layer still to migrate.
 - **Several pieces are shipped but not yet founder-verified live**, and a few required secrets (`ANTHROPIC_API_KEY`, `SUPABASE_MANAGEMENT_TOKEN`, `ODO_SUPABASE_SERVICE_ROLE_KEY`) still need adding to `tvgsuosweb`'s Vercel project — see `FOUNDER_OS.md`'s most recent entries for the exact current list, since that changes faster than this doc should.
 - No longer out of scope: app code now exists and is the primary thing this repo does. Future sessions should read `FOUNDER_OS.md` first (per `docs/HANDOFF_PROTOCOL.md`) rather than assume this §8 snapshot is current.
 
