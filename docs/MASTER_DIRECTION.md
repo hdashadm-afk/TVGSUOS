@@ -41,7 +41,7 @@ TVGSUOS sits at Layer 1. Layers 2–4 are governed, not peers — they execute t
 
 These areas are **connected but modular** — no area is hard-dependent on another unless explicitly required. The system stays usable in partial form and becomes more powerful as more areas are connected.
 
-**Build status:** all 9 areas are named and scoped by this doc. None has real app code yet (Phase 0 is docs-only — see `docs/PORTFOLIO_MAP.md`).
+**Build status:** all 9 areas are named and scoped by this doc, and — as of 2026-07-18 — all 9 have real, live implementation in this repo's `index.html`. See `FOUNDER_OS.md` for the dated build log and `docs/PORTFOLIO_MAP.md` for what's verified live vs. shipped-but-not-yet-confirmed.
 
 ---
 
@@ -94,9 +94,12 @@ The founder uses two Claude accounts interchangeably. Full protocol — what to 
 
 ## 8) Current build status (2026-07-18, not aspirational)
 
-- **Built:** this repo's Phase 0 docs (README, this file, `docs/GOVERNANCE_MODEL.md`, `docs/PORTFOLIO_MAP.md`, `docs/HANDOFF_PROTOCOL.md`).
-- **Not built here:** any app code — `index.html`, `api/`, migrations, Vercel config. No custom domain wired. Founder's Space itself (Daily Baseline Check, Ver's live implementation) has not moved — it is still live inside `katiwala-owner-os-`, unchanged.
-- **Explicitly out of scope for this pass:** app code of any kind, per the founder's own instruction. Do not build `index.html`/`api/`/migrations/Vercel config until told to.
+This section covered only the first few hours of this repo's existence (Phase 0, docs-only) and was never updated as the same day's work continued past it — see `FOUNDER_OS.md`'s dated log for what actually happened next. Corrected below rather than left to mislead a future session:
+
+- **Built:** all Phase 0 docs (README, this file, `docs/GOVERNANCE_MODEL.md`, `docs/PORTFOLIO_MAP.md`, `docs/HANDOFF_PROTOCOL.md`) — plus real app code: a login-gated `index.html` (Founder Cockpit dashboard, all 9 governance-area sections as a collapsed accordion, a floating "Ask Ver" assistant), `api/ask-ver.js`, `api/security-check.js`, `api/odo-status.js`, and `vercel.json`. Deployed to `tvgsuosweb.vercel.app` (GitHub-connected, auto-deploys from `main`).
+- **Not built here:** `theverifiedgroup.org` DNS is not wired yet (still Vercel-assigned URL only). Founder's Space itself (Daily Baseline Check) has not moved — it is still live inside `katiwala-owner-os-`, unchanged.
+- **Several pieces are shipped but not yet founder-verified live**, and a few required secrets (`ANTHROPIC_API_KEY`, `SUPABASE_MANAGEMENT_TOKEN`, `ODO_SUPABASE_SERVICE_ROLE_KEY`) still need adding to `tvgsuosweb`'s Vercel project — see `FOUNDER_OS.md`'s most recent entries for the exact current list, since that changes faster than this doc should.
+- No longer out of scope: app code now exists and is the primary thing this repo does. Future sessions should read `FOUNDER_OS.md` first (per `docs/HANDOFF_PROTOCOL.md`) rather than assume this §8 snapshot is current.
 
 ---
 

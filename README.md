@@ -42,9 +42,9 @@ Kath and Vera report to Ver. Full role spec: `docs/GOVERNANCE_MODEL.md` (this re
 - Single-file `index.html` — same pattern as the KOS MVP (`katiwala-owner-os.vercel.app`), no build step.
 - Same Supabase project as `katiwala-owner-os-` (project ref `jbhfdmujqrtqkhacfegl`) — no new database, this reads/writes the existing one.
 - Vercel serverless functions under `api/*.js` where server-side logic is needed (credential-gated, same graceful-degradation pattern as `katiwala-owner-os-`'s `api/` directory).
-- Deploy target: Vercel → `theverifiedgroup.org` (no custom domain wired yet — deploys to its Vercel-assigned URL until DNS is pointed).
+- Deploy target: Vercel project `tvgsuosweb` → `theverifiedgroup.org` (DNS not wired yet — live today at `tvgsuosweb.vercel.app`, GitHub-connected, auto-deploys from `main`). Two earlier orphaned deployments (`tvgsuos-hdashadm-afks-projects.vercel.app`, `tvg-founder-os-hdashadm-afks-projects.vercel.app`) exist from a direct file-deploy tool and should be ignored — `tvgsuosweb` is the real one.
 
-**Current phase: Phase 0 — docs only.** No app code (`index.html`, `api/`, migrations, Vercel config) exists in this repo yet. See `docs/PORTFOLIO_MAP.md` for what's built vs. planned.
+**Current phase: Phase 4 — all 9 governance areas live.** Real app code exists: a login-gated `index.html` (Founder Cockpit dashboard, all 9 governance-area sections, floating Ver assistant) plus `api/ask-ver.js`, `api/security-check.js`, `api/odo-status.js`, and `vercel.json`. Deployed to `tvgsuosweb.vercel.app` (GitHub-connected, auto-deploys from `main`). See `FOUNDER_OS.md` for the full dated build log — including what's verified live vs. shipped-but-not-yet-confirmed — and `docs/PORTFOLIO_MAP.md` for build status per area.
 
 ## Repos in this ecosystem
 
@@ -56,7 +56,7 @@ Kath and Vera report to Ver. Full role spec: `docs/GOVERNANCE_MODEL.md` (this re
 ## Setup
 
 1. `cp .env.example .env.local` and fill in real values (see that file for what each key is for and where it comes from).
-2. This is a static single-file app — no install/build step. Open `index.html` directly for local iteration, or `vercel dev` to exercise `api/` functions locally (once either exists — Phase 0 has neither yet).
+2. This is a static single-file app — no install/build step. Open `index.html` directly for local iteration, or `vercel dev` to exercise the `api/` functions locally.
 3. Deploy: connect this repo to Vercel under the `hdashadm-afks-projects` team (same team as `katiwala-owner-os-`/`staffverified`/`staffverified-app`, so there's one login across the whole ecosystem).
 
 ## Key docs
