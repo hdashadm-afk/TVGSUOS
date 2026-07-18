@@ -445,6 +445,33 @@
       </section>
 
       <section>
+        <h2>Marketing — go-to-market oversight</h2>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Top-of-funnel visibility across ventures — the public waitlist (KOS) currently only has its own standalone admin page, no dashboard; ODO's weekly lead snapshot, same idea.</p>
+
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Katiwala AI waitlist <span id="waitlist-total-badge"></span></h3>
+        <div class="table-wrap">
+          <table id="waitlist-table">
+            <thead>
+              <tr><th>Company / Name</th><th>Industry</th><th>Status</th><th>Signed up</th></tr>
+            </thead>
+            <tbody id="waitlist-table-body"></tbody>
+          </table>
+        </div>
+        <p id="waitlist-empty" style="display:none;">No waitlist signups yet.</p>
+
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">ODO weekly leads</h3>
+        <div class="table-wrap">
+          <table id="odo-leads-table">
+            <thead>
+              <tr><th>Week of</th><th>OFW</th><th>Seller</th><th>Service provider</th></tr>
+            </thead>
+            <tbody id="odo-leads-table-body"></tbody>
+          </table>
+        </div>
+        <p id="odo-leads-empty" style="display:none;">No ODO weekly lead snapshots logged yet.</p>
+      </section>
+
+      <section>
         <h2>Other governance areas</h2>
         <div class="areas">
           <div class="area built">
@@ -464,7 +491,10 @@
             <p class="area-state">Built — above</p>
           </div>
           <div class="area"><p class="area-name">Finance</p><p class="area-state">Not yet built</p></div>
-          <div class="area"><p class="area-name">Marketing</p><p class="area-state">Not yet built — priority 4</p></div>
+          <div class="area built">
+            <p class="area-name">Marketing</p>
+            <p class="area-state">Built — above</p>
+          </div>
           <div class="area"><p class="area-name">R&amp;D</p><p class="area-state">Not yet built — priority 5</p></div>
           <div class="area"><p class="area-name">Intelligence</p><p class="area-state">Not yet built</p></div>
           <div class="area"><p class="area-name">People / Admin / Governance</p><p class="area-state">Not yet built</p></div>
@@ -535,6 +565,7 @@
       loadDecisions();
       loadProductRollup();
       loadGovernanceLog();
+      loadMarketing();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -823,6 +854,71 @@
             <span class="decision-venture">${new Date(d.check_date).toLocaleDateString()}</span>
           </div>
         </li>
+      `).join('');
+    }
+
+    // Marketing: go-to-market oversight across ventures. Both
+    // sources already live in the same shared Supabase project —
+    // waitlist_leads (KOS's public waitlist, currently only visible
+    // via a standalone admin-waitlist.html page, no dashboard at
+    // all) and odo_leads_snapshots (ODO's weekly lead counts). No
+    // new schema; RLS already permits authenticated read on both.
+    async function loadMarketing() {
+      const { data, error } = await sb
+        .from('waitlist_leads')
+        .select('full_name, company_name, industry, status, created_at')
+        .order('created_at', { ascending: false })
+        .limit(25);
+      const bodyEl = document.getElementById('waitlist-table-body');
+      const emptyEl = document.getElementById('waitlist-empty');
+      const badgeEl = document.getElementById('waitlist-total-badge');
+      if (error) {
+        bodyEl.innerHTML = '';
+        emptyEl.textContent = "Couldn't load the waitlist — " + error.message;
+        emptyEl.style.display = 'block';
+      } else if (!data || !data.length) {
+        bodyEl.innerHTML = '';
+        badgeEl.textContent = '';
+        emptyEl.style.display = 'block';
+      } else {
+        emptyEl.style.display = 'none';
+        badgeEl.textContent = `(${data.length}${data.length === 25 ? '+' : ''})`;
+        bodyEl.innerHTML = data.map(w => `
+          <tr>
+            <td>${escapeHtml(w.company_name || w.full_name) || '—'}</td>
+            <td>${escapeHtml(w.industry) || '—'}</td>
+            <td>${escapeHtml(w.status) || '—'}</td>
+            <td>${w.created_at ? new Date(w.created_at).toLocaleDateString() : '—'}</td>
+          </tr>
+        `).join('');
+      }
+
+      const { data: odoData, error: odoError } = await sb
+        .from('odo_leads_snapshots')
+        .select('week_start, ofw_leads_count, seller_leads_count, service_provider_leads_count')
+        .order('week_start', { ascending: false })
+        .limit(8);
+      const odoBodyEl = document.getElementById('odo-leads-table-body');
+      const odoEmptyEl = document.getElementById('odo-leads-empty');
+      if (odoError) {
+        odoBodyEl.innerHTML = '';
+        odoEmptyEl.textContent = "Couldn't load ODO's leads — " + odoError.message;
+        odoEmptyEl.style.display = 'block';
+        return;
+      }
+      if (!odoData || !odoData.length) {
+        odoBodyEl.innerHTML = '';
+        odoEmptyEl.style.display = 'block';
+        return;
+      }
+      odoEmptyEl.style.display = 'none';
+      odoBodyEl.innerHTML = odoData.map(w => `
+        <tr>
+          <td>${new Date(w.week_start).toLocaleDateString()}</td>
+          <td>${w.ofw_leads_count ?? '—'}</td>
+          <td>${w.seller_leads_count ?? '—'}</td>
+          <td>${w.service_provider_leads_count ?? '—'}</td>
+        </tr>
       `).join('');
     }
 
