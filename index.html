@@ -228,6 +228,42 @@
     border-radius: 50%;
     margin-right: 7px;
   }
+  .venture-updates {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .venture-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    background: var(--white);
+  }
+  .venture-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .venture-card-header h3 { margin: 0; font-size: 13px; }
+  .venture-card-header a {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-blue);
+    text-decoration: none;
+  }
+  .venture-card-header a:hover { text-decoration: underline; }
+  .venture-metric-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .venture-metric-row:last-child { border-bottom: none; }
+  .venture-metric-row .metric-label { color: var(--slate); }
+  .venture-metric-row .metric-value { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
   .quick-capture textarea {
     width: 100%;
     padding: 8px 10px;
@@ -295,14 +331,13 @@
     color: var(--white);
     border: none;
     border-radius: 999px;
-    padding: 10px 18px 10px 10px;
+    padding: 12px 20px;
     font-size: 13px;
     font-weight: 700;
     font-family: inherit;
     cursor: pointer;
     box-shadow: 0 6px 18px rgba(10,29,77,0.35);
   }
-  #ver-toggle-btn .logo-mark { width: 26px; height: auto; }
   #ver-drawer {
     position: fixed;
     top: 0;
@@ -726,6 +761,28 @@
         </div>
       </div>
 
+      <!-- Venture Updates: KOS and ODO's project status, native to
+           TVGSUOS instead of only living inside KOS's own app. Each
+           card links out to the real production domain for actual
+           admin work — this panel is status only. -->
+      <p class="cockpit-label">Venture Updates</p>
+      <div class="venture-updates">
+        <div class="venture-card">
+          <div class="venture-card-header">
+            <h3>KOS / Katiwala AI</h3>
+            <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open katiwalaai.app →</a>
+          </div>
+          <div id="kos-update-body"></div>
+        </div>
+        <div class="venture-card">
+          <div class="venture-card-header">
+            <h3>ODO / OwnerDirect</h3>
+            <a href="https://ownerdirect.online" target="_blank" rel="noopener">Open ownerdirect.online →</a>
+          </div>
+          <div id="odo-update-body"></div>
+        </div>
+      </div>
+
       <!-- Row 3: founder action zone. -->
       <p class="cockpit-label">Act On</p>
       <div class="cockpit-row3">
@@ -996,8 +1053,7 @@
   </div>
 
   <button id="ver-toggle-btn" type="button">
-    <svg class="logo-mark" viewBox="0 0 200 224"><use href="#tvg-shield-def"/></svg>
-    Ver
+    Ask Ver
   </button>
   <div id="ver-drawer">
     <div class="ver-drawer-header">
@@ -1100,6 +1156,7 @@
       loadPriorityTasks();
       loadKpiGrid();
       loadProjectHealth();
+      loadVentureUpdates();
       loadVerDesk();
       loadVerHistory();
     }
@@ -1785,6 +1842,60 @@
           </div>
         `;
       }).join('');
+    }
+
+    // Venture Updates: KOS's and ODO's own "project update" views,
+    // native to TVGSUOS instead of embedded inside KOS's app. KOS reads
+    // the shared Supabase project directly (same source as the KPI
+    // grid/Finance). ODO has its own separate Supabase project, so it
+    // goes through api/odo-status.js (service-role key server-side) —
+    // shows a plain "not configured" message until ODO_SUPABASE_SERVICE_
+    // ROLE_KEY is added to this Vercel project, never fake numbers.
+    function ventureMetricRow(label, value) {
+      return `<div class="venture-metric-row"><span class="metric-label">${escapeHtml(label)}</span><span class="metric-value">${escapeHtml(value)}</span></div>`;
+    }
+
+    async function loadVentureUpdates() {
+      const kosEl = document.getElementById('kos-update-body');
+      const odoEl = document.getElementById('odo-update-body');
+
+      const { data: kosRow } = await sb
+        .from('projects')
+        .select('stage, project_status(build_readiness, cash_pulse, burn_rate, runway_months)')
+        .eq('slug', 'kos')
+        .maybeSingle();
+      const kosStatus = kosRow ? (Array.isArray(kosRow.project_status) ? kosRow.project_status[0] : kosRow.project_status) : null;
+      kosEl.innerHTML = [
+        ventureMetricRow('Stage', (kosRow && kosRow.stage) || 'No data'),
+        ventureMetricRow('Build readiness', (kosStatus && kosStatus.build_readiness) || 'No data'),
+        ventureMetricRow('Cash pulse', (kosStatus && kosStatus.cash_pulse) || 'No data'),
+        ventureMetricRow('Burn rate', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data'),
+        ventureMetricRow('Runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data'),
+      ].join('');
+
+      try {
+        const res = await fetch('/api/odo-status');
+        const body = await res.json();
+        if (body.notConfigured) {
+          odoEl.innerHTML = `<p class="cockpit-not-connected">${escapeHtml(body.error)}</p>`;
+          return;
+        }
+        if (body.error) {
+          odoEl.innerHTML = `<p class="cockpit-not-connected">${escapeHtml(body.error)}</p>`;
+          return;
+        }
+        const h = body.health;
+        odoEl.innerHTML = [
+          ventureMetricRow('Vera signals (72h)', String(body.signalsCount ?? 0)),
+          ventureMetricRow('Negative signals', String(body.negativeCount ?? 0)),
+          ventureMetricRow('Signal topics', body.topicSummary || 'None'),
+          ventureMetricRow('Pulse score', h && h.pulse_score != null ? String(h.pulse_score) : 'No data'),
+          ventureMetricRow('Open critical/high/medium', h ? `${h.open_critical ?? 0} / ${h.open_high ?? 0} / ${h.open_medium ?? 0}` : 'No data'),
+          ventureMetricRow('Active / closed (7d) deals', h ? `${h.deals_active ?? 0} / ${h.deals_closed_7d ?? 0}` : 'No data'),
+        ].join('');
+      } catch (err) {
+        odoEl.innerHTML = `<p class="cockpit-not-connected">Couldn't reach ODO status — ${escapeHtml(err.message)}</p>`;
+      }
     }
 
     // Quick Capture: founder scratch notes, real inserts into
