@@ -761,6 +761,27 @@
         </div>
       </div>
 
+      <!-- YC Snapshot: Product / Stage / Key Metric for the two
+           flagship ventures, framed for a YC application/update
+           rather than internal stage vocabulary — same reasoning as
+           Venture Updates below (native to TVGSUOS, not buried
+           inside KOS's own app). Reads project_status.yc_stage_label/
+           yc_key_metric_label directly (migration 094,
+           katiwala-owner-os-) — same shared Supabase project as
+           everything else on this page, no new schema. Manual entry
+           only; renders "—" until the founder fills them in via
+           Supabase (no in-app edit form, matching how cash_pulse
+           etc. already work). -->
+      <p class="cockpit-label">YC Snapshot</p>
+      <div class="table-wrap">
+        <table id="yc-snapshot-table">
+          <thead>
+            <tr><th>Product</th><th>Stage</th><th>Key Metric</th></tr>
+          </thead>
+          <tbody id="yc-snapshot-table-body"></tbody>
+        </table>
+      </div>
+
       <!-- Venture Updates: KOS and ODO's project status, native to
            TVGSUOS instead of only living inside KOS's own app. Each
            card links out to the real production domain for actual
@@ -1156,6 +1177,7 @@
       loadPriorityTasks();
       loadKpiGrid();
       loadProjectHealth();
+      loadYcSnapshot();
       loadVentureUpdates();
       loadVerDesk();
       loadVerHistory();
@@ -1841,6 +1863,35 @@
             <span>${escapeHtml((p && p.stage) || 'No data')}${readiness ? ` · ${escapeHtml(readiness)}` : ''}</span>
           </div>
         `;
+      }).join('');
+    }
+
+    // YC Snapshot: the two flagship ventures only, display-named the
+    // way a YC application/update would read them rather than their
+    // internal kos/odo slugs. Both rows live in project_status in the
+    // same shared Supabase project this whole page already reads —
+    // unlike ODO's Venture Update card below, this needs no separate
+    // api/odo-status.js round trip.
+    const YC_SNAPSHOT_DISPLAY_NAME = { kos: 'Katiwala AI', odo: 'OwnerDirect' };
+
+    async function loadYcSnapshot() {
+      const tbody = document.getElementById('yc-snapshot-table-body');
+      const { data, error } = await sb
+        .from('projects')
+        .select('slug, project_status(yc_stage_label, yc_key_metric_label)')
+        .in('slug', ['kos', 'odo']);
+      if (error || !data) {
+        tbody.innerHTML = `<tr><td colspan="3">Couldn't load YC Snapshot.</td></tr>`;
+        return;
+      }
+      const bySlug = Object.fromEntries(data.map(p => [p.slug, Array.isArray(p.project_status) ? p.project_status[0] : p.project_status]));
+      tbody.innerHTML = ['kos', 'odo'].map(slug => {
+        const s = bySlug[slug];
+        return `<tr>
+          <td>${escapeHtml(YC_SNAPSHOT_DISPLAY_NAME[slug])}</td>
+          <td>${escapeHtml((s && s.yc_stage_label) || '—')}</td>
+          <td>${escapeHtml((s && s.yc_key_metric_label) || '—')}</td>
+        </tr>`;
       }).join('');
     }
 
