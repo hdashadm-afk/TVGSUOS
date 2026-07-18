@@ -619,13 +619,23 @@
     // catching drift across ventures is the point, not a second
     // decision log (that's Strategy's job, above). Left-joins
     // project_status since not every project row necessarily has one.
+    // Ventures out of current focus (per docs/KATIWALA_GAS_STATION_MASTER_DIRECTION.md's
+    // scope constraint in katiwala-owner-os-: execution now concentrates
+    // on gas stations/KOS/Helium Fuels). Hidden from this rollup only —
+    // the underlying `projects` rows are untouched, same "archive, don't
+    // delete" precedent already used for CafeVerified/HotelVerified
+    // elsewhere in the ecosystem. Un-hide by removing a slug here if
+    // focus changes again.
+    const PRODUCT_ROLLUP_HIDDEN_SLUGS = ['wpos', 'cofeshop', 'gas_ops', 'verde-cafe', 'green-apple-hotel'];
+
     async function loadProductRollup() {
       const bodyEl = document.getElementById('product-table-body');
       const emptyEl = document.getElementById('product-empty');
-      const { data, error } = await sb
+      const { data: rawData, error } = await sb
         .from('projects')
-        .select('id, name, stage, project_status(build_readiness, research_depth, updated_at)')
+        .select('id, name, slug, stage, project_status(build_readiness, research_depth, updated_at)')
         .order('name', { ascending: true });
+      const data = rawData ? rawData.filter(p => !PRODUCT_ROLLUP_HIDDEN_SLUGS.includes(p.slug)) : rawData;
       if (error) {
         bodyEl.innerHTML = '';
         emptyEl.textContent = "Couldn't load the product rollup — " + error.message;
