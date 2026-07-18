@@ -385,6 +385,19 @@
       </section>
 
       <section>
+        <h2>Security / Privacy / Compliance</h2>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Live posture check against the shared Supabase project, plus Ver's day-to-day governance risk log from Founder's Space.</p>
+        <div class="strategy-form">
+          <button type="button" id="security-check-btn">Run security &amp; compliance check</button>
+          <p id="security-check-status"></p>
+          <ul class="decision-list" id="security-findings-list" style="margin-top:12px;"></ul>
+        </div>
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">Recent governance risk notes (Ver, Founder's Space)</h3>
+        <ul class="decision-list" id="governance-log-list"></ul>
+        <p id="governance-log-empty" style="display:none;">No governance risk notes logged yet.</p>
+      </section>
+
+      <section>
         <h2>Other governance areas</h2>
         <div class="areas">
           <div class="area built">
@@ -399,10 +412,13 @@
             <p class="area-name">Product</p>
             <p class="area-state">Built — above</p>
           </div>
+          <div class="area built">
+            <p class="area-name">Security / Privacy / Compliance</p>
+            <p class="area-state">Built — above</p>
+          </div>
           <div class="area"><p class="area-name">Finance</p><p class="area-state">Not yet built</p></div>
           <div class="area"><p class="area-name">Marketing</p><p class="area-state">Not yet built — priority 4</p></div>
           <div class="area"><p class="area-name">R&amp;D</p><p class="area-state">Not yet built — priority 5</p></div>
-          <div class="area"><p class="area-name">Security / Privacy / Compliance</p><p class="area-state">Not yet built — priority 3</p></div>
           <div class="area"><p class="area-name">Intelligence</p><p class="area-state">Not yet built</p></div>
           <div class="area"><p class="area-name">People / Admin / Governance</p><p class="area-state">Not yet built</p></div>
         </div>
@@ -471,6 +487,7 @@
       appEl.style.display = 'block';
       loadDecisions();
       loadProductRollup();
+      loadGovernanceLog();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -679,6 +696,87 @@
           </tr>
         `;
       }).join('');
+    }
+
+    // Security / Privacy / Compliance: on-demand live check (calls
+    // this repo's own /api/security-check, ported from
+    // katiwala-owner-os-'s generate-governance-risk.js since
+    // ecosystem-wide posture is TVGSUOS's job) plus a read-only
+    // history of Ver's daily governance_risk_note entries from
+    // Founder's Space (daily_baseline_checks, same shared Supabase
+    // project — no new schema, same RLS-open-to-authenticated
+    // pattern Strategy/Product already rely on).
+    document.getElementById('security-check-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('security-check-btn');
+      const statusEl = document.getElementById('security-check-status');
+      const listEl = document.getElementById('security-findings-list');
+      btn.disabled = true;
+      btn.textContent = 'Checking…';
+      statusEl.textContent = '';
+      listEl.innerHTML = '';
+      try {
+        const res = await fetch('/api/security-check', { method: 'POST' });
+        const body = await res.json();
+        if (body.notConfigured) {
+          statusEl.textContent = body.error;
+          return;
+        }
+        if (body.error) throw new Error(body.error);
+        if (!body.findings || !body.findings.length) {
+          statusEl.style.color = 'var(--good)';
+          statusEl.textContent = 'No ERROR/WARN-level security or performance findings.';
+          return;
+        }
+        statusEl.style.color = 'var(--danger)';
+        statusEl.textContent = `${body.findings.length} finding(s) as of ${new Date(body.checkedAt).toLocaleString()}:`;
+        listEl.innerHTML = body.findings.map(f => `
+          <li class="decision">
+            <div class="decision-top">
+              <span class="decision-title">${escapeHtml(f.title)}</span>
+              <span class="decision-venture">${escapeHtml(f.level)}</span>
+            </div>
+            ${f.detail ? `<p class="decision-context">${escapeHtml(f.detail)}</p>` : ''}
+          </li>
+        `).join('');
+      } catch (err) {
+        console.error('[security-check] client error:', err);
+        statusEl.style.color = 'var(--danger)';
+        statusEl.textContent = "Couldn't run the check — try again in a moment.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Run security & compliance check';
+      }
+    });
+
+    async function loadGovernanceLog() {
+      const listEl = document.getElementById('governance-log-list');
+      const emptyEl = document.getElementById('governance-log-empty');
+      const { data, error } = await sb
+        .from('daily_baseline_checks')
+        .select('check_date, governance_risk_note')
+        .order('check_date', { ascending: false })
+        .limit(14);
+      if (error) {
+        listEl.innerHTML = '';
+        emptyEl.textContent = "Couldn't load the governance log — " + error.message;
+        emptyEl.style.display = 'block';
+        return;
+      }
+      const withNotes = (data || []).filter(d => d.governance_risk_note);
+      if (!withNotes.length) {
+        listEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      listEl.innerHTML = withNotes.map(d => `
+        <li class="decision">
+          <div class="decision-top">
+            <span class="decision-title">${escapeHtml(d.governance_risk_note)}</span>
+            <span class="decision-venture">${new Date(d.check_date).toLocaleDateString()}</span>
+          </div>
+        </li>
+      `).join('');
     }
 
     document.getElementById('decision-form').addEventListener('submit', async (e) => {
