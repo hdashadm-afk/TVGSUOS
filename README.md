@@ -1,15 +1,16 @@
 # TVGSUOS — The Verified Group Single Unified OS
 
-Layer 1 of The Verified Group's four-layer ecosystem. Founder-only. No public pages, no client access.
+Layer 1 of The Verified Group's three-layer ecosystem. Founder-only. No public pages, no client access.
+
+**TVGSUOS *is* Founder's OS** — not a separate layer sitting elsewhere. Earlier docs modeled a four-layer ecosystem with Founder's OS as its own Layer 2, embedded inside `katiwala-owner-os-`, "migrating here long-term." That's resolved now: Founder's Space (Ver, the Daily Baseline Check, the cross-venture dashboard) is one of TVGSUOS's own 9 governance areas, built and live in this repo's `index.html`, not a distinct layer to migrate later.
 
 ## Ecosystem map
 
 | Layer | System | Domain | Role |
 |---|---|---|---|
-| 1 | **TVGSUOS** (this repo) | `theverifiedgroup.org` | Umbrella governance — strategy, security, continuity, cross-venture command |
-| 2 | Founder's OS | *(currently inside `katiwala-owner-os-`, migrating here long-term)* | Founder-internal operating layer — Ver, Daily Baseline Check |
-| 3 | Katiwala AI / KOS | `katiwalaai.app` | Gas station SME operating system |
-| 4 | ODO / OwnerDirect Online | `ownerdirect.online` | Property/vehicle trust marketplace |
+| 1 | **TVGSUOS** (this repo) | `theverifiedgroup.org` | Umbrella governance — strategy, security, continuity, cross-venture command. Includes Founder's Space (Ver, Daily Baseline Check) as one of its 9 governance areas, not a separate layer. |
+| 2 | Katiwala AI / KOS | `katiwalaai.app` | Gas station SME operating system |
+| 3 | ODO / OwnerDirect Online | `ownerdirect.online` | Property/vehicle trust marketplace |
 
 TVGSUOS governs from the top. KOS and OWDO sit below it as governed ventures — they execute their own domains and report up through the agent hierarchy below.
 
@@ -48,10 +49,10 @@ Kath and Vera report to Ver. Full role spec: `docs/GOVERNANCE_MODEL.md` (this re
 
 ## Repos in this ecosystem
 
-- **TVGSUOS** (this repo) — Layer 1, umbrella governance.
-- [`katiwala-owner-os-`](https://github.com/hdashadm-afk/katiwala-owner-os-) — Layers 2 (Founder's OS, for now) + 3 (KOS/Katiwala AI).
+- **TVGSUOS** (this repo) — Layer 1, umbrella governance, including Founder's Space.
+- [`katiwala-owner-os-`](https://github.com/hdashadm-afk/katiwala-owner-os-) — Layer 2, KOS/Katiwala AI. Still runs the Daily Baseline Check's actual scheduled routine (a separate, still-open technical question from the layer model itself — see `docs/PORTFOLIO_MAP.md` §4).
 - [`staffverified-app`](https://github.com/hdashadm-afk/staffverified-app) — KOS's HR & Payroll module.
-- ODO/OwnerDirect Online — separate repo/Supabase project (Layer 4).
+- ODO/OwnerDirect Online — separate repo/Supabase project (Layer 3).
 
 ## Setup
 
