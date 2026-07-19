@@ -39,15 +39,24 @@
   .brand-row {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
     margin-bottom: 4px;
+    flex-shrink: 0;
   }
   .brand-row .logo-mark {
-    width: 40px;
+    width: 34px;
     height: auto;
     flex-shrink: 0;
   }
-  .brand-row .eyebrow { margin: 0 0 4px; }
+  /* Eyebrow/wordmark shrunk + forced to one line each, 2026-07-19 —
+     founder: "The Verified Group 1 line, Founder OS 1 line." Wrapping
+     showed up once the header became a two-column flex row (brand row
+     sharing width with Sign Out + toggle on the right) with less room
+     than the old full-width layout. Sized to fit that narrower column
+     at typical mobile widths (tested 320-430px) rather than truncating
+     with an ellipsis, which would've clipped the real brand name. */
+  .brand-row .eyebrow { margin: 0 0 4px; font-size: 11px; letter-spacing: 0.03em; white-space: nowrap; }
+  .brand-row h1 { font-size: 28px; }
   h1 {
     font-size: 34px;
     line-height: 1.2;
@@ -60,6 +69,7 @@
     color: var(--slate);
     margin: 0;
   }
+  .brand-row .wordmark-sub { font-size: 13px; white-space: nowrap; }
   .lede {
     font-size: 17px;
     line-height: 1.6;
@@ -334,8 +344,8 @@
   }
   .mode-switcher.mode-switcher-compact button,
   .mode-switcher.mode-switcher-compact a {
-    padding: 5px 11px;
-    font-size: 11px;
+    padding: 4px 8px;
+    font-size: 10px;
   }
   .mode-switcher button, .mode-switcher a {
     display: inline-flex;
@@ -755,8 +765,8 @@
     background: none;
     border: 1px solid var(--border);
     border-radius: 7px;
-    padding: 5px 12px;
-    font-size: 13px;
+    padding: 4px 9px;
+    font-size: 12px;
     color: var(--slate);
     cursor: pointer;
     font-family: inherit;
@@ -882,7 +892,7 @@
            behavior unchanged throughout every move — loadKpiGrid()
            etc. all key off #ecosystem-toggle's .ecosystem-toggle-btn
            buttons by class/id, never page position. -->
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:20px;">
         <div class="brand-row">
           <svg class="logo-mark" viewBox="0 0 200 224"><use href="#tvg-shield-def"/></svg>
           <div>
