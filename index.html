@@ -799,6 +799,17 @@
       </div>
       <span class="status"><span class="dot"></span>Phase 4 — all 9 governance areas live, deployed 2026-07-18</span>
 
+      <!-- AI Tools — moved here from the Ver drawer, 2026-07-19, per
+           founder feedback: drawer placement meant open drawer + scroll
+           just to reach an external link, and these should be reachable
+           anytime without opening anything, same standing as Today's
+           Verse / Station Control's top-of-page placement. -->
+      <div class="quick-links" style="margin:10px 0 0;">
+        <a href="https://www.perplexity.ai" target="_blank" rel="noopener">Perplexity →</a>
+        <a href="https://claude.ai" target="_blank" rel="noopener">Claude →</a>
+        <a href="https://www.notion.so" target="_blank" rel="noopener">Notion →</a>
+      </div>
+
       <!-- Today's Verse — moved here from katiwala-owner-os-'s
            Morning Brief, 2026-07-19, per founder request ("move from
            CEO to founders" — it was already founder-role-gated there,
@@ -1312,22 +1323,6 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         <div id="ver-repo-tree"></div>
         <button type="button" id="ver-repo-tree-regenerate-btn" style="width:100%; margin-top:8px;">Regenerate</button>
         <p id="ver-repo-tree-status" style="font-size:12px; margin:6px 0 0; min-height:16px;"></p>
-      </div>
-      <!-- AI Tools — logged 2026-07-19 as "research tab, task inventory
-           plus the AI tools next to each other"; clarified via
-           AskUserQuestion to R&D + AI tool shortcuts placed next to
-           Task Inventory. Task Inventory lives in this drawer (not the
-           main-page R&D accordion), so "next to" means directly
-           adjacent here — just external shortcut links, no API
-           integration, so plain <a> tags reusing .quick-links. -->
-      <div class="ver-drawer-section">
-        <h4>AI Tools</h4>
-        <p class="sub">Quick jumps for research and cross-referencing.</p>
-        <div class="quick-links" style="margin:8px 0 0;">
-          <a href="https://www.perplexity.ai" target="_blank" rel="noopener">Perplexity →</a>
-          <a href="https://claude.ai" target="_blank" rel="noopener">Claude →</a>
-          <a href="https://www.notion.so" target="_blank" rel="noopener">Notion →</a>
-        </div>
       </div>
       <!-- Task Inventory — ported from katiwala-owner-os-'s Founder
            mode (founder_tasks table, same shared Supabase project).
