@@ -436,50 +436,73 @@
     text-align: center;
     color: var(--slate);
   }
-  /* VOC/Priority Tasks/Notes toggles, restyled from full-width dark
-     bars to small square tabs, 2026-07-19 — founder: "That big long
-     space can u make like square tab. That blends with the ai logos."
-     The dark full-width look was never deliberate: these .section-
-     toggle buttons sit inside .strategy-form (the AI Tools & Voice of
-     Customer wrapper), and ".strategy-form button" — meant for real
-     submit buttons like "Save note" — was bleeding onto them via a
-     plain element selector. .tab-toggle overrides that bleed with
-     higher specificity and gives them the same rounded-square, ~64px
-     badge language as .tool-tile-icon above, instead of reverting to
-     a plain full-width text row. Chevron hidden — a filled/expanded
-     background is the state indicator instead, same idea as the mode-
-     switcher's active pill. Left as inline-flex (shrink-to-fit, not
-     width:100%) rather than restructuring into a literal shared tab
-     bar: each button's .section-body sibling is display:none while
-     collapsed (taking no layout space, so the three still sit flush
-     next to each other by default) and only pushes later tabs onto a
-     new line once expanded — no changes needed to the shared
-     click-wiring JS, which keys off btn.nextElementSibling. */
+  /* VOC/Tasks/Notes toggles — restyled twice now, 2026-07-19. First
+     pass: full-width dark bars (a real bug — these .section-toggle
+     buttons sit inside .strategy-form, and ".strategy-form button",
+     meant for real submit buttons, was bleeding onto them) fixed into
+     small bordered pill tabs. Second pass, founder: "Allign w with
+     logos. All color blue" — rebuilt as true tiles matching
+     .tool-tile's own icon+label column structure/64px width exactly,
+     instead of just borrowing its rounded-corner language. Icon
+     badges are solid brand-blue always (not just on hover/expanded,
+     per "all color blue") — unlike the AI tools' varied brand colors,
+     these three are internal features sharing one color on purpose.
+     Expanded state inverts to a bordered outline (white bg, blue
+     border+text) reusing the same filled-vs-bordered-blue language
+     already established by the mode-switcher/mode-switcher-link pair,
+     so open vs. closed stays visually obvious without needing the
+     chevron (removed from markup — no room/need in a small icon
+     tile).
+     Kept as a separate row rather than merging into .tool-tile-row
+     itself: that container is a real flex row, and a .section-body
+     that expands to display:block would become a flex item there too
+     (flex containers override any non-none child into item layout),
+     likely squeezing it into the same row instead of dropping full-
+     width below — visually broken. Same width/shape instead gets the
+     "aligned with logos" look without that risk. Still inline-flex/
+     shrink-to-fit, so the three sit flush together when collapsed
+     (their .section-body siblings are display:none, contributing no
+     layout space) and any one expanding still just pushes later tiles
+     to a new line — no changes to the shared click-wiring JS, which
+     keys off btn.nextElementSibling. */
   .strategy-form .section-toggle.tab-toggle {
     display: inline-flex;
-    width: auto;
-    margin: 0 8px 8px 0;
-    padding: 10px 14px;
-    background: var(--surface);
-    color: var(--slate);
-    border: 1px solid var(--border);
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 64px;
+    margin: 0 14px 12px 0;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+  }
+  .tab-toggle-icon {
+    width: 40px;
+    height: 40px;
     border-radius: 12px;
-  }
-  .strategy-form .section-toggle.tab-toggle:hover { background: var(--white); }
-  .strategy-form .section-toggle.tab-toggle.expanded {
-    background: var(--brand-blue);
-    border-color: var(--brand-blue);
-    color: var(--white);
-  }
-  .tab-toggle h3 {
-    margin: 0;
-    color: inherit;
-    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    color: var(--white);
+    background: var(--brand-blue);
+    border: 2px solid var(--brand-blue);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
-  .tab-toggle .chevron { display: none; }
+  .strategy-form .section-toggle.tab-toggle:hover .tab-toggle-icon { filter: brightness(1.1); }
+  .strategy-form .section-toggle.tab-toggle.expanded .tab-toggle-icon {
+    background: var(--white);
+    color: var(--brand-blue);
+  }
+  .tab-toggle-label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--slate);
+  }
   .ecosystem-toggle-btn {
     border: none;
     background: none;
@@ -1043,10 +1066,6 @@
               <span class="tool-tile-label">Gemini</span>
             </a>
           </div>
-          <div class="quick-links" style="margin:0 0 20px;">
-            <a href="https://github.com/hdashadm-afk/TVGSUOS/blob/main/docs/MASTER_DIRECTION.md" target="_blank" rel="noopener">Master Direction →</a>
-            <a href="#" id="rd-jump-baseline">Daily Baseline Check →</a>
-          </div>
           <!-- Voice of Customer, own collapsible sub-toggle — founder,
                2026-07-19, pointing at a screenshot of this exact spot:
                "Voice of customer shrinkable." AI Tools above stays
@@ -1066,9 +1085,9 @@
                pass — dropping VOC's description makes its body as
                minimal as the other two, rather than adding text to
                match VOC. -->
-          <button type="button" class="section-toggle tab-toggle">
-            <h3>VOC</h3>
-            <span class="chevron">▶</span>
+          <button type="button" class="section-toggle tab-toggle" title="Voice of Customer">
+            <span class="tab-toggle-icon" aria-hidden="true">V</span>
+            <h3 class="tab-toggle-label">VOC</h3>
           </button>
           <div class="section-body">
             <ul class="decision-list" id="rd-voice-of-customer" style="margin:0;"></ul>
@@ -1088,9 +1107,9 @@
                as Voice of Customer got one: "shrink the priority tasks
                like VOC." Closed by default, same nested section-toggle/
                section-body pattern — no new JS wiring. -->
-          <button type="button" class="section-toggle tab-toggle">
-            <h3>Priority Tasks</h3>
-            <span class="chevron">▶</span>
+          <button type="button" class="section-toggle tab-toggle" title="Priority Tasks">
+            <span class="tab-toggle-icon" aria-hidden="true">T</span>
+            <h3 class="tab-toggle-label">Tasks</h3>
           </button>
           <div class="section-body">
             <ul class="attention-list" id="priority-tasks-list"></ul>
@@ -1111,9 +1130,9 @@
                #quick-capture-form/-text/-btn/-status ids inside the
                new section-body — existing submit-handler JS needs no
                changes. -->
-          <button type="button" class="section-toggle tab-toggle">
-            <h3>Notes</h3>
-            <span class="chevron">▶</span>
+          <button type="button" class="section-toggle tab-toggle" title="Notes">
+            <span class="tab-toggle-icon" aria-hidden="true">N</span>
+            <h3 class="tab-toggle-label">Notes</h3>
           </button>
           <div class="section-body">
           <div class="quick-capture">
@@ -1123,6 +1142,18 @@
           </form>
           <p id="quick-capture-status" style="font-size:12px; margin:6px 0 0;"></p>
           </div>
+          </div>
+          <!-- Master Direction/Daily Baseline Check, moved to the
+               bottom of this section (below Notes), 2026-07-19 —
+               founder: "Duration and baseline bottom 1 line." Forced
+               onto one line via nowrap on this specific instance
+               instead of the shared .quick-links default (flex-wrap:
+               wrap), since other .quick-links elsewhere on the page
+               (Open KOS/ODO, etc.) still need to wrap on narrow
+               screens. -->
+          <div class="quick-links" style="margin:20px 0 0; flex-wrap:nowrap; overflow-x:auto;">
+            <a href="https://github.com/hdashadm-afk/TVGSUOS/blob/main/docs/MASTER_DIRECTION.md" target="_blank" rel="noopener" style="white-space:nowrap;">Master Direction →</a>
+            <a href="#" id="rd-jump-baseline" style="white-space:nowrap;">Daily Baseline Check →</a>
           </div>
         </div>
         </div>
