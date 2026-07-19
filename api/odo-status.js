@@ -64,6 +64,12 @@ module.exports = async function handler(req, res) {
     const negativeCount = signals.filter(s => s.sentiment === 'negative').length;
     const byTopic = signals.reduce((acc, s) => { const t = s.topic || 'unspecified'; acc[t] = (acc[t] || 0) + 1; return acc; }, {});
     const topicSummary = Object.entries(byTopic).map(([topic, count]) => `${count} ${topic}`).join(', ');
+    // Per-topic negative count — for the Daily Baseline Check's
+    // Regenerate flow to detect a real pattern (repeated frustration
+    // on one topic) worth flagging to Task Inventory, without touching
+    // ODO's live customer-facing /api/vera route at all. Read-only,
+    // additive to the existing response shape.
+    const byTopicNegative = signals.filter(s => s.sentiment === 'negative').reduce((acc, s) => { const t = s.topic || 'unspecified'; acc[t] = (acc[t] || 0) + 1; return acc; }, {});
 
     // GMV = sum of every transaction's total_php regardless of escrow
     // state (held/released/refunded all represent real transacted
@@ -76,6 +82,7 @@ module.exports = async function handler(req, res) {
       signalsCount: signals.length,
       negativeCount,
       topicSummary,
+      byTopicNegative,
       lookbackHours: LOOKBACK_HOURS,
       health: health[0] || null,
       business: {
