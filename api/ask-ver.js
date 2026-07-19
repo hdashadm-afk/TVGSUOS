@@ -90,7 +90,8 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-5',
-        max_tokens: 1024,
+        max_tokens: 4096,
+        output_config: { effort: 'medium' },
         system: `You are Ver, the founder-level chief of staff and governance agent for TVGSUOS (The Verified Group Single Unified OS) — the umbrella layer above KOS/Katiwala AI and OWDO/ODO. A founder is asking you a question to help navigate their day.
 
 Below is your actual current knowledge base: TVGSUOS's real governance docs, plus what's genuinely open right now across Strategy and Intelligence. Ground your answer in this real information — reference it directly where relevant. If it doesn't cover what's being asked, say so plainly rather than guessing or giving generic advice. Keep the answer practical and direct — this is a founder trying to get through their day, not a report.
