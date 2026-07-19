@@ -3531,6 +3531,33 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       renderTaskInventory();
     }
 
+    // Realtime sync, 2026-07-19 — founder: "Does Ver update the task
+    // real time?" / "Add real-time updates so it syncs automatically."
+    // Before this, founder_tasks only refreshed on this session's own
+    // actions (page load, mark done/reopen, +Add task, Ask Ver/Vera
+    // logging a follow-up) — a row written by Kath, Vera, or another
+    // browser tab never showed up without a manual reload. Subscribes
+    // to every change (insert/update/delete) on founder_tasks and
+    // re-fetches; debounced 300ms so a burst of several rows changing
+    // at once (e.g. Vera's pattern-detection logging multiple tasks)
+    // triggers one re-fetch, not one per row.
+    // Requires founder_tasks to already be added to Supabase's
+    // supabase_realtime publication (Database > Replication in the
+    // dashboard, or `alter publication supabase_realtime add table
+    // founder_tasks;`) — a server-side setting, not something this
+    // client-side subscribe() call can turn on itself. No DB/
+    // migration tool available in this session to check or enable it;
+    // if it's not already on, this subscribes without error but never
+    // actually fires. Founder should confirm real-time updates arrive
+    // live — if they don't, check that setting first.
+    let taskInventoryRealtimeTimer = null;
+    sb.channel('founder_tasks-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'founder_tasks' }, () => {
+        clearTimeout(taskInventoryRealtimeTimer);
+        taskInventoryRealtimeTimer = setTimeout(loadTaskInventory, 300);
+      })
+      .subscribe();
+
     // Major Alerts, folded into Task Inventory 2026-07-19 — founder:
     // "Major alerts can also come here to reminder founder." Reuses
     // the exact same open-bottleneck improvement_signals query
