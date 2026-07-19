@@ -1220,6 +1220,17 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         <button type="button" id="ver-repo-tree-regenerate-btn" style="width:100%; margin-top:8px;">Regenerate</button>
         <p id="ver-repo-tree-status" style="font-size:12px; margin:6px 0 0; min-height:16px;"></p>
       </div>
+      <!-- Task Inventory — ported from katiwala-owner-os-'s Founder
+           mode (founder_tasks table, same shared Supabase project).
+           Genuinely cross-venture (KOS & ODO both), unlike the
+           Building Katiwala tile content this table's own "tool
+           lane" companion came from — that part stays KOS-specific,
+           not ported here. -->
+      <div class="ver-drawer-section">
+        <h4>Task Inventory — KOS &amp; ODO</h4>
+        <p class="sub">Done vs. not done, by priority and phase — a running check so nothing gets forgotten.</p>
+        <div id="ver-task-inventory"></div>
+      </div>
     </div>
   </div>
 
@@ -1340,6 +1351,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       loadAccessRequests();
       loadBaselineCheck();
       loadRepoTree();
+      loadTaskInventory();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -2594,6 +2606,83 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       }
     }
     document.getElementById('ver-repo-tree-regenerate-btn').addEventListener('click', loadRepoTree);
+
+    // Task Inventory — ported from katiwala-owner-os- (founder_tasks
+    // table, same shared Supabase project). "Mark done/Reopen" is a
+    // manual override, same as there — the table itself is meant to
+    // be kept current by whoever's shipping the work, not filled in
+    // via a form.
+    let taskInventoryState = [];
+    const TASK_PRIORITY_RANK = { high: 0, medium: 1, low: 2 };
+    const TASK_PHASE_RANK = { mvp: 0, phase2: 1, phase3: 2 };
+    const TASK_PHASE_LABEL = { mvp: 'MVP', phase2: 'Phase 2', phase3: 'Phase 3' };
+
+    function renderTaskInventory() {
+      const el = document.getElementById('ver-task-inventory');
+      if (!taskInventoryState.length) {
+        el.innerHTML = `<p class="cockpit-not-connected">No tasks tracked yet.</p>`;
+        return;
+      }
+      const sorted = [...taskInventoryState].sort((a, b) => {
+        if (a.status !== b.status) return a.status === 'done' ? 1 : -1;
+        if (TASK_PRIORITY_RANK[a.priority] !== TASK_PRIORITY_RANK[b.priority]) return TASK_PRIORITY_RANK[a.priority] - TASK_PRIORITY_RANK[b.priority];
+        return TASK_PHASE_RANK[a.phase] - TASK_PHASE_RANK[b.phase];
+      });
+      el.innerHTML = ['KOS', 'ODO'].map(eco => {
+        const items = sorted.filter(t => t.ecosystem === eco);
+        if (!items.length) return '';
+        const doneCount = items.filter(t => t.status === 'done').length;
+        return `
+          <div style="margin-bottom:14px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+              <strong style="font-size:13px;">${eco}</strong>
+              <span class="sub" style="margin:0;">${doneCount}/${items.length} done</span>
+            </div>
+            ${items.map(t => `
+              <div style="padding:6px 0; border-bottom:1px solid var(--border);">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                  <span style="font-size:13px; ${t.status === 'done' ? 'text-decoration:line-through; color:var(--slate);' : ''}">${escapeHtml(t.title)}</span>
+                  <button type="button" class="task-inventory-toggle-btn" data-id="${t.id}" data-status="${t.status}" style="width:auto; flex-shrink:0; font-size:11px; padding:3px 8px;">${t.status === 'done' ? 'Reopen' : 'Mark done'}</button>
+                </div>
+                <p class="sub" style="margin:2px 0 0;">${escapeHtml(t.priority)} priority · ${TASK_PHASE_LABEL[t.phase] || t.phase}${t.notes ? ` · ${escapeHtml(t.notes)}` : ''}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }).join('');
+      el.querySelectorAll('.task-inventory-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => toggleTaskInventoryItem(btn.dataset.id, btn.dataset.status));
+      });
+    }
+
+    async function loadTaskInventory() {
+      const el = document.getElementById('ver-task-inventory');
+      const { data, error } = await sb
+        .from('founder_tasks')
+        .select('id, ecosystem, title, status, priority, phase, notes')
+        .order('created_at', { ascending: true });
+      if (error) {
+        el.innerHTML = `<p class="cockpit-not-connected">Couldn't load Task Inventory — ${escapeHtml(error.message)}</p>`;
+        return;
+      }
+      taskInventoryState = data || [];
+      renderTaskInventory();
+    }
+
+    async function toggleTaskInventoryItem(id, currentStatus) {
+      const newStatus = currentStatus === 'done' ? 'not_done' : 'done';
+      const { error } = await sb
+        .from('founder_tasks')
+        .update({ status: newStatus, completed_at: newStatus === 'done' ? new Date().toISOString() : null, updated_at: new Date().toISOString() })
+        .eq('id', id);
+      if (error) {
+        console.error('[task-inventory] toggle failed:', error);
+        return;
+      }
+      const task = taskInventoryState.find(t => t.id === id);
+      if (task) task.status = newStatus;
+      renderTaskInventory();
+    }
 
     // R&D's write side: logs straight into improvement_signals — the
     // same table Intelligence reads — with signal_type: 'idea' to
