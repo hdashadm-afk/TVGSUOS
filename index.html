@@ -1461,7 +1461,16 @@
       <section>
         <button type="button" class="section-toggle" data-topic="Intelligence"><h2>Intelligence — signal synthesis</h2><span class="chevron">▶</span></button>
         <div class="section-body">
-        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">What Kath and Vera are surfacing from real usage — requests, bottlenecks, and what needs founder attention. This is the "Weekly Innovation Summary" signal katiwala-owner-os- built a home for but never populated; it's real and live here.</p>
+        <!-- Description corrected 2026-07-19 — this table reads raw
+             improvement_signals rows, which is NOT the same thing as
+             "Weekly Innovation Summary." That's a separate, curated,
+             editable weekly digest (its own table, weekly_innovation_
+             summary — top_requests/key_bottlenecks/needs_attention/
+             recommended_discussion_points per venture per week),
+             ported from katiwala-owner-os- below this table — a real
+             naming collision this comment previously papered over,
+             found and fixed while doing that port, not before. -->
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">What Kath and Vera are surfacing from real usage — requests, bottlenecks, and what needs founder attention, as individual raw signals.</p>
         <div class="table-wrap">
           <table id="intelligence-table">
             <thead>
@@ -1471,6 +1480,48 @@
           </table>
         </div>
         <p id="intelligence-empty" style="display:none;">No improvement signals logged yet.</p>
+
+        <!-- Weekly Innovation Summary — ported from katiwala-owner-os-
+             2026-07-19, per the founder's Loop Engineering directive
+             ("shall be applied in every process... with the help of
+             all layers, Kath Vera n ver"): this is docs/MASTER_
+             DIRECTION.md §4's own named example of what the "Signal"
+             step looks like — a curated weekly digest per venture,
+             meant to be populated from what Kath/Vera see in real
+             usage, that Ver/Founder OS reviews here to set updated
+             direction. Same weekly_innovation_summary table/columns/
+             (project_scope, week_start) upsert-conflict-key as the
+             source — no schema change. UI adapted to TVGSUOS's own
+             idiom rather than copied verbatim: the source used a popup
+             modal per venture; TVGSUOS has no modal pattern anywhere,
+             so this uses an inline collapsed <details> edit form with
+             a venture <select>, same shape as YC Snapshot's existing
+             edit-form pattern just above Venture Updates. -->
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">Weekly Innovation Summary</h3>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Curated weekly digest per venture — top requests, key bottlenecks, what needs attention, and discussion points. The actual "Signal" step of the KOS/ODO agentic loop (docs/MASTER_DIRECTION.md §4).</p>
+        <div id="weekly-innovation-summary"></div>
+        <details style="margin-top:10px;">
+          <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--slate);">Edit this week's summary</summary>
+          <div class="strategy-form" style="margin-top:10px;">
+            <form id="weekly-innovation-summary-form">
+              <label for="wis-scope">Venture</label>
+              <select id="wis-scope" required>
+                <option value="KOS">KOS</option>
+                <option value="ODO">ODO</option>
+              </select>
+              <label for="wis-top-requests">Top requests</label>
+              <textarea id="wis-top-requests" placeholder="What are users/staff asking for most this week?"></textarea>
+              <label for="wis-key-bottlenecks">Key bottlenecks</label>
+              <textarea id="wis-key-bottlenecks"></textarea>
+              <label for="wis-needs-attention">Needs attention</label>
+              <textarea id="wis-needs-attention"></textarea>
+              <label for="wis-discuss">Discuss <span style="font-weight:400;">(recommended discussion points)</span></label>
+              <textarea id="wis-discuss"></textarea>
+              <button type="submit" id="wis-save-btn">Save summary</button>
+            </form>
+            <p id="wis-status" style="font-size:12px; margin:6px 0 0;"></p>
+          </div>
+        </details>
         </div>
       </section>
 
@@ -1853,6 +1904,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       loadVoiceOfCustomer();
       loadFinance();
       loadIntelligence();
+      loadWeeklyInnovationSummary();
       loadCriticalAlerts();
       loadDecisionQueue();
       loadPriorityTasks();
@@ -2439,6 +2491,103 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         </tr>
       `).join('');
     }
+
+    // Weekly Innovation Summary — ported from katiwala-owner-os-
+    // 2026-07-19 (see the HTML comment above this section for the
+    // full reasoning: this is the Signal step in docs/MASTER_
+    // DIRECTION.md §4's agentic loop, distinct from the raw
+    // improvement_signals table above). Same weekly_innovation_summary
+    // table/columns and (project_scope, week_start) upsert-conflict
+    // key as the source — no schema change.
+    const WIS_SCOPES = ['KOS', 'ODO'];
+    let weeklyInnovationSummaryState = {};
+
+    function mondayOfManilaWeek() {
+      const manilaDateStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
+      const d = new Date(manilaDateStr + 'T00:00:00Z');
+      const day = d.getUTCDay();
+      const diff = (day === 0 ? -6 : 1) - day;
+      d.setUTCDate(d.getUTCDate() + diff);
+      return d.toISOString().slice(0, 10);
+    }
+    function addDaysStr(dateStr, days) {
+      const d = new Date(dateStr + 'T00:00:00Z');
+      d.setUTCDate(d.getUTCDate() + days);
+      return d.toISOString().slice(0, 10);
+    }
+
+    function populateWisForm(scope) {
+      const weekStart = mondayOfManilaWeek();
+      const r = weeklyInnovationSummaryState[scope];
+      const currentWeekRow = r && r.week_start === weekStart ? r : null;
+      document.getElementById('wis-top-requests').value = currentWeekRow?.top_requests || '';
+      document.getElementById('wis-key-bottlenecks').value = currentWeekRow?.key_bottlenecks || '';
+      document.getElementById('wis-needs-attention').value = currentWeekRow?.needs_attention || '';
+      document.getElementById('wis-discuss').value = currentWeekRow?.recommended_discussion_points || '';
+    }
+
+    async function loadWeeklyInnovationSummary() {
+      const el = document.getElementById('weekly-innovation-summary');
+      const { data, error } = await sb
+        .from('weekly_innovation_summary')
+        .select('*')
+        .order('week_start', { ascending: false })
+        .limit(20);
+      if (error) {
+        el.innerHTML = `<p class="cockpit-not-connected">Couldn't load Weekly Innovation Summary — ${escapeHtml(error.message)}</p>`;
+        return;
+      }
+      const rows = data || [];
+      weeklyInnovationSummaryState = {};
+      rows.forEach(r => { if (!weeklyInnovationSummaryState[r.project_scope]) weeklyInnovationSummaryState[r.project_scope] = r; });
+
+      el.innerHTML = WIS_SCOPES.map(scope => {
+        const r = weeklyInnovationSummaryState[scope];
+        let body = `<p style="font-size:14px; color:var(--slate); margin:2px 0;">No summary yet.</p>`;
+        if (r) {
+          body = `
+            <p style="font-size:12px; color:var(--slate); margin:2px 0 6px;">Week of ${new Date(r.week_start).toLocaleDateString()} – ${new Date(r.week_end).toLocaleDateString()}</p>
+            ${r.top_requests ? `<p style="font-size:14px; margin:2px 0;"><strong>Top requests:</strong> ${escapeHtml(r.top_requests)}</p>` : ''}
+            ${r.key_bottlenecks ? `<p style="font-size:14px; margin:2px 0;"><strong>Key bottlenecks:</strong> ${escapeHtml(r.key_bottlenecks)}</p>` : ''}
+            ${r.needs_attention ? `<p style="font-size:14px; margin:2px 0;"><strong>Needs attention:</strong> ${escapeHtml(r.needs_attention)}</p>` : ''}
+            ${r.recommended_discussion_points ? `<p style="font-size:14px; margin:2px 0;"><strong>Discuss:</strong> ${escapeHtml(r.recommended_discussion_points)}</p>` : ''}
+          `;
+        }
+        return `<div style="margin-bottom:14px;"><strong style="font-size:13px;">${scope}</strong>${body}</div>`;
+      }).join('');
+
+      populateWisForm(document.getElementById('wis-scope').value);
+    }
+
+    document.getElementById('wis-scope').addEventListener('change', (e) => populateWisForm(e.target.value));
+
+    document.getElementById('weekly-innovation-summary-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('wis-status');
+      const btn = document.getElementById('wis-save-btn');
+      const scope = document.getElementById('wis-scope').value;
+      const weekStart = mondayOfManilaWeek();
+      const weekEnd = addDaysStr(weekStart, 6);
+      btn.disabled = true;
+      statusEl.textContent = 'Saving…';
+      const { error } = await sb.from('weekly_innovation_summary').upsert({
+        project_scope: scope,
+        week_start: weekStart,
+        week_end: weekEnd,
+        top_requests: document.getElementById('wis-top-requests').value,
+        key_bottlenecks: document.getElementById('wis-key-bottlenecks').value,
+        needs_attention: document.getElementById('wis-needs-attention').value,
+        recommended_discussion_points: document.getElementById('wis-discuss').value,
+      }, { onConflict: 'project_scope,week_start' });
+      btn.disabled = false;
+      if (error) {
+        console.error('[weekly-innovation-summary] save failed:', error);
+        statusEl.textContent = "Couldn't save — check console for details.";
+        return;
+      }
+      statusEl.textContent = 'Saved.';
+      loadWeeklyInnovationSummary();
+    });
 
     // R&D's "Voice of Customer" box — same improvement_signals table
     // as Intelligence above, deliberately filtered to bottleneck_flag
