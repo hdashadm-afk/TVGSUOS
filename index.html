@@ -330,6 +330,7 @@
   }
   .mode-switcher {
     display: inline-flex;
+    flex-wrap: wrap;
     gap: 2px;
     padding: 3px;
     border: 1px solid var(--border);
@@ -337,7 +338,7 @@
     background: var(--surface);
     margin-bottom: 24px;
   }
-  .mode-switcher button {
+  .mode-switcher button, .mode-switcher a {
     display: inline-flex;
     align-items: center;
     padding: 8px 18px;
@@ -351,6 +352,24 @@
   .mode-switcher .mode-active {
     background: var(--brand-blue);
     color: var(--white);
+  }
+  /* "Open KOS/ODO" used to be a separate .quick-links row below the
+     mode switcher — founder, 2026-07-19, circling both in a
+     screenshot: "make this like Mode Founder/KoS/Kweb" (pointing at
+     the KOS pill as the style reference for the "Open KOS" link).
+     Folded into the same pill group as a link variant: same size/
+     shape as the toggle buttons, bordered + brand-blue instead of the
+     flat slate/active-blue toggle look, so it still reads as "go to
+     the real site" rather than another mode option. */
+  .mode-switcher a.mode-switcher-link {
+    color: var(--brand-blue);
+    background: var(--white);
+    border: 1px solid var(--border);
+  }
+  .mode-switcher a.mode-switcher-link:hover {
+    background: var(--brand-blue);
+    color: var(--white);
+    border-color: var(--brand-blue);
   }
   .quick-links {
     display: flex;
@@ -991,21 +1010,21 @@
            mode changed from founder to kos to match "focus on gas
            ops." To un-hide: drop the style="display:none" from the
            ODO button/link below. -->
+      <!-- Same day, reversed the "didn't need to live here" call above:
+           founder circled the Open KOS quick-link and the KOS pill in
+           a screenshot — "make this like Mode Founder/KoS/Kweb." Moved
+           the .quick-links anchors into this same .mode-switcher group
+           as a bordered "link" pill variant (.mode-switcher-link),
+           same size/shape as the toggle buttons but visually distinct
+           so it still reads as "go to the real site," not a third mode
+           option. Same href/target/hidden-state as before, just
+           relocated + restyled — no JS changes. -->
       <div class="mode-switcher" id="ecosystem-toggle" role="group" aria-label="Founder / KOS / ODO view">
         <button type="button" class="ecosystem-toggle-btn" data-ecosystem="founder">Founder</button>
         <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="kos">KOS — Gas Operations</button>
         <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo" style="display:none;">ODO — OwnerDirect</button>
-      </div>
-
-      <!-- Quick links back to each venture's real domain, restored
-           near the top after being dropped from the old FOS/KOS/ODO
-           tab bar — Venture Updates' own "Open …" links are further
-           down the page (and hidden entirely when the other mode is
-           active), so this was the founder's fast path back, not a
-           reason to reinstate the old two-toggle setup. -->
-      <div class="quick-links">
-        <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open KOS — katiwalaai.app →</a>
-        <a href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;">Open ODO — ownerdirect.online →</a>
+        <a class="mode-switcher-link" href="https://katiwalaai.app" target="_blank" rel="noopener">Open KOS — katiwalaai.app →</a>
+        <a class="mode-switcher-link" href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;">Open ODO — ownerdirect.online →</a>
       </div>
 
       <!-- Row 1: KPI strip. Every card is real data from what's
