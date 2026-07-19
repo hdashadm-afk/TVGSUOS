@@ -837,21 +837,29 @@
           <tbody id="yc-snapshot-table-body"></tbody>
         </table>
       </div>
-      <div class="strategy-form" style="margin-top:10px;">
-        <form id="yc-snapshot-form">
-          <label for="yc-snapshot-slug">Product</label>
-          <select id="yc-snapshot-slug" required>
-            <option value="kos">Katiwala AI</option>
-            <option value="odo">OwnerDirect</option>
-          </select>
-          <label for="yc-snapshot-stage-input">Stage</label>
-          <input type="text" id="yc-snapshot-stage-input" placeholder="e.g. Pre-revenue, seeking YC" required>
-          <label for="yc-snapshot-metric-input">Key Metric</label>
-          <input type="text" id="yc-snapshot-metric-input" placeholder="e.g. MRR, pilot conversions" required>
-          <button type="submit" id="yc-snapshot-save-btn">Save</button>
-        </form>
-        <p id="yc-snapshot-status" style="font-size:12px; margin:6px 0 0;"></p>
-      </div>
+      <!-- Collapsed by default (founder request, 2026-07-19) — this
+           form used to sit permanently expanded, taking up vertical
+           space even when there was nothing to edit. Native <details>
+           needs no JS wiring; the table above stays always-visible
+           since that's the actual data, not the editing UI. -->
+      <details style="margin-top:10px;">
+        <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--slate);">Edit YC Snapshot</summary>
+        <div class="strategy-form" style="margin-top:10px;">
+          <form id="yc-snapshot-form">
+            <label for="yc-snapshot-slug">Product</label>
+            <select id="yc-snapshot-slug" required>
+              <option value="kos">Katiwala AI</option>
+              <option value="odo">OwnerDirect</option>
+            </select>
+            <label for="yc-snapshot-stage-input">Stage</label>
+            <input type="text" id="yc-snapshot-stage-input" placeholder="e.g. Pre-revenue, seeking YC" required>
+            <label for="yc-snapshot-metric-input">Key Metric</label>
+            <input type="text" id="yc-snapshot-metric-input" placeholder="e.g. MRR, pilot conversions" required>
+            <button type="submit" id="yc-snapshot-save-btn">Save</button>
+          </form>
+          <p id="yc-snapshot-status" style="font-size:12px; margin:6px 0 0;"></p>
+        </div>
+      </details>
 
       <!-- Venture Updates: KOS and ODO's project status, native to
            TVGSUOS instead of only living inside KOS's own app. Each
