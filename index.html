@@ -841,10 +841,18 @@
            and both cards are visible in Founder mode anyway. Default
            Founder, not KOS — this is Founder OS, land on the whole
            picture, drill into one venture only when asked. -->
+      <!-- ODO hidden from the toggle + quick-links, 2026-07-19,
+           founder request: "hide ODO, focus on gas ops." Reversible —
+           display:none, not deleted, and Founder mode (still
+           selectable) is deliberately untouched, still whole-org
+           including ODO data if the founder clicks into it. Default
+           mode changed from founder to kos to match "focus on gas
+           ops." To un-hide: drop the style="display:none" from the
+           ODO button/link below. -->
       <div class="mode-switcher" id="ecosystem-toggle" role="group" aria-label="Founder / KOS / ODO view">
-        <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="founder">Founder</button>
-        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="kos">KOS — Gas Operations</button>
-        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo">ODO — OwnerDirect</button>
+        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="founder">Founder</button>
+        <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="kos">KOS — Gas Operations</button>
+        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo" style="display:none;">ODO — OwnerDirect</button>
       </div>
 
       <!-- Quick links back to each venture's real domain, restored
@@ -855,7 +863,7 @@
            reason to reinstate the old two-toggle setup. -->
       <div class="quick-links">
         <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open KOS — katiwalaai.app →</a>
-        <a href="https://ownerdirect.online" target="_blank" rel="noopener">Open ODO — ownerdirect.online →</a>
+        <a href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;">Open ODO — ownerdirect.online →</a>
       </div>
 
       <!-- Row 1: KPI strip. Every card is real data from what's
@@ -2221,7 +2229,11 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       kos: ['kos', 'staff_verified', 'gas_ops'],
       odo: ['tv', 'rv'],
     };
-    let currentEcosystem = 'founder';
+    // Default KOS, not Founder — 2026-07-19, founder request to hide
+    // ODO and focus on gas ops. Founder mode is still fully selectable
+    // and still whole-org (incl. ODO data) if clicked; this only
+    // changes what loads first.
+    let currentEcosystem = 'kos';
 
     // Row 1 KPI strip — real data only, mode-aware. Anything without
     // a live source reads "Not connected" rather than a fabricated
