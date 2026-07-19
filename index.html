@@ -310,6 +310,19 @@
     background: var(--brand-blue);
     color: var(--white);
   }
+  .quick-links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 12px 0 24px;
+  }
+  .quick-links a {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-blue);
+    text-decoration: none;
+  }
+  .quick-links a:hover { text-decoration: underline; }
   .ecosystem-toggle-btn {
     border: none;
     background: none;
@@ -749,6 +762,17 @@
         <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="founder">Founder</button>
         <button type="button" class="ecosystem-toggle-btn" data-ecosystem="kos">KOS — Gas Operations</button>
         <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo">ODO — OwnerDirect</button>
+      </div>
+
+      <!-- Quick links back to each venture's real domain, restored
+           near the top after being dropped from the old FOS/KOS/ODO
+           tab bar — Venture Updates' own "Open …" links are further
+           down the page (and hidden entirely when the other mode is
+           active), so this was the founder's fast path back, not a
+           reason to reinstate the old two-toggle setup. -->
+      <div class="quick-links">
+        <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open KOS — katiwalaai.app →</a>
+        <a href="https://ownerdirect.online" target="_blank" rel="noopener">Open ODO — ownerdirect.online →</a>
       </div>
 
       <!-- Row 1: KPI strip. Every card is real data from what's
