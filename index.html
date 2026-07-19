@@ -728,6 +728,20 @@
       <button type="submit" id="set-password-btn">Set password</button>
       <p id="set-password-status"></p>
     </form>
+
+    <!-- Role gate: TVGSUOS shares its auth backend with
+         katiwala-owner-os- (same Supabase project), whose login is
+         explicitly self-serve — anyone can sign in with any email.
+         Signing in here used to grant the full founder dashboard to
+         anyone with a KOS account, staff included. This panel is
+         what a signed-in-but-unauthorized user sees instead of
+         showApp() — see resolveCurrentUser(). Fails closed: no
+         app_users row or role !== 'founder' both land here, same as
+         katiwala-owner-os-'s own "pending" behavior. -->
+    <div id="not-authorized-panel" style="display:none;">
+      <p style="font-size:14px; color:var(--slate); margin:0 0 16px;">Your account is signed in but not authorized for TVGSUOS — this is a founder-only app. If you're the founder, ask the other account to grant you 'founder' access via Access Requests.</p>
+      <button type="button" id="not-authorized-signout-btn">Sign out</button>
+    </div>
   </div>
 
   <div id="app">
@@ -1054,6 +1068,28 @@
           <li>Kath and Vera escalate to Ver: blockers needing founder-level resourcing or cross-venture coordination — not routine operations.</li>
           <li>Non-redundancy rule: Ver never duplicates Kath/Vera domain reasoning; Kath/Vera never own founder-level orchestration.</li>
         </ul>
+
+        <!-- Access Requests — ported from katiwala-owner-os-'s Founder
+             mode (migration 010's list_pending_users()/grant_user_access()
+             RPCs, already callable here since TVGSUOS shares the same
+             Supabase auth project). Anyone who signs in anywhere on this
+             shared auth backend with no app_users row lands here, same
+             "self-serve signup, founder grants access" model as the
+             other app. This is also what closes the role-gate loop
+             above — a stranger signing into TVGSUOS for the first time
+             now needs a real 'founder'-role grant, not just a login. -->
+        <p style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 8px;">Access Requests</p>
+        <p style="font-size:14px; color:var(--slate); margin:0 0 12px;">People who signed in (here or on katiwala-owner-os-'s shared login) but don't have a role yet — no SQL editor needed.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Email</th><th>Signed in</th><th>Grant</th></tr>
+            </thead>
+            <tbody id="access-requests-tbody"></tbody>
+          </table>
+        </div>
+        <p id="access-requests-empty" style="display:none;">No pending access requests.</p>
+        <p id="access-requests-status" style="font-size:12px; margin:8px 0 0;"></p>
         </div>
       </section>
 
@@ -1220,6 +1256,41 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       document.getElementById('login-forgot-link').style.display = which === 'login' ? 'block' : 'none';
       forgotForm.style.display = which === 'forgot' ? 'block' : 'none';
       setPasswordForm.style.display = which === 'set-password' ? 'block' : 'none';
+      document.getElementById('not-authorized-panel').style.display = 'none';
+    }
+
+    // Role gate — see the HTML comment above #not-authorized-panel
+    // for why this exists. Fails closed: any error, no app_users
+    // row, or role !== 'founder' all land here, never showApp().
+    async function resolveCurrentUserRole(session) {
+      try {
+        const { data, error } = await sb.from('app_users').select('role').eq('id', session.user.id).maybeSingle();
+        if (error) throw error;
+        return data ? data.role : null;
+      } catch (err) {
+        console.error('[auth] role lookup failed:', err);
+        return null;
+      }
+    }
+
+    function showNotAuthorized() {
+      loginScreen.style.display = 'block';
+      appEl.style.display = 'none';
+      document.getElementById('ver-toggle-btn').style.display = 'none';
+      loginForm.style.display = 'none';
+      document.getElementById('login-forgot-link').style.display = 'none';
+      forgotForm.style.display = 'none';
+      setPasswordForm.style.display = 'none';
+      document.getElementById('not-authorized-panel').style.display = 'block';
+    }
+
+    async function handleSignedIn(session) {
+      const role = await resolveCurrentUserRole(session);
+      if (role === 'founder') {
+        showApp();
+      } else {
+        showNotAuthorized();
+      }
     }
 
     function showApp() {
@@ -1242,6 +1313,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       loadVentureUpdates();
       loadVerDesk();
       loadVerHistory();
+      loadAccessRequests();
     }
     function showLogin() {
       loginScreen.style.display = 'block';
@@ -1554,6 +1626,79 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           </div>
         </li>
       `).join('');
+    }
+
+    // Access Requests — ported from katiwala-owner-os- (migration
+    // 010's RPCs, same shared Supabase project/auth). list_pending_users()
+    // and grant_user_access() are both SECURITY DEFINER, hard-gated
+    // server-side to edc.helium@gmail.com only — nothing new to secure
+    // here, this just calls what already exists.
+    const ACCESS_REQUEST_ROLES = ['founder', 'internal_admin', 'client_owner', 'client_staff'];
+    const ACCESS_REQUEST_SCOPES = [
+      { value: '', label: 'No restriction' },
+      { value: 'kos', label: 'KOS' },
+    ];
+
+    async function loadAccessRequests() {
+      const tbody = document.getElementById('access-requests-tbody');
+      const emptyEl = document.getElementById('access-requests-empty');
+      const statusEl = document.getElementById('access-requests-status');
+      const { data, error } = await sb.rpc('list_pending_users');
+      if (error) {
+        tbody.innerHTML = '';
+        emptyEl.textContent = "Couldn't load access requests — " + error.message;
+        emptyEl.style.display = 'block';
+        return;
+      }
+      if (!data || !data.length) {
+        tbody.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      tbody.innerHTML = data.map(u => `
+        <tr data-user-id="${u.id}" data-user-email="${escapeHtml(u.email || '')}">
+          <td>${escapeHtml(u.email || '(no email)')}</td>
+          <td>${new Date(u.created_at).toLocaleDateString()}</td>
+          <td style="white-space:nowrap;">
+            <select class="access-request-role">
+              ${ACCESS_REQUEST_ROLES.map(r => `<option value="${r}"${r === 'founder' ? ' selected' : ''}>${r}</option>`).join('')}
+            </select>
+            <select class="access-request-scope">
+              ${ACCESS_REQUEST_SCOPES.map(s => `<option value="${s.value}">${s.label}</option>`).join('')}
+            </select>
+            <button type="button" class="access-request-grant-btn">Grant</button>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.querySelectorAll('.access-request-grant-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const row = btn.closest('tr');
+          const targetId = row.dataset.userId;
+          const targetEmail = row.dataset.userEmail;
+          const role = row.querySelector('.access-request-role').value;
+          const scope = row.querySelector('.access-request-scope').value || null;
+          btn.disabled = true;
+          btn.textContent = 'Granting…';
+          const { error: grantError } = await sb.rpc('grant_user_access', {
+            target_id: targetId,
+            target_email: targetEmail,
+            new_role: role,
+            new_workspace_scope: scope,
+          });
+          if (grantError) {
+            statusEl.style.color = 'var(--danger)';
+            statusEl.textContent = `Couldn't grant access to ${targetEmail} — ${grantError.message}`;
+            btn.disabled = false;
+            btn.textContent = 'Grant';
+            return;
+          }
+          statusEl.style.color = 'var(--good)';
+          statusEl.textContent = `Granted '${role}' to ${targetEmail}.`;
+          loadAccessRequests();
+        });
+      });
     }
 
     // Marketing: go-to-market oversight across ventures. Both
@@ -2448,7 +2593,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         appEl.style.display = 'none';
         showLoginSubview('set-password');
       } else if (event === 'SIGNED_IN' && session && !isPasswordRecovery) {
-        showApp();
+        handleSignedIn(session);
       } else if (event === 'SIGNED_OUT') {
         showLogin();
       }
@@ -2456,6 +2601,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     sb.auth.getSession().then(({ data }) => {
       if (!data.session) showLogin();
     });
+    document.getElementById('not-authorized-signout-btn').addEventListener('click', () => sb.auth.signOut());
   </script>
 </body>
 </html>
