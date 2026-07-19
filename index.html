@@ -823,21 +823,34 @@
            opening anything. AI Tools: 5 external/in-page shortcut
            links. Voice of Customer: real, non-bottleneck rows from the
            same improvement_signals table Intelligence reads — fuel for
-           R&D ideas, not incident tracking. -->
-      <div class="strategy-form" style="margin:12px 0 0;">
-        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">AI Tools</h3>
-        <div class="quick-links" style="margin:0 0 20px;">
-          <a href="https://www.perplexity.ai" target="_blank" rel="noopener">Perplexity →</a>
-          <a href="https://claude.ai" target="_blank" rel="noopener">Claude →</a>
-          <a href="https://www.notion.so" target="_blank" rel="noopener">Notion →</a>
-          <a href="https://github.com/hdashadm-afk/TVGSUOS/blob/main/docs/MASTER_DIRECTION.md" target="_blank" rel="noopener">Master Direction →</a>
-          <a href="#" id="rd-jump-baseline">Daily Baseline Check →</a>
+           R&D ideas, not incident tracking.
+
+           2026-07-19, third pass: it was un-collapsible, so on mobile
+           it pushed Needs Your Attention below the fold every time —
+           founder: "here I eat all my mobile space." Wrapped in the
+           same section-toggle/section-body accordion every governance
+           area already uses (closed by default, same tap-to-expand
+           gesture the founder already knows from the rest of the
+           page), instead of inventing a second collapse pattern. -->
+      <section>
+        <button type="button" class="section-toggle"><h2>AI Tools &amp; Voice of Customer</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
+        <div class="strategy-form" style="margin:12px 0 0;">
+          <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">AI Tools</h3>
+          <div class="quick-links" style="margin:0 0 20px;">
+            <a href="https://www.perplexity.ai" target="_blank" rel="noopener">Perplexity →</a>
+            <a href="https://claude.ai" target="_blank" rel="noopener">Claude →</a>
+            <a href="https://www.notion.so" target="_blank" rel="noopener">Notion →</a>
+            <a href="https://github.com/hdashadm-afk/TVGSUOS/blob/main/docs/MASTER_DIRECTION.md" target="_blank" rel="noopener">Master Direction →</a>
+            <a href="#" id="rd-jump-baseline">Daily Baseline Check →</a>
+          </div>
+          <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Voice of Customer</h3>
+          <p style="font-size:14px; color:var(--slate); margin:-8px 0 12px;">Real, non-bottleneck signals from KOS and ODO usage — fuel for R&D ideas, not incident tracking (that's Intelligence, further down).</p>
+          <ul class="decision-list" id="rd-voice-of-customer" style="margin:0;"></ul>
+          <p id="rd-voice-of-customer-empty" style="display:none; font-size:14px; color:var(--slate);">No non-bottleneck signals logged yet.</p>
         </div>
-        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Voice of Customer</h3>
-        <p style="font-size:14px; color:var(--slate); margin:-8px 0 12px;">Real, non-bottleneck signals from KOS and ODO usage — fuel for R&D ideas, not incident tracking (that's Intelligence, further down).</p>
-        <ul class="decision-list" id="rd-voice-of-customer" style="margin:0;"></ul>
-        <p id="rd-voice-of-customer-empty" style="display:none; font-size:14px; color:var(--slate);">No non-bottleneck signals logged yet.</p>
-      </div>
+        </div>
+      </section>
 
       <!-- Needs Your Attention — founder request, 2026-07-19, modeled
            on KOS's Morning Brief tile grid. Fixed whole-org counts,
