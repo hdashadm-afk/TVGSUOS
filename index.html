@@ -453,25 +453,27 @@
      so open vs. closed stays visually obvious without needing the
      chevron (removed from markup — no room/need in a small icon
      tile).
-     Kept as a separate row rather than merging into .tool-tile-row
-     itself: that container is a real flex row, and a .section-body
-     that expands to display:block would become a flex item there too
-     (flex containers override any non-none child into item layout),
-     likely squeezing it into the same row instead of dropping full-
-     width below — visually broken. Same width/shape instead gets the
-     "aligned with logos" look without that risk. Still inline-flex/
-     shrink-to-fit, so the three sit flush together when collapsed
-     (their .section-body siblings are display:none, contributing no
-     layout space) and any one expanding still just pushes later tiles
-     to a new line — no changes to the shared click-wiring JS, which
-     keys off btn.nextElementSibling. */
+     Originally kept as a separate row below .tool-tile-row rather than
+     merged into it, reasoning a .section-body expanding to
+     display:block would become an unwanted flex item there too and
+     squeeze rather than drop full-width. Reversed same day — founder:
+     "Why don't u align the tiles like the logos to save space... I'm
+     trying save space." Right call: Gemini alone left 3 tile-slots of
+     empty space in that row. The blocker wasn't real — .tool-tile-row
+     already has flex-wrap:wrap, so `.tool-tile-row > .section-body.
+     expanded { flex: 1 1 100%; }` (standard flex-wrap line-break
+     trick) forces the expanding body onto its own full-width line
+     same as before, while V/T/N now genuinely share the row and fill
+     the gap next to Gemini when collapsed. No change to click-wiring
+     — still keys off btn.nextElementSibling regardless of which
+     parent contains the button/body pair. */
   .strategy-form .section-toggle.tab-toggle {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
     width: 64px;
-    margin: 0 14px 12px 0;
+    margin: 0;
     padding: 0;
     background: none;
     border: none;
@@ -503,6 +505,13 @@
     text-align: center;
     color: var(--slate);
   }
+  /* Standard "flex line break" trick: inside .tool-tile-row's wrapping
+     flex layout, a wrapped item can be forced onto its own new line by
+     giving it flex-basis:100% — so VOC/Tasks/Notes's .section-body
+     still expands to a full-width block (pushing later tiles below
+     it) even while genuinely sharing the row with the AI logos, not
+     just sitting in a visually-matched row beneath them. */
+  .tool-tile-row > .section-body.expanded { flex: 1 1 100%; }
   .ecosystem-toggle-btn {
     border: none;
     background: none;
@@ -1065,7 +1074,25 @@
               <span class="tool-tile-icon" style="background:linear-gradient(135deg,#4285F4,#9B72CB 55%,#D96570);">G</span>
               <span class="tool-tile-label">Gemini</span>
             </a>
-          </div>
+          <!-- VOC/Tasks/Notes moved inside .tool-tile-row itself,
+               2026-07-19 — founder pushed back on the previous pass
+               keeping them in a separate row below: "Why don't u align
+               the tiles like the logos to save space... I'm trying
+               save space." Right call — Gemini alone left 3 tile-slots
+               of empty space in this row, and the earlier reasoning
+               for keeping them separate (a flex item can't become
+               full-width when it expands) turned out solvable, not a
+               hard blocker: .tool-tile-row already has flex-wrap:wrap,
+               so a wrapped flex item can be forced onto its own new
+               line by giving it flex-basis:100% — a standard "flex
+               line break" technique. See .tool-tile-row > .section-
+               body.expanded below. Now V/T/N genuinely fill the gap
+               next to Gemini when collapsed, and still drop to a
+               full-width line when one expands, pushing later tiles
+               below it — same as before, just actually sharing the
+               row instead of merely matching its look. No JS changes
+               — click-wiring still keys off btn.nextElementSibling,
+               unaffected by which parent contains the pair. -->
           <!-- Voice of Customer, own collapsible sub-toggle — founder,
                2026-07-19, pointing at a screenshot of this exact spot:
                "Voice of customer shrinkable." AI Tools above stays
@@ -1141,6 +1168,7 @@
             <button type="submit" id="quick-capture-btn">Save note</button>
           </form>
           <p id="quick-capture-status" style="font-size:12px; margin:6px 0 0;"></p>
+          </div>
           </div>
           </div>
           <!-- Master Direction/Daily Baseline Check, moved to the
