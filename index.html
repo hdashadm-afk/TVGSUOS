@@ -362,6 +362,8 @@
      flat slate/active-blue toggle look, so it still reads as "go to
      the real site" rather than another mode option. */
   .mode-switcher a.mode-switcher-link {
+    padding-left: 14px;
+    padding-right: 14px;
     color: var(--brand-blue);
     background: var(--white);
     border: 1px solid var(--border);
@@ -857,6 +859,47 @@
           <p class="wordmark-sub">Founder OS</p>
         </div>
       </div>
+
+      <!-- One 3-way toggle, not two separate ones. This used to be a
+           FOS/KOS/ODO tab bar (FOS a static label, KOS/ODO external
+           links out to their own domains) sitting above a second,
+           different KOS/ODO in-page filter — confusing, two things
+           doing similar-sounding but different jobs. Founder asked to
+           unify: Founder / KOS / ODO is now the one real toggle.
+           Founder = whole-org combined view (both ventures together,
+           same as this page originally showed before per-ecosystem
+           filtering existed). KOS/ODO = the individual filtered
+           lenses already built.
+           ODO hidden from the toggle + link, 2026-07-19, founder
+           request: "hide ODO, focus on gas ops." Reversible —
+           display:none, not deleted. Default mode kos, not founder,
+           to match "focus on gas ops." To un-hide: drop the
+           style="display:none" from the ODO button/link below.
+           Open KOS/ODO links folded into this same pill group as a
+           bordered "link" variant (.mode-switcher-link) same day,
+           founder: "make this like Mode Founder/KoS/Kweb... I want
+           those in mode control to save space."
+           Relocated here, to the very top of the page (above Phase 4/
+           Today's Verse/Needs Your Attention), 2026-07-19 — founder
+           screenshot with an arrow pointing at the blank space under
+           Sign Out: "Relocate on top." Toggle behavior unchanged
+           (loadKpiGrid etc. all key off #ecosystem-toggle's
+           .ecosystem-toggle-btn buttons by class/id, not page
+           position). Labels shortened same message ("make it like
+           lesser words to reduce space") — "KOS — Gas Operations" to
+           "KOS", "ODO — OwnerDirect" to "ODO", and the Open KOS/ODO
+           links to an icon-only "↗" (title attr keeps the full
+           destination for a11y/tooltip) — this row now has to share
+           header space with Sign Out instead of a full-width strip
+           further down. -->
+      <div class="mode-switcher" id="ecosystem-toggle" role="group" aria-label="Founder / KOS / ODO view">
+        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="founder">Founder</button>
+        <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="kos">KOS</button>
+        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo" style="display:none;">ODO</button>
+        <a class="mode-switcher-link" href="https://katiwalaai.app" target="_blank" rel="noopener" title="Open KOS — katiwalaai.app">↗</a>
+        <a class="mode-switcher-link" href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;" title="Open ODO — ownerdirect.online">↗</a>
+      </div>
+
       <span class="status"><span class="dot"></span>Phase 4 — all 9 governance areas live, deployed 2026-07-18</span>
 
       <!-- Today's Verse — moved here from katiwala-owner-os-'s
@@ -875,19 +918,26 @@
 
       <!-- Needs Your Attention — founder request, 2026-07-19, modeled
            on KOS's Morning Brief tile grid. Fixed whole-org counts,
-           deliberately NOT mode-aware (unlike the KPI grid below) —
-           this sits above the Founder/KOS/ODO toggle so it reads the
-           same regardless of which mode is selected: everything that
-           genuinely needs attention right now, in one glance, no
-           scrolling through all 9 governance-area cards to find it.
-           Not new data — same counts loadKpiGrid/loadAccessRequests/
-           loadTaskInventory already compute, just surfaced together
-           here first. See loadAttentionTiles().
+           deliberately NOT mode-aware (unlike the KPI grid below): it
+           reads the same regardless of which mode is selected —
+           everything that genuinely needs attention right now, in one
+           glance, no scrolling through all 9 governance-area cards to
+           find it. Not new data — same counts loadKpiGrid/
+           loadAccessRequests/loadTaskInventory already compute, just
+           surfaced together here first. See loadAttentionTiles().
 
            2026-07-19, fourth pass: moved above AI Tools & Voice of
            Customer — founder: "Alerts are more important than
            Research and AI tools." Alerts is now the first real
-           content on the page after Today's Verse. -->
+           content on the page after Today's Verse.
+
+           2026-07-19, fifth pass: the Founder/KOS/ODO toggle itself
+           relocated above this (now up near Sign Out/brand-row,
+           "Relocate on top") — its mode-independence is a data
+           property (the query never filters by currentEcosystem), not
+           a position one, so this note's original "reads the same
+           regardless of mode" claim still holds even though the
+           toggle no longer sits directly below it. -->
       <p class="cockpit-label" style="margin-top:0;">Needs Your Attention</p>
       <div class="kpi-grid" id="attention-tiles"></div>
 
@@ -987,45 +1037,6 @@
         </div>
       </section>
 
-      <!-- One 3-way toggle, not two separate ones. This used to be a
-           FOS/KOS/ODO tab bar (FOS a static label, KOS/ODO external
-           links out to their own domains) sitting above a second,
-           different KOS/ODO in-page filter — confusing, two things
-           doing similar-sounding but different jobs. Founder asked to
-           unify: Founder / KOS / ODO is now the one real toggle.
-           Founder = whole-org combined view (both ventures together,
-           same as this page originally showed before per-ecosystem
-           filtering existed). KOS/ODO = the individual filtered
-           lenses already built. External nav to katiwalaai.app/
-           ownerdirect.online didn't need to live here separately —
-           each Venture Update card already has its own "Open …" link,
-           and both cards are visible in Founder mode anyway. Default
-           Founder, not KOS — this is Founder OS, land on the whole
-           picture, drill into one venture only when asked. -->
-      <!-- ODO hidden from the toggle + quick-links, 2026-07-19,
-           founder request: "hide ODO, focus on gas ops." Reversible —
-           display:none, not deleted, and Founder mode (still
-           selectable) is deliberately untouched, still whole-org
-           including ODO data if the founder clicks into it. Default
-           mode changed from founder to kos to match "focus on gas
-           ops." To un-hide: drop the style="display:none" from the
-           ODO button/link below. -->
-      <!-- Same day, reversed the "didn't need to live here" call above:
-           founder circled the Open KOS quick-link and the KOS pill in
-           a screenshot — "make this like Mode Founder/KoS/Kweb." Moved
-           the .quick-links anchors into this same .mode-switcher group
-           as a bordered "link" pill variant (.mode-switcher-link),
-           same size/shape as the toggle buttons but visually distinct
-           so it still reads as "go to the real site," not a third mode
-           option. Same href/target/hidden-state as before, just
-           relocated + restyled — no JS changes. -->
-      <div class="mode-switcher" id="ecosystem-toggle" role="group" aria-label="Founder / KOS / ODO view">
-        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="founder">Founder</button>
-        <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="kos">KOS — Gas Operations</button>
-        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo" style="display:none;">ODO — OwnerDirect</button>
-        <a class="mode-switcher-link" href="https://katiwalaai.app" target="_blank" rel="noopener">Open KOS — katiwalaai.app →</a>
-        <a class="mode-switcher-link" href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;">Open ODO — ownerdirect.online →</a>
-      </div>
 
       <!-- Row 1: KPI strip. Every card is real data from what's
            already built this session (Strategy/Product/Finance/
