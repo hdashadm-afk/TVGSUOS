@@ -126,6 +126,9 @@ ${docsContext}${liveContext}`,
     const anthropicData = await anthropicRes.json();
     const content = anthropicData.content || [];
     const answer = content.filter(b => b.type === 'text').map(b => b.text || '').join('').trim() || 'No answer text returned.';
+    if (answer === 'No answer text returned.') {
+      console.error('[ask-ver] empty answer, raw response:', JSON.stringify(anthropicData));
+    }
 
     // Fire-and-forget: Ver identified a real follow-up via the tool
     // call above. No need to send a tool_result back — this isn't a
