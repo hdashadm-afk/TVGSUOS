@@ -2023,17 +2023,23 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     async function loadAttentionTiles() {
       const el = document.getElementById('attention-tiles');
       try {
-        const [decisionsRes, alertsRes, accessRes, taskRes] = await Promise.all([
+        const weekOut = new Date(Date.now() + 7 * 86400000);
+        const [decisionsRes, alertsRes, accessRes, taskRes, complianceRes, signalsRes] = await Promise.all([
           sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open').neq('project_id', WPOS_PROJECT_ID),
           sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true).eq('status', 'open').not('project_scope', 'ilike', '%wp%os%'),
           sb.rpc('list_pending_users'),
           sb.from('founder_tasks').select('id', { count: 'exact', head: true }).eq('status', 'not_done').eq('priority', 'high'),
+          sb.from('compliance_items').select('due_date, status'),
+          sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', false).eq('status', 'open').not('project_scope', 'ilike', '%wp%os%'),
         ]);
+        const complianceDue = complianceRes.error ? null : (complianceRes.data || []).filter(c => c.status !== 'complete' && c.due_date && new Date(c.due_date) <= weekOut).length;
         const tiles = [
           { name: 'Critical Alerts', value: alertsRes.count, sub: 'Open bottlenecks, whole org' },
           { name: 'Open Decisions', value: decisionsRes.count, sub: 'Awaiting a founder call' },
           { name: 'Access Requests', value: accessRes.error ? null : (accessRes.data || []).length, sub: 'Signed in, no role yet' },
           { name: 'High-Priority Tasks', value: taskRes.count, sub: 'Not done, high priority' },
+          { name: 'Compliance Due Soon', value: complianceDue, sub: 'Due within 7 days' },
+          { name: 'Priority Signals', value: signalsRes.count, sub: 'Open, non-bottleneck' },
         ];
         el.innerHTML = tiles.map(t => {
           const known = t.value != null;
