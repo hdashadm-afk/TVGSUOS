@@ -295,7 +295,7 @@
     background: var(--surface);
     margin-bottom: 24px;
   }
-  .mode-switcher a, .mode-switcher span {
+  .mode-switcher button {
     display: inline-flex;
     align-items: center;
     padding: 8px 18px;
@@ -304,17 +304,11 @@
     font-size: 13px;
     letter-spacing: 0.02em;
     text-decoration: none;
+    font-family: inherit;
   }
   .mode-switcher .mode-active {
     background: var(--brand-blue);
     color: var(--white);
-  }
-  .mode-switcher a {
-    color: var(--slate);
-  }
-  .mode-switcher a:hover {
-    background: var(--white);
-    color: var(--brand-blue);
   }
   .ecosystem-toggle-btn {
     border: none;
@@ -736,21 +730,24 @@
       </div>
       <span class="status"><span class="dot"></span>Phase 4 — all 9 governance areas live, deployed 2026-07-18</span>
 
-      <div class="mode-switcher">
-        <span class="mode-active">FOS</span>
-        <a href="https://katiwalaai.app" target="_blank" rel="noopener">KOS</a>
-        <a href="https://ownerdirect.online" target="_blank" rel="noopener">ODO</a>
-      </div>
-
-      <!-- Ecosystem toggle: KOS-only / ODO-only lens over the KPI
-           strip, Critical Alerts, Project Health, and the Product
-           rollup table below (that table doubles as the "Projects
-           view" — no separately-named Projects page exists yet).
-           Purely a view-layer filter: swaps which real rows/counts
-           each load function queries, never touches underlying data.
-           Default KOS, per founder's instruction. -->
-      <div class="mode-switcher" id="ecosystem-toggle" role="group" aria-label="Ecosystem view">
-        <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="kos">KOS — Gas Operations</button>
+      <!-- One 3-way toggle, not two separate ones. This used to be a
+           FOS/KOS/ODO tab bar (FOS a static label, KOS/ODO external
+           links out to their own domains) sitting above a second,
+           different KOS/ODO in-page filter — confusing, two things
+           doing similar-sounding but different jobs. Founder asked to
+           unify: Founder / KOS / ODO is now the one real toggle.
+           Founder = whole-org combined view (both ventures together,
+           same as this page originally showed before per-ecosystem
+           filtering existed). KOS/ODO = the individual filtered
+           lenses already built. External nav to katiwalaai.app/
+           ownerdirect.online didn't need to live here separately —
+           each Venture Update card already has its own "Open …" link,
+           and both cards are visible in Founder mode anyway. Default
+           Founder, not KOS — this is Founder OS, land on the whole
+           picture, drill into one venture only when asked. -->
+      <div class="mode-switcher" id="ecosystem-toggle" role="group" aria-label="Founder / KOS / ODO view">
+        <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="founder">Founder</button>
+        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="kos">KOS — Gas Operations</button>
         <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo">ODO — OwnerDirect</button>
       </div>
 
@@ -1430,7 +1427,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       const bySlug = {};
       (data || []).forEach(p => { bySlug[p.slug] = p; });
       const rows = PRODUCT_ROLLUP_ROWS
-        .filter(r => r.ecosystem === currentEcosystem)
+        .filter(r => currentEcosystem === 'founder' || r.ecosystem === currentEcosystem)
         .map(r => ({ ...r, source: bySlug[r.sourceSlug] }));
       if (!rows.some(r => r.source)) {
         bodyEl.innerHTML = '';
@@ -1754,17 +1751,17 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       // project_scope is real, controlled free text (confirmed live
       // values: 'KOS', 'ODO', 'WP_OS', 'TVGSUOS') — exact match on
       // the active ecosystem's uppercase name is reliable, unlike a
-      // fuzzy ilike. TVGSUOS-scoped alerts (not tied to either
-      // venture) intentionally show in neither mode, same reasoning
-      // as hiding the TVGSUOS row from the Product rollup below.
-      const { data } = await sb
+      // fuzzy ilike. Founder mode shows every scope (minus WP OS) —
+      // "whole org," not filtered to one venture.
+      let query = sb
         .from('improvement_signals')
         .select('project_scope, signal_summary')
         .eq('status', 'open')
-        .eq('bottleneck_flag', true)
-        .eq('project_scope', currentEcosystem.toUpperCase())
-        .order('attention_score', { ascending: false, nullsFirst: false })
-        .limit(10);
+        .eq('bottleneck_flag', true);
+      query = currentEcosystem === 'founder'
+        ? query.not('project_scope', 'ilike', '%wp%os%')
+        : query.eq('project_scope', currentEcosystem.toUpperCase());
+      const { data } = await query.order('attention_score', { ascending: false, nullsFirst: false }).limit(10);
       const items = (data || [])
         .filter(s => !isWposScope(s.project_scope))
         .map(s => ({ tag: 'Bottleneck', label: `${s.project_scope || 'Unscoped'}: ${s.signal_summary || 'Untitled signal'}` }));
@@ -1832,7 +1829,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       kos: ['kos', 'staff_verified', 'gas_ops'],
       odo: ['tv', 'rv'],
     };
-    let currentEcosystem = 'kos';
+    let currentEcosystem = 'founder';
 
     // Row 1 KPI strip — real data only, mode-aware. Anything without
     // a live source reads "Not connected" rather than a fabricated
@@ -1851,7 +1848,12 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // docs/GOVERNANCE_MODEL.md's ownership table).
     async function loadKpiGrid() {
       const el = document.getElementById('kpi-grid');
-      const modeSlugs = ECOSYSTEM_SLUGS[currentEcosystem];
+      const isFounder = currentEcosystem === 'founder';
+      // Founder mode = whole org: every module across both
+      // ecosystems, same set this page originally used before
+      // per-ecosystem filtering existed. KOS/ODO modes stay scoped
+      // to their own ECOSYSTEM_SLUGS entry.
+      const modeSlugs = isFounder ? [...ECOSYSTEM_SLUGS.kos, ...ECOSYSTEM_SLUGS.odo] : ECOSYSTEM_SLUGS[currentEcosystem];
 
       const [projectsRes, kosStatusRes, tvRes, rvRes, lastGovernanceNote] = await Promise.all([
         sb.from('projects').select('id, slug, project_status(build_readiness)').in('slug', modeSlugs),
@@ -1869,14 +1871,24 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       }).length;
       const atRiskCount = modeSlugs.length - trackedCount;
 
+      // Founder mode counts everything (minus WP OS, same exclusion
+      // this page has always applied) rather than scoping to one
+      // ecosystem's project_ids/project_scope — that's the whole
+      // point of "whole org."
       const [openDecisions, criticalCount, complianceRes] = await Promise.all([
-        modeProjectIds.length
-          ? sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open').in('project_id', modeProjectIds)
-          : Promise.resolve({ count: 0 }),
-        sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true).eq('status', 'open').eq('project_scope', currentEcosystem.toUpperCase()),
-        modeProjectIds.length
-          ? sb.from('compliance_items').select('due_date, status').in('project_id', modeProjectIds)
-          : Promise.resolve({ data: [] }),
+        isFounder
+          ? sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open').neq('project_id', WPOS_PROJECT_ID)
+          : (modeProjectIds.length
+              ? sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open').in('project_id', modeProjectIds)
+              : Promise.resolve({ count: 0 })),
+        isFounder
+          ? sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true).eq('status', 'open').not('project_scope', 'ilike', '%wp%os%')
+          : sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true).eq('status', 'open').eq('project_scope', currentEcosystem.toUpperCase()),
+        isFounder
+          ? sb.from('compliance_items').select('due_date, status')
+          : (modeProjectIds.length
+              ? sb.from('compliance_items').select('due_date, status').in('project_id', modeProjectIds)
+              : Promise.resolve({ data: [] })),
       ]);
 
       const now = new Date();
@@ -1887,7 +1899,21 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       const noteRow = (lastGovernanceNote.data || [])[0];
 
       let cards;
-      if (currentEcosystem === 'kos') {
+      if (isFounder) {
+        cards = [
+          renderKpi('Cash position', 'Not connected', 'kpi-off', 'No cash_pulse-to-ledger integration yet'),
+          renderKpi('Open decisions', openDecisions.count ?? 0, kpiStatusClass(openDecisions.count ?? 0, 1, 4), 'Strategy — awaiting founder call'),
+          renderKpi('Critical alerts', criticalCount.count ?? 0, kpiStatusClass(criticalCount.count ?? 0, 1, 3), 'Bottleneck-flagged signals'),
+          renderKpi('Projects at risk', atRiskCount, kpiStatusClass(atRiskCount, 1, 3), `${trackedCount}/${modeSlugs.length} modules have status data`),
+          renderKpi('Compliance due (7d)', complianceDue, kpiStatusClass(complianceDue, 1, 3), 'From compliance_items'),
+          renderKpi('Payroll readiness', 'Not connected', 'kpi-off', 'Lives in StaffVerified, not wired here'),
+          renderKpi('KOS runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data', kosStatus && kosStatus.runway_months != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels'),
+          renderKpi('KOS burn rate', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data', kosStatus && kosStatus.burn_rate != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels, monthly'),
+          renderKpi('ODO-TV stage', (tvRes.data && tvRes.data.stage) || 'No data', 'kpi-good', 'Property track'),
+          renderKpi('ODO-RV stage', (rvRes.data && rvRes.data.stage) || 'No data', 'kpi-good', 'Vehicle track'),
+          renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'Governance risk log'),
+        ];
+      } else if (currentEcosystem === 'kos') {
         cards = [
           renderKpi('Cash position', 'Not connected', 'kpi-off', 'No cash_pulse-to-ledger integration yet'),
           renderKpi('Open decisions (KOS)', openDecisions.count ?? 0, kpiStatusClass(openDecisions.count ?? 0, 1, 4), 'Strategy — awaiting founder call'),
@@ -1958,7 +1984,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     async function loadProjectHealth() {
       const el = document.getElementById('project-health-list');
       const titleEl = document.getElementById('project-health-title');
-      const rows = PROJECT_HEALTH_ROWS.filter(r => r.ecosystem === currentEcosystem);
+      const rows = currentEcosystem === 'founder' ? PROJECT_HEALTH_ROWS : PROJECT_HEALTH_ROWS.filter(r => r.ecosystem === currentEcosystem);
       titleEl.textContent = `Project Health — ${rows.map(r => r.label).join(' / ')}`;
       const { data } = await sb
         .from('projects')
@@ -2014,20 +2040,22 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       }
       // Cache keeps both ventures regardless of mode — the edit form
       // below still lets the founder update either one (editing is a
-      // tool, not a filtered view). Only the read-only table row is
-      // scoped to the active ecosystem, so this doesn't sit below the
-      // toggle showing both ventures at once.
+      // tool, not a filtered view). Founder mode shows both rows
+      // (whole org); KOS/ODO modes show just their own row.
       ycSnapshotCache = Object.fromEntries(data.map(p => {
         const s = Array.isArray(p.project_status) ? p.project_status[0] : p.project_status;
         return [p.slug, { projectId: p.id, stage: s && s.yc_stage_label, metric: s && s.yc_key_metric_label }];
       }));
-      const entry = ycSnapshotCache[currentEcosystem];
-      tbody.innerHTML = `<tr>
-        <td>${escapeHtml(YC_SNAPSHOT_DISPLAY_NAME[currentEcosystem])}</td>
-        <td>${escapeHtml((entry && entry.stage) || '—')}</td>
-        <td>${escapeHtml((entry && entry.metric) || '—')}</td>
-      </tr>`;
-      document.getElementById('yc-snapshot-slug').value = currentEcosystem;
+      const slugsToShow = currentEcosystem === 'founder' ? ['kos', 'odo'] : [currentEcosystem];
+      tbody.innerHTML = slugsToShow.map(slug => {
+        const entry = ycSnapshotCache[slug];
+        return `<tr>
+          <td>${escapeHtml(YC_SNAPSHOT_DISPLAY_NAME[slug])}</td>
+          <td>${escapeHtml((entry && entry.stage) || '—')}</td>
+          <td>${escapeHtml((entry && entry.metric) || '—')}</td>
+        </tr>`;
+      }).join('');
+      document.getElementById('yc-snapshot-slug').value = currentEcosystem === 'founder' ? 'kos' : currentEcosystem;
       ycSnapshotPrefillForm();
     }
 
@@ -2085,55 +2113,66 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     async function loadVentureUpdates() {
       const kosCard = document.getElementById('kos-update-card');
       const odoCard = document.getElementById('odo-update-card');
-      kosCard.style.display = currentEcosystem === 'kos' ? '' : 'none';
-      odoCard.style.display = currentEcosystem === 'odo' ? '' : 'none';
+      const showKos = currentEcosystem === 'founder' || currentEcosystem === 'kos';
+      const showOdo = currentEcosystem === 'founder' || currentEcosystem === 'odo';
+      kosCard.style.display = showKos ? '' : 'none';
+      odoCard.style.display = showOdo ? '' : 'none';
 
-      if (currentEcosystem === 'kos') {
-        const kosEl = document.getElementById('kos-update-body');
-        const { data: kosRow } = await sb
-          .from('projects')
-          .select('stage, project_status(build_readiness, cash_pulse, burn_rate, runway_months)')
-          .eq('slug', 'kos')
-          .maybeSingle();
-        const kosStatus = kosRow ? (Array.isArray(kosRow.project_status) ? kosRow.project_status[0] : kosRow.project_status) : null;
-        kosEl.innerHTML = [
-          ventureMetricRow('Stage', (kosRow && kosRow.stage) || 'No data'),
-          ventureMetricRow('Build readiness', (kosStatus && kosStatus.build_readiness) || 'No data'),
-          ventureMetricRow('Cash pulse', (kosStatus && kosStatus.cash_pulse) || 'No data'),
-          ventureMetricRow('Burn rate', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data'),
-          ventureMetricRow('Runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data'),
-        ].join('');
-        return;
+      const tasks = [];
+
+      if (showKos) {
+        tasks.push((async () => {
+          const kosEl = document.getElementById('kos-update-body');
+          const { data: kosRow } = await sb
+            .from('projects')
+            .select('stage, project_status(build_readiness, cash_pulse, burn_rate, runway_months)')
+            .eq('slug', 'kos')
+            .maybeSingle();
+          const kosStatus = kosRow ? (Array.isArray(kosRow.project_status) ? kosRow.project_status[0] : kosRow.project_status) : null;
+          kosEl.innerHTML = [
+            ventureMetricRow('Stage', (kosRow && kosRow.stage) || 'No data'),
+            ventureMetricRow('Build readiness', (kosStatus && kosStatus.build_readiness) || 'No data'),
+            ventureMetricRow('Cash pulse', (kosStatus && kosStatus.cash_pulse) || 'No data'),
+            ventureMetricRow('Burn rate', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data'),
+            ventureMetricRow('Runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data'),
+          ].join('');
+        })());
       }
 
-      const odoEl = document.getElementById('odo-update-body');
-      try {
-        const res = await fetch('/api/odo-status');
-        const body = await res.json();
-        if (body.notConfigured || body.error) {
-          odoEl.innerHTML = `<p class="cockpit-not-connected">${escapeHtml(body.error)}</p>`;
-          return;
-        }
-        const h = body.health;
-        const b = body.business;
-        const escrowSummary = b && b.escrowBreakdown && Object.keys(b.escrowBreakdown).length
-          ? Object.entries(b.escrowBreakdown).map(([state, count]) => `${count} ${state}`).join(', ')
-          : 'None yet';
-        odoEl.innerHTML = [
-          ventureMetricRow('Vera signals (72h)', String(body.signalsCount ?? 0)),
-          ventureMetricRow('Negative signals', String(body.negativeCount ?? 0)),
-          ventureMetricRow('Signal topics', body.topicSummary || 'None'),
-          ventureMetricRow('Pulse score', h && h.pulse_score != null ? String(h.pulse_score) : 'No data'),
-          ventureMetricRow('Open critical/high/medium', h ? `${h.open_critical ?? 0} / ${h.open_high ?? 0} / ${h.open_medium ?? 0}` : 'No data'),
-          ventureMetricRow('Active / closed (7d) deals', h ? `${h.deals_active ?? 0} / ${h.deals_closed_7d ?? 0}` : 'No data'),
-          ventureMetricRow('Active listings', b ? `${b.activeListings} of ${b.totalListings} total` : 'No data'),
-          ventureMetricRow('GMV', b ? `₱${Number(b.gmvPhp).toLocaleString()}` : 'No data'),
-          ventureMetricRow('Escrow / protection cases', b ? escrowSummary : 'No data'),
-          ventureMetricRow('Waitlist signups', b ? String(b.waitlistCount) : 'No data'),
-        ].join('');
-      } catch (err) {
-        odoEl.innerHTML = `<p class="cockpit-not-connected">Couldn't reach ODO status — ${escapeHtml(err.message)}</p>`;
+      if (showOdo) {
+        tasks.push((async () => {
+          const odoEl = document.getElementById('odo-update-body');
+          try {
+            const res = await fetch('/api/odo-status');
+            const body = await res.json();
+            if (body.notConfigured || body.error) {
+              odoEl.innerHTML = `<p class="cockpit-not-connected">${escapeHtml(body.error)}</p>`;
+              return;
+            }
+            const h = body.health;
+            const b = body.business;
+            const escrowSummary = b && b.escrowBreakdown && Object.keys(b.escrowBreakdown).length
+              ? Object.entries(b.escrowBreakdown).map(([state, count]) => `${count} ${state}`).join(', ')
+              : 'None yet';
+            odoEl.innerHTML = [
+              ventureMetricRow('Vera signals (72h)', String(body.signalsCount ?? 0)),
+              ventureMetricRow('Negative signals', String(body.negativeCount ?? 0)),
+              ventureMetricRow('Signal topics', body.topicSummary || 'None'),
+              ventureMetricRow('Pulse score', h && h.pulse_score != null ? String(h.pulse_score) : 'No data'),
+              ventureMetricRow('Open critical/high/medium', h ? `${h.open_critical ?? 0} / ${h.open_high ?? 0} / ${h.open_medium ?? 0}` : 'No data'),
+              ventureMetricRow('Active / closed (7d) deals', h ? `${h.deals_active ?? 0} / ${h.deals_closed_7d ?? 0}` : 'No data'),
+              ventureMetricRow('Active listings', b ? `${b.activeListings} of ${b.totalListings} total` : 'No data'),
+              ventureMetricRow('GMV', b ? `₱${Number(b.gmvPhp).toLocaleString()}` : 'No data'),
+              ventureMetricRow('Escrow / protection cases', b ? escrowSummary : 'No data'),
+              ventureMetricRow('Waitlist signups', b ? String(b.waitlistCount) : 'No data'),
+            ].join('');
+          } catch (err) {
+            odoEl.innerHTML = `<p class="cockpit-not-connected">Couldn't reach ODO status — ${escapeHtml(err.message)}</p>`;
+          }
+        })());
       }
+
+      await Promise.all(tasks);
     }
 
     // Quick Capture: founder scratch notes, real inserts into
