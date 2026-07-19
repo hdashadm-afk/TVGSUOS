@@ -94,7 +94,24 @@ module.exports = async function handler(req, res) {
         system: `You are Ver, the founder-level chief of staff and governance agent for TVGSUOS (The Verified Group Single Unified OS) — the umbrella layer above KOS/Katiwala AI and OWDO/ODO. A founder is asking you a question to help navigate their day.
 
 Below is your actual current knowledge base: TVGSUOS's real governance docs, plus what's genuinely open right now across Strategy and Intelligence. Ground your answer in this real information — reference it directly where relevant. If it doesn't cover what's being asked, say so plainly rather than guessing or giving generic advice. Keep the answer practical and direct — this is a founder trying to get through their day, not a report.
+
+If your answer surfaces a genuinely new, concrete, actionable follow-up (something that needs to be built, fixed, or configured — not just discussed), log it with log_follow_up_task. Most questions don't need this — only call it when there's a real, specific action item that isn't already covered by what you can see above.
 ${docsContext}${liveContext}`,
+        tools: [{
+          name: 'log_follow_up_task',
+          description: 'Log a concrete, actionable follow-up task to the founder\'s Task Inventory. Only call this for something genuinely new and specific — not for every question.',
+          input_schema: {
+            type: 'object',
+            properties: {
+              ecosystem: { type: 'string', enum: ['FOUNDER', 'KOS', 'ODO'], description: 'FOUNDER for TVGSUOS/infra-level items, KOS or ODO for venture-specific ones.' },
+              title: { type: 'string', description: 'Short, specific task title.' },
+              priority: { type: 'string', enum: ['high', 'medium', 'low'] },
+              phase: { type: 'string', enum: ['mvp', 'phase2', 'phase3'] },
+              notes: { type: 'string', description: 'One or two sentences of context — why this matters, what it unblocks.' },
+            },
+            required: ['ecosystem', 'title', 'priority', 'phase'],
+          },
+        }],
         messages: [{ role: 'user', content: question }],
       }),
     });
@@ -107,7 +124,30 @@ ${docsContext}${liveContext}`,
     }
 
     const anthropicData = await anthropicRes.json();
-    const answer = (anthropicData.content || []).map(b => b.text || '').join('').trim() || 'No answer text returned.';
+    const content = anthropicData.content || [];
+    const answer = content.filter(b => b.type === 'text').map(b => b.text || '').join('').trim() || 'No answer text returned.';
+
+    // Fire-and-forget: Ver identified a real follow-up via the tool
+    // call above. No need to send a tool_result back — this isn't a
+    // multi-turn tool loop, just a side effect of answering. Logged
+    // best-effort; a failure here shouldn't fail the whole answer.
+    const loggedTasks = [];
+    for (const block of content) {
+      if (block.type !== 'tool_use' || block.name !== 'log_follow_up_task') continue;
+      const { ecosystem, title, priority, phase, notes } = block.input || {};
+      if (!ecosystem || !title || !priority || !phase) continue;
+      try {
+        const taskRes = await fetch(`${SUPABASE_URL}/rest/v1/founder_tasks`, {
+          method: 'POST',
+          headers: { ...sbHeaders, Prefer: 'return=minimal' },
+          body: JSON.stringify({ ecosystem, title, priority, phase, notes: notes || null, status: 'not_done' }),
+        });
+        if (taskRes.ok) loggedTasks.push(title);
+        else console.error('[ask-ver] Could not log follow-up task:', await taskRes.text());
+      } catch (err) {
+        console.error('[ask-ver] log_follow_up_task error:', err);
+      }
+    }
 
     const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/ver_queries`, {
       method: 'POST',
@@ -116,7 +156,7 @@ ${docsContext}${liveContext}`,
     });
     if (!insertRes.ok) console.error('[ask-ver] Could not save to ver_queries:', await insertRes.text());
 
-    res.status(200).json({ answer });
+    res.status(200).json({ answer, loggedTasks });
   } catch (err) {
     console.error('[ask-ver] error:', err);
     res.status(500).json({ error: err.message || 'Failed to answer the question.' });

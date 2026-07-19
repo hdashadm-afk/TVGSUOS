@@ -2546,7 +2546,11 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           return;
         }
         if (body.error) throw new Error(body.error);
-        answerEl.textContent = body.answer;
+        const loggedNote = (body.loggedTasks && body.loggedTasks.length)
+          ? `<p class="sub" style="margin:10px 0 0;">Logged to Task Inventory: ${escapeHtml(body.loggedTasks.join(', '))}</p>`
+          : '';
+        answerEl.innerHTML = `<p style="margin:0; white-space:pre-wrap;">${escapeHtml(body.answer)}</p>${loggedNote}`;
+        if (loggedNote) loadTaskInventory();
         answerEl.style.display = 'block';
         input.value = '';
         loadVerHistory();
