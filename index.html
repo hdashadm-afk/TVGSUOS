@@ -813,28 +813,47 @@
         <div class="verse-body" id="verse-body"></div>
       </details>
 
+      <!-- Needs Your Attention — founder request, 2026-07-19, modeled
+           on KOS's Morning Brief tile grid. Fixed whole-org counts,
+           deliberately NOT mode-aware (unlike the KPI grid below) —
+           this sits above the Founder/KOS/ODO toggle so it reads the
+           same regardless of which mode is selected: everything that
+           genuinely needs attention right now, in one glance, no
+           scrolling through all 9 governance-area cards to find it.
+           Not new data — same counts loadKpiGrid/loadAccessRequests/
+           loadTaskInventory already compute, just surfaced together
+           here first. See loadAttentionTiles().
+
+           2026-07-19, fourth pass: moved above AI Tools & Voice of
+           Customer — founder: "Alerts are more important than
+           Research and AI tools." Alerts is now the first real
+           content on the page after Today's Verse. -->
+      <p class="cockpit-label" style="margin-top:0;">Needs Your Attention</p>
+      <div class="kpi-grid" id="attention-tiles"></div>
+
       <!-- AI Tools & Voice of Customer — moved here 2026-07-19, second
            placement change. Founder's own words: "should be I one box
            as Rnd section" (one combined box) then, after seeing it
            buried behind 5 accordion clicks, "it has to on top, easy to
-           access" — pointed directly at this spot, between Today's
-           Verse and Needs Your Attention. Same box, same content, just
-           moved out of the R&D accordion so it's visible without
-           opening anything. AI Tools: 5 external/in-page shortcut
-           links. Voice of Customer: real, non-bottleneck rows from the
-           same improvement_signals table Intelligence reads — fuel for
-           R&D ideas, not incident tracking.
+           access" — pointed directly at this spot. Same box, same
+           content, just moved out of the R&D accordion so it's visible
+           without opening anything. AI Tools: 5 external/in-page
+           shortcut links. Voice of Customer: real, non-bottleneck rows
+           from the same improvement_signals table Intelligence reads —
+           fuel for R&D ideas, not incident tracking.
 
-           2026-07-19, third pass: it was un-collapsible, so on mobile
-           it pushed Needs Your Attention below the fold every time —
-           founder: "here I eat all my mobile space." Wrapped in the
-           same section-toggle/section-body accordion every governance
-           area already uses (closed by default, same tap-to-expand
-           gesture the founder already knows from the rest of the
-           page), instead of inventing a second collapse pattern. -->
+           2026-07-19, third pass: made it collapsible (closed by
+           default) after "here I eat all my mobile space." 2026-07-19,
+           fourth pass, founder corrected the fix: "Alerts are more
+           important than Research and AI tools, but I want it there on
+           top visible" — Alerts now leads (see above), and this stays
+           expanded by default (not hidden behind a tap) since the
+           founder wants it visibly on top, just second to Alerts. Kept
+           the section-toggle/section-body accordion so it CAN still be
+           collapsed manually — just starts open now, not closed. -->
       <section>
-        <button type="button" class="section-toggle"><h2>AI Tools &amp; Voice of Customer</h2><span class="chevron">▶</span></button>
-        <div class="section-body">
+        <button type="button" class="section-toggle expanded"><h2>AI Tools &amp; Voice of Customer</h2><span class="chevron">▶</span></button>
+        <div class="section-body expanded">
         <div class="strategy-form" style="margin:12px 0 0;">
           <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">AI Tools</h3>
           <div class="quick-links" style="margin:0 0 20px;">
@@ -851,19 +870,6 @@
         </div>
         </div>
       </section>
-
-      <!-- Needs Your Attention — founder request, 2026-07-19, modeled
-           on KOS's Morning Brief tile grid. Fixed whole-org counts,
-           deliberately NOT mode-aware (unlike the KPI grid below) —
-           this sits above the Founder/KOS/ODO toggle so it reads the
-           same regardless of which mode is selected: everything that
-           genuinely needs attention right now, in one glance, no
-           scrolling through all 9 governance-area cards to find it.
-           Not new data — same counts loadKpiGrid/loadAccessRequests/
-           loadTaskInventory already compute, just surfaced together
-           here first. See loadAttentionTiles(). -->
-      <p class="cockpit-label" style="margin-top:0;">Needs Your Attention</p>
-      <div class="kpi-grid" id="attention-tiles"></div>
 
       <!-- One 3-way toggle, not two separate ones. This used to be a
            FOS/KOS/ODO tab bar (FOS a static label, KOS/ODO external
