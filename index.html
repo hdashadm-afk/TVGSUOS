@@ -942,6 +942,18 @@
             <ul class="decision-list" id="rd-voice-of-customer" style="margin:0;"></ul>
             <p id="rd-voice-of-customer-empty" style="display:none; font-size:14px; color:var(--slate);">No non-bottleneck signals logged yet.</p>
           </div>
+          <!-- Priority Tasks, moved here from the Act On row (2026-07-19,
+               founder pointing at both screenshots side by side) — it was
+               reading the same improvement_signals rows (open,
+               non-bottleneck) as Voice of Customer above, just rendered
+               through a different list component two sections away. Same
+               #priority-tasks-list/#priority-tasks-empty ids and the same
+               loadPriorityTasks()/renderAttentionList() call — the KPI
+               tile's "Priority Signals" scroll-to and the section's
+               expanded-by-default state both still work unchanged. -->
+          <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:20px 0 12px;">Priority Tasks</h3>
+          <ul class="attention-list" id="priority-tasks-list"></ul>
+          <p class="attention-empty" id="priority-tasks-empty" style="display:none;">No open signals right now.</p>
         </div>
         </div>
       </section>
@@ -1091,11 +1103,6 @@
           <h3>Decision Queue</h3>
           <ul class="attention-list" id="decision-queue-list"></ul>
           <p class="attention-empty" id="decision-queue-empty" style="display:none;">No decisions waiting.</p>
-        </div>
-        <div class="cockpit-panel">
-          <h3>Priority Tasks</h3>
-          <ul class="attention-list" id="priority-tasks-list"></ul>
-          <p class="attention-empty" id="priority-tasks-empty" style="display:none;">No open signals right now.</p>
         </div>
         <div class="cockpit-panel">
           <h3>Today's Calendar</h3>
