@@ -1498,7 +1498,7 @@
              a venture <select>, same shape as YC Snapshot's existing
              edit-form pattern just above Venture Updates. -->
         <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">Weekly Innovation Summary</h3>
-        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Curated weekly digest per venture — top requests, key bottlenecks, what needs attention, and discussion points. The actual "Signal" step of the KOS/ODO agentic loop (docs/MASTER_DIRECTION.md §4).</p>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Curated weekly digest per venture — top requests, key bottlenecks, what needs attention, and discussion points. The actual "Signal" step of the KOS/ODO agentic loop (docs/MASTER_DIRECTION.md §4). Same field as the raw signals table above — the suggestions below are those exact rows, one click from becoming this week's curated line.</p>
         <div id="weekly-innovation-summary"></div>
         <details style="margin-top:10px;">
           <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--slate);">Edit this week's summary</summary>
@@ -1509,6 +1509,7 @@
                 <option value="KOS">KOS</option>
                 <option value="ODO">ODO</option>
               </select>
+              <div id="wis-suggestions" style="margin:4px 0 14px;"></div>
               <label for="wis-top-requests">Top requests</label>
               <textarea id="wis-top-requests" placeholder="What are users/staff asking for most this week?"></textarea>
               <label for="wis-key-bottlenecks">Key bottlenecks</label>
@@ -2457,6 +2458,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // populated (sat empty waiting for Kath/Vera to auto-fill it).
     // Real, already-populated table; read-only rollup here, no new
     // schema.
+    let intelligenceSignalsState = [];
     async function loadIntelligence() {
       const bodyEl = document.getElementById('intelligence-table-body');
       const emptyEl = document.getElementById('intelligence-empty');
@@ -2466,6 +2468,8 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         .order('attention_score', { ascending: false, nullsFirst: false })
         .limit(25);
       const data = rawData ? rawData.filter(s => !isWposScope(s.project_scope)) : rawData;
+      intelligenceSignalsState = data || [];
+      if (document.getElementById('wis-scope')) renderWisSuggestions(document.getElementById('wis-scope').value);
       if (error) {
         bodyEl.innerHTML = '';
         emptyEl.textContent = "Couldn't load intelligence signals — " + error.message;
@@ -2524,7 +2528,48 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       document.getElementById('wis-key-bottlenecks').value = currentWeekRow?.key_bottlenecks || '';
       document.getElementById('wis-needs-attention').value = currentWeekRow?.needs_attention || '';
       document.getElementById('wis-discuss').value = currentWeekRow?.recommended_discussion_points || '';
+      renderWisSuggestions(scope);
     }
+
+    // Ties Intelligence's raw signals to the Weekly Innovation Summary
+    // form so the founder isn't retyping what Kath/Vera already
+    // surfaced — same improvement_signals rows as the table above,
+    // filtered to this venture and still open, one click into the
+    // matching textarea (bottleneck -> Key bottlenecks, else -> Top
+    // requests). Purely a form-fill convenience; doesn't touch
+    // improvement_signals or write anything until "Save summary".
+    let wisSuggestionRows = [];
+    function renderWisSuggestions(scope) {
+      const el = document.getElementById('wis-suggestions');
+      if (!el) return;
+      wisSuggestionRows = intelligenceSignalsState
+        .filter(s => s.project_scope === scope && s.status === 'open' && s.signal_summary)
+        .slice(0, 5);
+      if (!wisSuggestionRows.length) {
+        el.innerHTML = '';
+        return;
+      }
+      el.innerHTML = `
+        <p style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 6px;">From Intelligence this week</p>
+        ${wisSuggestionRows.map((s, i) => `
+          <div style="display:flex; align-items:center; gap:8px; font-size:13px; margin:0 0 4px;">
+            <button type="button" class="wis-suggestion-add" data-idx="${i}" style="flex:none; font-size:11px; padding:2px 8px; border-radius:6px; border:1px solid var(--border); background:#fff; cursor:pointer;">+ Add</button>
+            <span>${escapeHtml(s.signal_summary)}${s.bottleneck_flag ? ' <span class="decision-venture" style="color:var(--danger); border-color:var(--danger);">Bottleneck</span>' : ''}</span>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    document.getElementById('wis-suggestions').addEventListener('click', (e) => {
+      const btn = e.target.closest('.wis-suggestion-add');
+      if (!btn) return;
+      const s = wisSuggestionRows[Number(btn.dataset.idx)];
+      if (!s) return;
+      const targetEl = document.getElementById(s.bottleneck_flag ? 'wis-key-bottlenecks' : 'wis-top-requests');
+      const line = '- ' + s.signal_summary;
+      if (targetEl.value.includes(line)) return;
+      targetEl.value = targetEl.value ? targetEl.value + '\n' + line : line;
+    });
 
     async function loadWeeklyInnovationSummary() {
       const el = document.getElementById('weekly-innovation-summary');
