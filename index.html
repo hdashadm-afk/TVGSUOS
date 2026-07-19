@@ -1287,6 +1287,8 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           </div>
           <label for="ti-notes" style="position:absolute; left:-9999px;">Notes</label>
           <input type="text" id="ti-notes" placeholder="Notes (optional)" style="margin-top:8px;" />
+          <label for="ti-attachment" style="position:absolute; left:-9999px;">Attachment</label>
+          <input type="file" id="ti-attachment" style="margin-top:8px;" />
           <button type="submit" id="task-inventory-add-btn" style="width:100%; margin-top:8px;">+ Add task</button>
           <p id="task-inventory-add-status" style="font-size:12px; margin:6px 0 0; min-height:16px;"></p>
         </form>
@@ -2908,7 +2910,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
                   <span style="font-size:13px; ${t.status === 'done' ? 'text-decoration:line-through; color:var(--slate);' : ''}">${escapeHtml(t.title)}</span>
                   <button type="button" class="task-inventory-toggle-btn" data-id="${t.id}" data-status="${t.status}" style="width:auto; flex-shrink:0; font-size:11px; padding:3px 8px;">${t.status === 'done' ? 'Reopen' : 'Mark done'}</button>
                 </div>
-                <p class="sub" style="margin:2px 0 0;">${escapeHtml(t.priority)} priority · ${TASK_PHASE_LABEL[t.phase] || t.phase}${t.notes ? ` · ${escapeHtml(t.notes)}` : ''}</p>
+                <p class="sub" style="margin:2px 0 0;">${escapeHtml(t.priority)} priority · ${TASK_PHASE_LABEL[t.phase] || t.phase}${t.notes ? ` · ${escapeHtml(t.notes)}` : ''}${t.attachment_path ? ` · <a href="#" class="task-inventory-attachment-link" data-path="${escapeHtml(t.attachment_path)}">📎 ${escapeHtml(t.attachment_name || 'attachment')}</a>` : ''}</p>
               </div>
             `).join('')}
           </div>
@@ -2917,13 +2919,20 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       el.querySelectorAll('.task-inventory-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => toggleTaskInventoryItem(btn.dataset.id, btn.dataset.status));
       });
+      el.querySelectorAll('.task-inventory-attachment-link').forEach(link => {
+        link.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const { data, error } = await sb.storage.from('department-reports').createSignedUrl(link.dataset.path, 300);
+          if (!error && data) window.open(data.signedUrl, '_blank');
+        });
+      });
     }
 
     async function loadTaskInventory() {
       const el = document.getElementById('ver-task-inventory');
       const { data, error } = await sb
         .from('founder_tasks')
-        .select('id, ecosystem, title, status, priority, phase, notes')
+        .select('id, ecosystem, title, status, priority, phase, notes, attachment_path, attachment_name')
         .order('created_at', { ascending: true });
       if (error) {
         el.innerHTML = `<p class="cockpit-not-connected">Couldn't load Task Inventory — ${escapeHtml(error.message)}</p>`;
@@ -2956,6 +2965,29 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       if (!title) return;
       btn.disabled = true;
       statusEl.textContent = '';
+      // Reuses the department-reports Storage bucket — same one
+      // katiwala-owner-os-'s original (async) Ask Ver used for
+      // attachments, before that feature was deliberately not ported
+      // to TVGSUOS's synchronous replacement. Bucket policy already
+      // allows any authenticated user to upload/read, no new policy
+      // needed — this app is fully founder-gated anyway.
+      let attachmentPath = null;
+      let attachmentName = null;
+      const file = document.getElementById('ti-attachment').files[0];
+      if (file) {
+        statusEl.textContent = 'Uploading attachment…';
+        const path = `founder-tasks/${Date.now()}-${file.name}`;
+        const { data: upload, error: uploadErr } = await sb.storage.from('department-reports').upload(path, file);
+        if (uploadErr) {
+          console.error('[task-inventory] attachment upload failed:', uploadErr);
+          statusEl.textContent = "Couldn't upload the attachment — check console for details.";
+          btn.disabled = false;
+          return;
+        }
+        attachmentPath = upload.path;
+        attachmentName = file.name;
+      }
+      statusEl.textContent = '';
       const { error } = await sb.from('founder_tasks').insert({
         ecosystem: document.getElementById('ti-ecosystem').value,
         title,
@@ -2963,6 +2995,8 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         phase: document.getElementById('ti-phase').value,
         notes: document.getElementById('ti-notes').value.trim() || null,
         status: 'not_done',
+        attachment_path: attachmentPath,
+        attachment_name: attachmentName,
       });
       btn.disabled = false;
       if (error) {
