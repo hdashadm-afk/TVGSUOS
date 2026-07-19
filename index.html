@@ -1044,6 +1044,24 @@
             <ul class="attention-list" id="priority-tasks-list"></ul>
             <p class="attention-empty" id="priority-tasks-empty" style="display:none;">No open signals right now.</p>
           </div>
+          <!-- Founder Notes / Quick Capture, moved here from the Act On
+               row, 2026-07-19 — founder screenshot: "The founders note
+               to go inside ai tools and Voc." Not given a collapsible
+               sub-toggle like Voice of Customer/Priority Tasks above —
+               it's an input, not a list to hide, so it stays visibly
+               open like the AI Tools tiles. Kept the .quick-capture
+               wrapper div (textarea/button styling is scoped to that
+               class) and the same #quick-capture-form/-text/-btn/
+               -status ids — the existing submit-handler JS needs no
+               changes. -->
+          <div class="quick-capture">
+          <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:20px 0 12px;">Founder Notes / Quick Capture</h3>
+          <form id="quick-capture-form">
+            <textarea id="quick-capture-text" placeholder="Jot something down — saved as a note, separate from R&D's ideas." required></textarea>
+            <button type="submit" id="quick-capture-btn">Save note</button>
+          </form>
+          <p id="quick-capture-status" style="font-size:12px; margin:6px 0 0;"></p>
+          </div>
         </div>
         </div>
       </section>
@@ -1147,25 +1165,28 @@
         </div>
       </div>
 
-      <!-- Row 3: founder action zone. -->
+      <!-- Row 3: founder action zone. Today's Calendar and Founder
+           Notes/Quick Capture both moved out 2026-07-19 — founder
+           screenshot + "Let's have the calendar at the bottom" /
+           "The founders note to go inside ai tools and Voc." Today's
+           Calendar is a permanent "Not connected" placeholder (no
+           calendar integration exists in TVGSUOS at all), so it's
+           real estate this action row doesn't need to spend on
+           something with nothing to act on — relocated to the very
+           bottom of the page, past Governed Ventures. Founder Notes/
+           Quick Capture moved into AI Tools & Voice of Customer,
+           alongside Voice of Customer/Priority Tasks (see that
+           section) — same #quick-capture-form/textarea/button ids,
+           so loadQuickCapture-adjacent JS needs no changes. Decision
+           Queue is now the only panel left here; cockpit-row3's
+           auto-fit grid just stretches it full-width with one item,
+           no CSS change needed. -->
       <p class="cockpit-label">Act On</p>
       <div class="cockpit-row3">
         <div class="cockpit-panel">
           <h3>Decision Queue</h3>
           <ul class="attention-list" id="decision-queue-list"></ul>
           <p class="attention-empty" id="decision-queue-empty" style="display:none;">No decisions waiting.</p>
-        </div>
-        <div class="cockpit-panel">
-          <h3>Today's Calendar</h3>
-          <p class="cockpit-not-connected">Not connected — no calendar integration in TVGSUOS. katiwala-owner-os-'s Google OAuth is Calendar-scoped but tied to that app, not this one.</p>
-        </div>
-        <div class="cockpit-panel quick-capture">
-          <h3>Founder Notes / Quick Capture</h3>
-          <form id="quick-capture-form">
-            <textarea id="quick-capture-text" placeholder="Jot something down — saved as a note, separate from R&D's ideas." required></textarea>
-            <button type="submit" id="quick-capture-btn">Save note</button>
-          </form>
-          <p id="quick-capture-status" style="font-size:12px; margin:6px 0 0;"></p>
         </div>
       </div>
 
@@ -1434,6 +1455,21 @@
 Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dashboard — is native here, not a copy of Katiwala AI's. What's still elsewhere: the Daily Baseline Check's own scheduled routine (the process that actually generates each day's check) still runs via Katiwala AI's app; this app only reads its output (the governance risk log, in Security). See <code>FOUNDER_OS.md</code> and <code>docs/MASTER_DIRECTION.md</code> in this repo for exactly what's built, what's open, and why.
         </footer>
         </div>
+      </div>
+
+      <!-- Today's Calendar, moved to the very bottom of the page,
+           2026-07-19 — founder screenshot + "Let's have the calendar
+           at the bottom est." It's a permanent "Not connected"
+           placeholder (no calendar integration exists in TVGSUOS at
+           all — see the note itself), so it doesn't belong in the Act
+           On row's prime real estate alongside things that are
+           actually actionable today. Kept .cockpit-panel styling
+           (border/padding/background are self-contained, not
+           dependent on being a grid item) so it still reads as the
+           same kind of card, just standalone instead of gridded. -->
+      <p class="cockpit-label">Today's Calendar</p>
+      <div class="cockpit-panel">
+        <p class="cockpit-not-connected">Not connected — no calendar integration in TVGSUOS. katiwala-owner-os-'s Google OAuth is Calendar-scoped but tied to that app, not this one.</p>
       </div>
     </div>
   </div>
