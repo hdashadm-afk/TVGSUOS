@@ -157,6 +157,14 @@
     gap: 10px;
     margin-bottom: 8px;
   }
+  /* Needs Your Attention — founder expected this to stay grid-like on
+     mobile, same as KOS's Morning Brief tile grid (.brief-grid there:
+     auto-fit, minmax(140px, 1fr)). Scoped to this grid only, not
+     .kpi-grid generally, so the "Today" KPI grid's own mobile layout
+     is unaffected. */
+  #attention-tiles {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
   .kpi-card {
     border: 1px solid var(--border);
     border-left: 3px solid var(--slate);
