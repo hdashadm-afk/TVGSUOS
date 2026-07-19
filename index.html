@@ -2653,6 +2653,39 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         : 'No ERROR/WARN-level security or performance advisor flags.';
     }
 
+    // Vera talks to real ODO customers (buyers/sellers/providers), not
+    // the founder — unlike Ask Ver, this deliberately does NOT touch
+    // ODO's live /api/vera route to self-report tasks (production
+    // customer-facing code, different Supabase project, different
+    // model provider). Instead this reads the same aggregate signal
+    // data odo-status.js already exposes (byTopicNegative, added
+    // alongside this) and flags a real pattern — repeated negative
+    // sentiment on one topic — as a Task Inventory item. Threshold is
+    // 3+ negative signals on the same topic within odo-status.js's own
+    // 72h lookback window; deduped against any existing open task with
+    // the same title so re-running Regenerate doesn't spam duplicates.
+    const VERA_SIGNAL_TASK_THRESHOLD = 3;
+    async function checkVeraSignalPatterns(veraStatusRes) {
+      if (!veraStatusRes || veraStatusRes.notConfigured || veraStatusRes.error) return false;
+      const byTopicNegative = veraStatusRes.byTopicNegative || {};
+      const worst = Object.entries(byTopicNegative).sort((a, b) => b[1] - a[1])[0];
+      if (!worst || worst[1] < VERA_SIGNAL_TASK_THRESHOLD) return false;
+      const [topic, count] = worst;
+      const title = `ODO: repeated negative signals — ${topic}`;
+      const { data: existing } = await sb.from('founder_tasks').select('id').eq('ecosystem', 'ODO').eq('title', title).eq('status', 'not_done').maybeSingle();
+      if (existing) return false;
+      const { error } = await sb.from('founder_tasks').insert({
+        ecosystem: 'ODO',
+        title,
+        priority: 'high',
+        phase: 'mvp',
+        notes: `${count} negative-sentiment Vera signals on "${topic}" in the last ${veraStatusRes.lookbackHours || 72}h — worth a look at what's actually going wrong for users here.`,
+        status: 'not_done',
+      });
+      if (error) { console.error('[vera-signal-pattern] log failed:', error); return false; }
+      return true;
+    }
+
     async function regenerateBaselineCheck() {
       const btn = document.getElementById('ver-baseline-check-regenerate-btn');
       const statusEl = document.getElementById('ver-baseline-check-regenerate-status');
@@ -2679,6 +2712,9 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         const skippedNotes = [];
         if (veraStatusRes && veraStatusRes.notConfigured) skippedNotes.push('Vera signal (needs ODO_SUPABASE_SERVICE_ROLE_KEY)');
         if (governanceRes && governanceRes.notConfigured) skippedNotes.push('governance risk (needs SUPABASE_MANAGEMENT_TOKEN)');
+
+        const loggedFromVera = await checkVeraSignalPatterns(veraStatusRes);
+        if (loggedFromVera) loadTaskInventory();
 
         let lastDirection = 'No newly agreed direction since the last check.';
         if (decisionsRes.data && decisionsRes.data.length) {
