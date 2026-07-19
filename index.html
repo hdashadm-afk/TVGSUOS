@@ -923,10 +923,25 @@
             <a href="https://github.com/hdashadm-afk/TVGSUOS/blob/main/docs/MASTER_DIRECTION.md" target="_blank" rel="noopener">Master Direction →</a>
             <a href="#" id="rd-jump-baseline">Daily Baseline Check →</a>
           </div>
-          <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Voice of Customer</h3>
-          <p style="font-size:14px; color:var(--slate); margin:-8px 0 12px;">Real, non-bottleneck signals from KOS and ODO usage — fuel for R&D ideas, not incident tracking (that's Intelligence, further down).</p>
-          <ul class="decision-list" id="rd-voice-of-customer" style="margin:0;"></ul>
-          <p id="rd-voice-of-customer-empty" style="display:none; font-size:14px; color:var(--slate);">No non-bottleneck signals logged yet.</p>
+          <!-- Voice of Customer, own collapsible sub-toggle — founder,
+               2026-07-19, pointing at a screenshot of this exact spot:
+               "Voice of customer shrinkable." AI Tools above stays
+               expanded (that's the founder's own prior instruction —
+               visible on top, not hidden); this is the part that grows
+               with real signal rows, so it gets its own shrink/expand,
+               closed by default since it's still starter/placeholder
+               data. Same section-toggle/section-body pattern, just
+               nested one level — the global click handler queries all
+               .section-toggle elements, no new JS needed. -->
+          <button type="button" class="section-toggle" style="padding:14px 0 4px;">
+            <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0;">Voice of Customer</h3>
+            <span class="chevron">▶</span>
+          </button>
+          <div class="section-body">
+            <p style="font-size:14px; color:var(--slate); margin:0 0 12px;">Real, non-bottleneck signals from KOS and ODO usage — fuel for R&D ideas, not incident tracking (that's Intelligence, further down).</p>
+            <ul class="decision-list" id="rd-voice-of-customer" style="margin:0;"></ul>
+            <p id="rd-voice-of-customer-empty" style="display:none; font-size:14px; color:var(--slate);">No non-bottleneck signals logged yet.</p>
+          </div>
         </div>
         </div>
       </section>
