@@ -1439,6 +1439,27 @@
           </table>
         </div>
         <p id="odo-leads-empty" style="display:none;">No ODO weekly lead snapshots logged yet.</p>
+
+        <!-- KOS Leads — ported from katiwala-owner-os- 2026-07-19 (see
+             the Weekly Market Update comment in Intelligence for the
+             full reasoning). Distinct from the Katiwala AI waitlist
+             above — these are real intake-form submissions
+             (leads_gas_station/_coffeeshop/_hotel), not pre-launch
+             waitlist signups. RLS restricts SELECT to the owner's own
+             authenticated session, same as it did in katiwala-owner-os- —
+             a non-founder signed-in user just sees an empty table here,
+             not an error. -->
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">KOS Leads <span id="kos-leads-total-badge"></span></h3>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">New intake submissions — Gas Station form. Coffee Shop/Hotel intake is archived (docs/MASTER_DIRECTION.md §9); any leads already in those tables still show below as historical.</p>
+        <div class="table-wrap">
+          <table id="kos-leads-table">
+            <thead>
+              <tr><th>Type</th><th>Business</th><th>Owner / Email</th><th>Submitted</th><th>Status</th><th>POS checklist</th></tr>
+            </thead>
+            <tbody id="kos-leads-table-body"></tbody>
+          </table>
+        </div>
+        <p id="kos-leads-empty" style="display:none;">No leads yet.</p>
         </div>
       </section>
 
@@ -1457,6 +1478,27 @@
             <textarea id="idea-summary" required placeholder="What's the idea, and why now?"></textarea>
             <button type="submit" id="idea-submit-btn">Log idea</button>
             <p id="idea-form-status"></p>
+          </form>
+        </div>
+
+        <!-- Accepted Suggestions — ported from katiwala-owner-os-
+             2026-07-19 (see the Weekly Market Update comment in
+             Intelligence for the full reasoning). Same accepted_
+             suggestions table, project_key='kos'. Discuss -> Accept
+             assigns one action path (Save/Analyze/Execute) and
+             generates a copy-ready handoff prompt for the matching AI
+             Tool above — this is exactly what those tools are for. -->
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">Accepted Suggestions — KOS</h3>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Discussed → Accepted → Save / Analyze / Execute.</p>
+        <div id="accepted-suggestions-kos"></div>
+        <div class="strategy-form" style="margin-top:10px;">
+          <form id="add-suggestion-form">
+            <label for="sug-title">Title</label>
+            <input type="text" id="sug-title" required />
+            <label for="sug-text">Suggestion</label>
+            <textarea id="sug-text" required></textarea>
+            <button type="submit" id="sug-submit-btn">Save as Discussed</button>
+            <p id="sug-form-status" style="font-size:12px; margin:6px 0 0;"></p>
           </form>
         </div>
 
@@ -1553,6 +1595,61 @@
               <button type="submit" id="wis-save-btn">Save summary</button>
             </form>
             <p id="wis-status" style="font-size:12px; margin:6px 0 0;"></p>
+          </div>
+        </details>
+
+        <!-- Weekly Market Update — ported from katiwala-owner-os-
+             2026-07-19, per founder screenshot marking KOS Leads/
+             Weekly Innovation Summary/Weekly Market Update/Accepted
+             Suggestions as "founder perspective," not Station
+             Control's day-to-day operator view (Weekly Innovation
+             Summary + Tool lane already moved earlier the same day;
+             this and Accepted Suggestions/KOS Leads are the rest of
+             that same move). Same weekly_updates table/columns and
+             (project_key, week_start) upsert-conflict-key as the
+             source — no schema change. UI follows the same pattern
+             already established for Weekly Innovation Summary just
+             above: inline summary + a venture <select>-driven edit
+             form, no modal (TVGSUOS has no modal pattern anywhere). -->
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">Weekly Market Update</h3>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Signal → Implication → Action · Saturday 8:00 AM Asia/Manila review cadence.</p>
+        <div id="weekly-market-update"></div>
+        <details style="margin-top:10px;">
+          <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--slate);">Edit this week's update</summary>
+          <div class="strategy-form" style="margin-top:10px;">
+            <form id="weekly-market-update-form">
+              <label for="wmu-scope">Venture</label>
+              <select id="wmu-scope" required>
+                <option value="kos">KOS</option>
+                <option value="odo">ODO</option>
+              </select>
+              <label for="wmu-status">Status</label>
+              <select id="wmu-status">
+                <option value="Draft">Draft</option>
+                <option value="Reviewed">Reviewed</option>
+                <option value="Locked">Locked</option>
+              </select>
+              <label for="wmu-main-signal">Main Signal</label>
+              <textarea id="wmu-main-signal" placeholder="The biggest market signal this week"></textarea>
+              <label for="wmu-what-changed">What Changed</label>
+              <textarea id="wmu-what-changed"></textarea>
+              <label id="wmu-implications-primary-label">What It Means (primary)</label>
+              <textarea id="wmu-implications-primary"></textarea>
+              <label id="wmu-implications-project-label">What It Means (project)</label>
+              <textarea id="wmu-implications-project"></textarea>
+              <label for="wmu-priorities">This Week's Priority</label>
+              <textarea id="wmu-priorities" placeholder="Top 3 actions for next week"></textarea>
+              <label for="wmu-long-term">Long-term Connection <span style="font-weight:400;">(how this week connects to the bigger portfolio direction)</span></label>
+              <textarea id="wmu-long-term"></textarea>
+              <label for="wmu-bottlenecks">Bottlenecks</label>
+              <textarea id="wmu-bottlenecks"></textarea>
+              <label id="wmu-assistant-focus-label">Assistant Focus</label>
+              <textarea id="wmu-assistant-focus"></textarea>
+              <label for="wmu-summary">Dashboard Summary <span style="font-weight:400;">(one line — shown collapsed above)</span></label>
+              <textarea id="wmu-summary" required></textarea>
+              <button type="submit" id="wmu-save-btn">Save update</button>
+              <p id="wmu-status-msg" style="font-size:12px; margin:6px 0 0;"></p>
+            </form>
           </div>
         </details>
         </div>
@@ -1938,6 +2035,9 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       loadFinance();
       loadIntelligence();
       loadWeeklyInnovationSummary();
+      loadWeeklyMarketUpdate();
+      loadAcceptedSuggestionsKos();
+      loadKosLeads();
       loadCriticalAlerts();
       loadDecisionQueue();
       loadPriorityTasks();
@@ -2665,6 +2765,327 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       statusEl.textContent = 'Saved.';
       loadWeeklyInnovationSummary();
     });
+
+    // Weekly Market Update — ported from katiwala-owner-os- 2026-07-19.
+    // Same weekly_updates table/(project_key, week_start) upsert-
+    // conflict-key as the source, no schema change. Same inline
+    // summary + venture-select-driven form idiom as Weekly Innovation
+    // Summary just above.
+    const WEEKLY_UPDATE_LABELS = {
+      kos: { primary: 'What It Means for SME Owners', project: 'What It Means for KOS', assistant: 'Kath Focus', name: 'KOS' },
+      odo: { primary: 'What It Means for OFWs', project: 'What It Means for ODO', assistant: 'Vera Focus', name: 'ODO' },
+    };
+    let weeklyMarketUpdateState = {};
+
+    function populateWmuForm(projectKey) {
+      const labels = WEEKLY_UPDATE_LABELS[projectKey];
+      document.getElementById('wmu-implications-primary-label').firstChild.textContent = labels.primary;
+      document.getElementById('wmu-implications-project-label').firstChild.textContent = labels.project;
+      document.getElementById('wmu-assistant-focus-label').firstChild.textContent = labels.assistant;
+      const weekStart = mondayOfManilaWeek();
+      const r = weeklyMarketUpdateState[projectKey];
+      const currentWeekRow = r && r.week_start === weekStart ? r : null;
+      document.getElementById('wmu-status').value = currentWeekRow?.status || 'Draft';
+      document.getElementById('wmu-main-signal').value = currentWeekRow?.main_signal || '';
+      document.getElementById('wmu-what-changed').value = currentWeekRow?.what_changed || '';
+      document.getElementById('wmu-implications-primary').value = currentWeekRow?.implications_primary || '';
+      document.getElementById('wmu-implications-project').value = currentWeekRow?.implications_project || '';
+      document.getElementById('wmu-priorities').value = currentWeekRow?.priorities_next_week || '';
+      document.getElementById('wmu-long-term').value = currentWeekRow?.long_term_connection || '';
+      document.getElementById('wmu-bottlenecks').value = currentWeekRow?.bottlenecks || '';
+      document.getElementById('wmu-assistant-focus').value = currentWeekRow?.assistant_focus || '';
+      document.getElementById('wmu-summary').value = currentWeekRow?.summary || '';
+    }
+
+    async function loadWeeklyMarketUpdate() {
+      const el = document.getElementById('weekly-market-update');
+      const { data, error } = await sb.from('weekly_updates').select('*').order('week_start', { ascending: false }).limit(20);
+      if (error) {
+        el.innerHTML = `<p class="cockpit-not-connected">Couldn't load Weekly Market Update — ${escapeHtml(error.message)}</p>`;
+        return;
+      }
+      const rows = data || [];
+      weeklyMarketUpdateState = {};
+      rows.forEach(r => { if (!weeklyMarketUpdateState[r.project_key]) weeklyMarketUpdateState[r.project_key] = r; });
+
+      el.innerHTML = ['kos', 'odo'].map(key => {
+        const labels = WEEKLY_UPDATE_LABELS[key];
+        const r = weeklyMarketUpdateState[key];
+        let body = `<p style="font-size:14px; color:var(--slate); margin:2px 0;">No update yet.</p>`;
+        if (r) {
+          const statusColor = r.status === 'Reviewed' || r.status === 'Locked' ? 'var(--good)' : '#B45309';
+          body = `
+            <p style="font-size:12px; color:var(--slate); margin:2px 0 6px;">Week of ${new Date(r.week_start).toLocaleDateString()} – ${new Date(r.week_end).toLocaleDateString()} <span class="decision-venture" style="color:${statusColor}; border-color:${statusColor};">${escapeHtml(r.status)}</span></p>
+            ${r.summary ? `<p style="font-size:14px; margin:2px 0; font-weight:600;">${escapeHtml(r.summary)}</p>` : ''}
+            ${r.main_signal ? `<p style="font-size:14px; margin:2px 0;"><strong>Main Signal:</strong> ${escapeHtml(r.main_signal)}</p>` : ''}
+            ${r.priorities_next_week ? `<p style="font-size:14px; margin:2px 0;"><strong>This Week's Priority:</strong> ${escapeHtml(r.priorities_next_week)}</p>` : ''}
+            ${r.bottlenecks ? `<p style="font-size:14px; margin:2px 0;"><strong>Bottlenecks:</strong> ${escapeHtml(r.bottlenecks)}</p>` : ''}
+          `;
+        }
+        return `<div style="margin-bottom:14px;"><strong style="font-size:13px;">${labels.name}</strong>${body}</div>`;
+      }).join('');
+
+      populateWmuForm(document.getElementById('wmu-scope').value);
+    }
+
+    document.getElementById('wmu-scope').addEventListener('change', (e) => populateWmuForm(e.target.value));
+
+    document.getElementById('weekly-market-update-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusMsgEl = document.getElementById('wmu-status-msg');
+      const btn = document.getElementById('wmu-save-btn');
+      const projectKey = document.getElementById('wmu-scope').value;
+      const weekStart = mondayOfManilaWeek();
+      const weekEnd = addDaysStr(weekStart, 6);
+      btn.disabled = true;
+      statusMsgEl.textContent = 'Saving…';
+      const { error } = await sb.from('weekly_updates').upsert({
+        project_key: projectKey,
+        week_start: weekStart,
+        week_end: weekEnd,
+        status: document.getElementById('wmu-status').value,
+        main_signal: document.getElementById('wmu-main-signal').value,
+        what_changed: document.getElementById('wmu-what-changed').value,
+        implications_primary: document.getElementById('wmu-implications-primary').value,
+        implications_project: document.getElementById('wmu-implications-project').value,
+        priorities_next_week: document.getElementById('wmu-priorities').value,
+        long_term_connection: document.getElementById('wmu-long-term').value,
+        bottlenecks: document.getElementById('wmu-bottlenecks').value,
+        assistant_focus: document.getElementById('wmu-assistant-focus').value,
+        summary: document.getElementById('wmu-summary').value,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'project_key,week_start' });
+      btn.disabled = false;
+      if (error) {
+        console.error('[weekly-market-update] save failed:', error);
+        statusMsgEl.textContent = "Couldn't save — check console for details.";
+        return;
+      }
+      statusMsgEl.textContent = 'Saved.';
+      loadWeeklyMarketUpdate();
+    });
+
+    // Accepted Suggestions (KOS) — ported from katiwala-owner-os-
+    // 2026-07-19. Same accepted_suggestions table, project_key='kos'.
+    const SUGGESTION_STATUS_COLOR = { Accepted: '#B45309', Executing: '#B45309', Executed: 'var(--good)' };
+
+    function buildSuggestionHandoffPrompt(actionType, s) {
+      const header = `KOS — Founder OS accepted suggestion (${new Date().toISOString().slice(0, 10)})\nTitle: ${s.title}\n\n${s.suggestion_text}`;
+      if (actionType === 'Analyze') return `${header}\n\nAnalyze: research/validate this — market fit, consistency with current direction, and any risks — before we execute. (Perplexity-ready)`;
+      if (actionType === 'Execute') return `${header}\n\nExecute: tightly scoped implementation only — do not redesign or expand beyond this. Report back what changed. (Claude-ready)`;
+      return `${header}\n\nSave: durable/approved knowledge — store as a structured memory row now, and promote to Notion as the system of record. (Memory/Notion-ready)`;
+    }
+
+    let acceptedSuggestionsState = [];
+    async function loadAcceptedSuggestionsKos() {
+      const el = document.getElementById('accepted-suggestions-kos');
+      const { data, error } = await sb.from('accepted_suggestions').select('*').eq('project_key', 'kos').order('created_at', { ascending: false }).limit(10);
+      if (error) {
+        el.innerHTML = `<p class="cockpit-not-connected">Couldn't load accepted suggestions — ${escapeHtml(error.message)}</p>`;
+        return;
+      }
+      acceptedSuggestionsState = data || [];
+      if (!acceptedSuggestionsState.length) {
+        el.innerHTML = `<p style="font-size:14px; color:var(--slate); margin:2px 0;">No accepted suggestions recorded yet. Review suggestions and assign Save, Analyze, or Execute.</p>`;
+        return;
+      }
+      el.innerHTML = acceptedSuggestionsState.map(s => {
+        const canAccept = s.status === 'Discussed';
+        const statusColor = SUGGESTION_STATUS_COLOR[s.status];
+        const actions = canAccept ? `
+          <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="sug-action-btn nav-btn tap-target" data-id="${s.id}" data-action="Save" style="width:auto; padding:4px 10px; font-size:12px;">Accept + Save</button>
+            <button type="button" class="sug-action-btn nav-btn tap-target" data-id="${s.id}" data-action="Analyze" style="width:auto; padding:4px 10px; font-size:12px;">Accept + Analyze</button>
+            <button type="button" class="sug-action-btn nav-btn tap-target" data-id="${s.id}" data-action="Execute" style="width:auto; padding:4px 10px; font-size:12px;">Accept + Execute</button>
+          </div>` : '';
+        const handoff = s.handoff_prompt ? `
+          <details style="margin-top:6px;">
+            <summary style="cursor:pointer; font-size:12px; color:var(--slate);">${escapeHtml(s.target_tool || s.action_type)}-ready handoff</summary>
+            <textarea readonly rows="4" style="width:100%; margin-top:6px; font-size:12px;">${escapeHtml(s.handoff_prompt)}</textarea>
+            <button type="button" class="sug-copy-btn nav-btn tap-target" data-id="${s.id}" style="width:auto; padding:4px 10px; font-size:12px; margin-top:4px;">Copy</button>
+          </details>` : '';
+        return `
+          <div style="margin:0 0 12px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+            <span class="decision-venture"${statusColor ? ` style="color:${statusColor}; border-color:${statusColor};"` : ''}>${escapeHtml(s.status)}</span>${s.action_type ? ` <span class="decision-venture">${escapeHtml(s.action_type)}</span>` : ''}
+            <strong style="display:block; font-size:14px; margin-top:4px;">${escapeHtml(s.title)}</strong>
+            <p style="font-size:14px; color:var(--slate); margin:4px 0;">${escapeHtml(s.suggestion_text)}</p>
+            ${actions}
+            ${handoff}
+          </div>`;
+      }).join('');
+
+      el.querySelectorAll('.sug-action-btn').forEach(btn => {
+        btn.addEventListener('click', () => acceptSuggestionKos(btn.dataset.id, btn.dataset.action));
+      });
+      el.querySelectorAll('.sug-copy-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const row = acceptedSuggestionsState.find(r => r.id === btn.dataset.id);
+          if (row && row.handoff_prompt) {
+            await navigator.clipboard.writeText(row.handoff_prompt);
+            btn.textContent = 'Copied';
+            setTimeout(() => { btn.textContent = 'Copy'; }, 1200);
+          }
+        });
+      });
+    }
+
+    async function acceptSuggestionKos(id, actionType) {
+      const s = acceptedSuggestionsState.find(r => r.id === id);
+      if (!s) return;
+      const targetTool = actionType === 'Analyze' ? 'Perplexity' : actionType === 'Execute' ? 'Claude' : 'Memory/Notion';
+      const handoffPrompt = buildSuggestionHandoffPrompt(actionType, s);
+      const { error } = await sb.from('accepted_suggestions').update({
+        status: 'Accepted',
+        action_type: actionType,
+        target_tool: targetTool,
+        handoff_prompt: handoffPrompt,
+        accepted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }).eq('id', id);
+      if (error) {
+        console.error('[accepted-suggestions] accept failed:', error);
+        alert("Couldn't accept the suggestion. Check console for details.");
+        return;
+      }
+      loadAcceptedSuggestionsKos();
+    }
+
+    document.getElementById('add-suggestion-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('sug-form-status');
+      const btn = document.getElementById('sug-submit-btn');
+      btn.disabled = true;
+      statusEl.textContent = 'Saving…';
+      const { error } = await sb.from('accepted_suggestions').insert({
+        project_key: 'kos',
+        title: document.getElementById('sug-title').value,
+        suggestion_text: document.getElementById('sug-text').value,
+        status: 'Discussed',
+      });
+      btn.disabled = false;
+      if (error) {
+        console.error('[accepted-suggestions] add failed:', error);
+        statusEl.textContent = "Couldn't save — check console for details.";
+        return;
+      }
+      document.getElementById('add-suggestion-form').reset();
+      statusEl.textContent = 'Saved.';
+      loadAcceptedSuggestionsKos();
+    });
+
+    // KOS Leads — ported from katiwala-owner-os- 2026-07-19. RLS
+    // restricts leads_coffeeshop/leads_hotel/leads_gas_station
+    // SELECT+UPDATE to the owner's own authenticated session — any
+    // other signed-in user just sees an empty table, not an error.
+    const LEAD_TYPE_LABELS = { coffeeshop: 'Coffee Shop', hotel: 'Hotel', gas_station: 'Gas Station' };
+
+    async function loadKosLeads() {
+      const badgeEl = document.getElementById('kos-leads-total-badge');
+      const bodyEl = document.getElementById('kos-leads-table-body');
+      const emptyEl = document.getElementById('kos-leads-empty');
+      try {
+        const [coffeeRes, hotelRes, gasRes] = await Promise.all([
+          sb.from('leads_coffeeshop').select('*').order('submitted_at', { ascending: false }).limit(25),
+          sb.from('leads_hotel').select('*').order('submitted_at', { ascending: false }).limit(25),
+          sb.from('leads_gas_station').select('*').order('submitted_at', { ascending: false }).limit(25),
+        ]);
+        if (coffeeRes.error) throw coffeeRes.error;
+        if (hotelRes.error) throw hotelRes.error;
+        if (gasRes.error) throw gasRes.error;
+
+        const rows = [
+          ...(coffeeRes.data || []).map(r => ({ ...r, _type: 'coffeeshop', _table: 'leads_coffeeshop' })),
+          ...(hotelRes.data || []).map(r => ({ ...r, _type: 'hotel', _table: 'leads_hotel' })),
+          ...(gasRes.data || []).map(r => ({ ...r, _type: 'gas_station', _table: 'leads_gas_station' })),
+        ].sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at)).slice(0, 25);
+
+        const newGasCount = (gasRes.data || []).filter(r => r.status === 'new').length;
+        badgeEl.textContent = newGasCount ? `(${newGasCount} new)` : '';
+
+        if (!rows.length) {
+          bodyEl.innerHTML = '';
+          emptyEl.style.display = 'block';
+          return;
+        }
+        emptyEl.style.display = 'none';
+
+        bodyEl.innerHTML = rows.map(r => {
+          let posCell = '<span style="font-size:12px; color:var(--slate);">No email on file</span>';
+          if (r.email) {
+            posCell = `
+              <button type="button" class="nav-btn tap-target pos-checklist-send-btn" data-id="${r.id}" data-table="${r._table}" data-lead-type="${r._type}" data-email="${escapeHtml(r.email)}" data-business="${escapeHtml(r.business_name || '')}" data-owner="${escapeHtml(r.owner_name || '')}" style="width:auto; padding:4px 10px; font-size:12px;">
+                ${r.pos_checklist_sent_at ? 'Resend checklist' : 'Send checklist'}
+              </button>
+              ${r.pos_checklist_sent_at ? `<div style="font-size:11px; color:var(--slate); margin-top:2px;">Sent ${new Date(r.pos_checklist_sent_at).toLocaleDateString()}</div>` : ''}
+            `;
+          }
+          return `
+          <tr>
+            <td>${LEAD_TYPE_LABELS[r._type] || r._type}</td>
+            <td>${escapeHtml(r.business_name) || '—'}</td>
+            <td>${escapeHtml(r.owner_name) || '—'}${r.email ? `<br><span style="font-size:12px; color:var(--slate);">${escapeHtml(r.email)}</span>` : ''}</td>
+            <td>${r.submitted_at ? new Date(r.submitted_at).toLocaleDateString() : '—'}</td>
+            <td>
+              <select data-table="${r._table}" data-id="${r.id}" class="lead-status-select">
+                <option value="new" ${r.status === 'new' ? 'selected' : ''}>New</option>
+                <option value="reviewed" ${r.status === 'reviewed' ? 'selected' : ''}>Reviewed</option>
+                <option value="converted" ${r.status === 'converted' ? 'selected' : ''}>Converted</option>
+              </select>
+            </td>
+            <td>${posCell}</td>
+          </tr>`;
+        }).join('');
+
+        bodyEl.querySelectorAll('.lead-status-select').forEach(select => {
+          select.addEventListener('change', async () => {
+            select.disabled = true;
+            const { error } = await sb.from(select.dataset.table).update({ status: select.value }).eq('id', select.dataset.id);
+            select.disabled = false;
+            if (error) {
+              console.error('[kos-leads] update status failed:', error);
+              alert("Couldn't update status. Check console for details.");
+            } else {
+              loadKosLeads();
+            }
+          });
+        });
+
+        bodyEl.querySelectorAll('.pos-checklist-send-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            btn.textContent = 'Sending…';
+            try {
+              const res = await fetch('/api/send-pos-checklist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: btn.dataset.email,
+                  businessName: btn.dataset.business,
+                  ownerName: btn.dataset.owner,
+                  leadType: btn.dataset.leadType,
+                }),
+              });
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || 'Send failed');
+              const { error } = await sb.from(btn.dataset.table).update({ pos_checklist_sent_at: new Date().toISOString() }).eq('id', btn.dataset.id);
+              if (error) throw error;
+              loadKosLeads();
+            } catch (err) {
+              console.error('[send-pos-checklist] failed:', err);
+              alert(`Couldn't send the checklist: ${err.message || 'check console for details.'}`);
+              btn.disabled = false;
+              btn.textContent = originalText;
+            }
+          });
+        });
+      } catch (err) {
+        console.error('[kos-leads] load failed:', err);
+        bodyEl.innerHTML = '';
+        emptyEl.textContent = "Couldn't load leads — " + err.message;
+        emptyEl.style.display = 'block';
+      }
+    }
 
     // R&D's "Voice of Customer" box — same improvement_signals table
     // as Intelligence above, deliberately filtered to bottleneck_flag
