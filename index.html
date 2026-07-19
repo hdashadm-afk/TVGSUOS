@@ -757,6 +757,19 @@
       </div>
       <span class="status"><span class="dot"></span>Phase 4 — all 9 governance areas live, deployed 2026-07-18</span>
 
+      <!-- Needs Your Attention — founder request, 2026-07-19, modeled
+           on KOS's Morning Brief tile grid. Fixed whole-org counts,
+           deliberately NOT mode-aware (unlike the KPI grid below) —
+           this sits above the Founder/KOS/ODO toggle so it reads the
+           same regardless of which mode is selected: everything that
+           genuinely needs attention right now, in one glance, no
+           scrolling through all 9 governance-area cards to find it.
+           Not new data — same counts loadKpiGrid/loadAccessRequests/
+           loadTaskInventory already compute, just surfaced together
+           here first. See loadAttentionTiles(). -->
+      <p class="cockpit-label" style="margin-top:0;">Needs Your Attention</p>
+      <div class="kpi-grid" id="attention-tiles"></div>
+
       <!-- One 3-way toggle, not two separate ones. This used to be a
            FOS/KOS/ODO tab bar (FOS a static label, KOS/ODO external
            links out to their own domains) sitting above a second,
@@ -1379,6 +1392,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       loginScreen.style.display = 'none';
       appEl.style.display = 'block';
       document.getElementById('ver-toggle-btn').style.display = 'flex';
+      loadAttentionTiles();
       loadDecisions();
       loadProductRollup();
       loadGovernanceLog();
@@ -1999,6 +2013,42 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       listEl.innerHTML = items.map(i => `
         <li><span>${escapeHtml(i.label)}</span>${i.tag ? `<span class="attention-tag">${escapeHtml(i.tag)}</span>` : ''}</li>
       `).join('');
+    }
+
+    // Needs Your Attention tile grid — fixed whole-org counts, same
+    // underlying data loadKpiGrid/loadAccessRequests/loadTaskInventory
+    // already query, kept as an independent query here rather than
+    // reading their internal state, so this tile grid's meaning stays
+    // constant regardless of the Founder/KOS/ODO toggle below it.
+    async function loadAttentionTiles() {
+      const el = document.getElementById('attention-tiles');
+      try {
+        const [decisionsRes, alertsRes, accessRes, taskRes] = await Promise.all([
+          sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open').neq('project_id', WPOS_PROJECT_ID),
+          sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true).eq('status', 'open').not('project_scope', 'ilike', '%wp%os%'),
+          sb.rpc('list_pending_users'),
+          sb.from('founder_tasks').select('id', { count: 'exact', head: true }).eq('status', 'not_done').eq('priority', 'high'),
+        ]);
+        const tiles = [
+          { name: 'Critical Alerts', value: alertsRes.count, sub: 'Open bottlenecks, whole org' },
+          { name: 'Open Decisions', value: decisionsRes.count, sub: 'Awaiting a founder call' },
+          { name: 'Access Requests', value: accessRes.error ? null : (accessRes.data || []).length, sub: 'Signed in, no role yet' },
+          { name: 'High-Priority Tasks', value: taskRes.count, sub: 'Not done, high priority' },
+        ];
+        el.innerHTML = tiles.map(t => {
+          const known = t.value != null;
+          const cls = !known ? 'kpi-off' : t.value > 0 ? 'kpi-bad' : 'kpi-good';
+          return `
+            <div class="kpi-card ${cls}">
+              <p class="kpi-name">${t.name}</p>
+              <p class="kpi-value${known ? '' : ' kpi-value-off'}">${known ? t.value : 'Not connected'}</p>
+              <p class="kpi-sub">${t.sub}</p>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        el.innerHTML = `<p class="cockpit-not-connected">Couldn't load — ${escapeHtml(err.message)}</p>`;
+      }
     }
 
     async function loadCriticalAlerts() {
