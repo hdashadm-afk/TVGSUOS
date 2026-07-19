@@ -1211,8 +1211,24 @@
            Kath's, this just surfaces the count). Nothing fabricated:
            anything without a live source shows "Not connected." Mode-
            aware since the ecosystem toggle above — see loadKpiGrid. -->
-      <p class="cockpit-label">Today</p>
-      <div class="kpi-grid" id="kpi-grid"></div>
+      <!-- Today, Status, YC Snapshot, Venture Updates, Act On — made
+           shrinkable 2026-07-19, per founder: "shrinkable. AI Tools/
+           Today/Status/YC/Venture Updates/Act on." Same section-toggle/
+           section-body pattern already used for AI Tools & Voice of
+           Customer and the governance accordion below — reused here
+           rather than inventing a second collapsible mechanism. Kept
+           the compact .cockpit-label typography inside the button
+           (not <h2>) so these keep their existing lightweight visual
+           weight instead of jumping to the big accordion-header size.
+           All default to expanded (same as AI Tools' 4th-pass
+           behavior) — the ask was the ability to shrink, not that
+           these start hidden. -->
+      <section>
+        <button type="button" class="section-toggle expanded"><p class="cockpit-label" style="margin:0;">Today</p><span class="chevron">▶</span></button>
+        <div class="section-body expanded">
+        <div class="kpi-grid" id="kpi-grid"></div>
+        </div>
+      </section>
 
       <!-- Row 2: status & trends. Weekly Trend Summary removed
            2026-07-19 (founder: "check which are redundant" pass) — it
@@ -1220,18 +1236,22 @@
            "Not connected" with no near-term plan to change that (would
            need a scheduled snapshot job). cockpit-row2's auto-fit grid
            just reflows to 2 columns, no CSS change needed. -->
-      <p class="cockpit-label">Status</p>
-      <div class="cockpit-row2">
-        <div class="cockpit-panel">
-          <h3>Critical Alerts</h3>
-          <ul class="attention-list" id="attention-list"></ul>
-          <p class="attention-empty" id="attention-empty" style="display:none;">Nothing open across the ecosystem right now.</p>
+      <section>
+        <button type="button" class="section-toggle expanded"><p class="cockpit-label" style="margin:0;">Status</p><span class="chevron">▶</span></button>
+        <div class="section-body expanded">
+        <div class="cockpit-row2">
+          <div class="cockpit-panel">
+            <h3>Critical Alerts</h3>
+            <ul class="attention-list" id="attention-list"></ul>
+            <p class="attention-empty" id="attention-empty" style="display:none;">Nothing open across the ecosystem right now.</p>
+          </div>
+          <div class="cockpit-panel">
+            <h3 id="project-health-title">Project Health — KOS Gas</h3>
+            <div id="project-health-list"></div>
+          </div>
         </div>
-        <div class="cockpit-panel">
-          <h3 id="project-health-title">Project Health — KOS Gas</h3>
-          <div id="project-health-list"></div>
         </div>
-      </div>
+      </section>
 
       <!-- YC Snapshot: Product / Stage / Key Metric for the two
            flagship ventures, framed for a YC application/update
@@ -1244,38 +1264,42 @@
            via the inline form below (founder asked for this instead
            of editing Supabase's table editor directly); still "—"
            until filled in, never a fabricated number. -->
-      <p class="cockpit-label">YC Snapshot</p>
-      <div class="table-wrap">
-        <table id="yc-snapshot-table">
-          <thead>
-            <tr><th>Product</th><th>Stage</th><th>Key Metric</th></tr>
-          </thead>
-          <tbody id="yc-snapshot-table-body"></tbody>
-        </table>
-      </div>
-      <!-- Collapsed by default (founder request, 2026-07-19) — this
-           form used to sit permanently expanded, taking up vertical
-           space even when there was nothing to edit. Native <details>
-           needs no JS wiring; the table above stays always-visible
-           since that's the actual data, not the editing UI. -->
-      <details style="margin-top:10px;">
-        <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--slate);">Edit YC Snapshot</summary>
-        <div class="strategy-form" style="margin-top:10px;">
-          <form id="yc-snapshot-form">
-            <label for="yc-snapshot-slug">Product</label>
-            <select id="yc-snapshot-slug" required>
-              <option value="kos">Katiwala AI</option>
-              <option value="odo">OwnerDirect</option>
-            </select>
-            <label for="yc-snapshot-stage-input">Stage</label>
-            <input type="text" id="yc-snapshot-stage-input" placeholder="e.g. Pre-revenue, seeking YC" required>
-            <label for="yc-snapshot-metric-input">Key Metric</label>
-            <input type="text" id="yc-snapshot-metric-input" placeholder="e.g. MRR, pilot conversions" required>
-            <button type="submit" id="yc-snapshot-save-btn">Save</button>
-          </form>
-          <p id="yc-snapshot-status" style="font-size:12px; margin:6px 0 0;"></p>
+      <section>
+        <button type="button" class="section-toggle expanded"><p class="cockpit-label" style="margin:0;">YC Snapshot</p><span class="chevron">▶</span></button>
+        <div class="section-body expanded">
+        <div class="table-wrap">
+          <table id="yc-snapshot-table">
+            <thead>
+              <tr><th>Product</th><th>Stage</th><th>Key Metric</th></tr>
+            </thead>
+            <tbody id="yc-snapshot-table-body"></tbody>
+          </table>
         </div>
-      </details>
+        <!-- Collapsed by default (founder request, 2026-07-19) — this
+             form used to sit permanently expanded, taking up vertical
+             space even when there was nothing to edit. Native <details>
+             needs no JS wiring; the table above stays always-visible
+             since that's the actual data, not the editing UI. -->
+        <details style="margin-top:10px;">
+          <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--slate);">Edit YC Snapshot</summary>
+          <div class="strategy-form" style="margin-top:10px;">
+            <form id="yc-snapshot-form">
+              <label for="yc-snapshot-slug">Product</label>
+              <select id="yc-snapshot-slug" required>
+                <option value="kos">Katiwala AI</option>
+                <option value="odo">OwnerDirect</option>
+              </select>
+              <label for="yc-snapshot-stage-input">Stage</label>
+              <input type="text" id="yc-snapshot-stage-input" placeholder="e.g. Pre-revenue, seeking YC" required>
+              <label for="yc-snapshot-metric-input">Key Metric</label>
+              <input type="text" id="yc-snapshot-metric-input" placeholder="e.g. MRR, pilot conversions" required>
+              <button type="submit" id="yc-snapshot-save-btn">Save</button>
+            </form>
+            <p id="yc-snapshot-status" style="font-size:12px; margin:6px 0 0;"></p>
+          </div>
+        </details>
+        </div>
+      </section>
 
       <!-- Venture Updates: KOS and ODO's project status, native to
            TVGSUOS instead of only living inside KOS's own app. Each
@@ -1285,23 +1309,27 @@
            shown/fetched, so this doesn't sit below the toggle
            showing both ventures at once (the "mix" the founder
            flagged after the first toggle pass). -->
-      <p class="cockpit-label">Venture Updates</p>
-      <div class="venture-updates">
-        <div class="venture-card" id="kos-update-card">
-          <div class="venture-card-header">
-            <h3>KOS / Katiwala AI</h3>
-            <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open katiwalaai.app →</a>
+      <section>
+        <button type="button" class="section-toggle expanded"><p class="cockpit-label" style="margin:0;">Venture Updates</p><span class="chevron">▶</span></button>
+        <div class="section-body expanded">
+        <div class="venture-updates">
+          <div class="venture-card" id="kos-update-card">
+            <div class="venture-card-header">
+              <h3>KOS / Katiwala AI</h3>
+              <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open katiwalaai.app →</a>
+            </div>
+            <div id="kos-update-body"></div>
           </div>
-          <div id="kos-update-body"></div>
-        </div>
-        <div class="venture-card" id="odo-update-card">
-          <div class="venture-card-header">
-            <h3>ODO / OwnerDirect</h3>
-            <a href="https://ownerdirect.online" target="_blank" rel="noopener">Open ownerdirect.online →</a>
+          <div class="venture-card" id="odo-update-card">
+            <div class="venture-card-header">
+              <h3>ODO / OwnerDirect</h3>
+              <a href="https://ownerdirect.online" target="_blank" rel="noopener">Open ownerdirect.online →</a>
+            </div>
+            <div id="odo-update-body"></div>
           </div>
-          <div id="odo-update-body"></div>
         </div>
-      </div>
+        </div>
+      </section>
 
       <!-- Row 3: founder action zone. Today's Calendar and Founder
            Notes/Quick Capture both moved out 2026-07-19 — founder
@@ -1319,14 +1347,18 @@
            Queue is now the only panel left here; cockpit-row3's
            auto-fit grid just stretches it full-width with one item,
            no CSS change needed. -->
-      <p class="cockpit-label">Act On</p>
-      <div class="cockpit-row3">
-        <div class="cockpit-panel">
-          <h3>Decision Queue</h3>
-          <ul class="attention-list" id="decision-queue-list"></ul>
-          <p class="attention-empty" id="decision-queue-empty" style="display:none;">No decisions waiting.</p>
+      <section>
+        <button type="button" class="section-toggle expanded"><p class="cockpit-label" style="margin:0;">Act On</p><span class="chevron">▶</span></button>
+        <div class="section-body expanded">
+        <div class="cockpit-row3">
+          <div class="cockpit-panel">
+            <h3>Decision Queue</h3>
+            <ul class="attention-list" id="decision-queue-list"></ul>
+            <p class="attention-empty" id="decision-queue-empty" style="display:none;">No decisions waiting.</p>
+          </div>
         </div>
-      </div>
+        </div>
+      </section>
 
       <section>
         <button type="button" class="section-toggle" data-topic="Strategy"><h2>Strategy — cross-venture decisions</h2><span class="chevron">▶</span></button>
