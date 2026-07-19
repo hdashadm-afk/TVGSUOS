@@ -67,20 +67,6 @@
     max-width: 640px;
     margin: 0 0 40px;
   }
-  .status {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--brand-blue);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 6px 14px;
-    margin-bottom: 40px;
-  }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
   h2 {
     font-size: 13px;
     font-weight: 600;
@@ -892,6 +878,15 @@
            destination for a11y/tooltip) — this row now has to share
            header space with Sign Out instead of a full-width strip
            further down. -->
+      <!-- Phase 4 status badge used to sit right below this toggle —
+           removed 2026-07-19, founder: "should it be there?" / "Remove
+           it, put the toggle there." It was a one-time build-progress
+           marker (Phase 1-4, all 9 governance areas live) that doesn't
+           change day-to-day, competing for header space with things
+           that actually update. Build history stays in FOUNDER_OS.md,
+           which already tracks it in more detail; the toggle now
+           takes that spot as the last header element before Today's
+           Verse — .status/.dot CSS removed too, unused elsewhere. -->
       <div class="mode-switcher" id="ecosystem-toggle" role="group" aria-label="Founder / KOS / ODO view">
         <button type="button" class="ecosystem-toggle-btn" data-ecosystem="founder">Founder</button>
         <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="kos">KOS</button>
@@ -899,8 +894,6 @@
         <a class="mode-switcher-link" href="https://katiwalaai.app" target="_blank" rel="noopener" title="Open KOS — katiwalaai.app">↗</a>
         <a class="mode-switcher-link" href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;" title="Open ODO — ownerdirect.online">↗</a>
       </div>
-
-      <span class="status"><span class="dot"></span>Phase 4 — all 9 governance areas live, deployed 2026-07-18</span>
 
       <!-- Today's Verse — moved here from katiwala-owner-os-'s
            Morning Brief, 2026-07-19, per founder request ("move from
