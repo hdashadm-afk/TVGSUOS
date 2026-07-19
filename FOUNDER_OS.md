@@ -239,3 +239,8 @@ Persistent, dated implementation log for this repo. Read this first in any new s
   - Both files syntax-checked, dangling-id checks clean. **Not yet verified live.**
 - **Next step, founder's call:** confirm Today's Verse shows at the top of TVGSUOS and that KOS's Morning Brief no longer shows it.
 - **Both sides merged**: TVGSUOS PR #31 (`9cb162d1`) and `katiwala-owner-os-` PR #135 (`7aa5bf53`). Today's Verse is fully relocated.
+- **Founder asked what was still needed from them, then said "let's hide ODO, I want to focus on gas ops."** Asked which scope before touching anything, given "hide" could mean several different things: founder chose "hide the ODO toggle + link, default to KOS" — Founder mode stays selectable and still whole-org (including ODO data) if clicked; only the always-visible ODO entry points go away.
+  - Hid the "ODO — OwnerDirect" toggle button and its quick-link via `style="display:none"` (reversible — not deleted, just drop that style to bring it back). Changed `currentEcosystem`'s default from `'founder'` to `'kos'`, and moved the `mode-active` class from the Founder button to the KOS button so the visible default matches the JS default.
+  - `loadAttentionTiles()` (the top tile grid) is unaffected either way — it was already built deliberately whole-org and mode-independent, never tied to the toggle.
+  - Script block syntax-checked. **Not yet verified live.**
+- **Next step, founder's call:** confirm the dashboard now lands on KOS by default, ODO doesn't appear in the toggle or quick-links, and Founder mode (if you click it) still shows the full whole-org view including ODO data.
