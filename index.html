@@ -1233,11 +1233,42 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
            Genuinely cross-venture (KOS & ODO both), unlike the
            Building Katiwala tile content this table's own "tool
            lane" companion came from — that part stays KOS-specific,
-           not ported here. -->
+           not ported here. Originally "maintained by Claude as work
+           ships, not a form the founder fills in" — added a manual
+           entry form 2026-07-19 so new items don't require going
+           through a session each time. Widened founder_tasks'
+           ecosystem CHECK constraint (was KOS/ODO only) to add
+           FOUNDER, for TVGSUOS/infra-level items that aren't really
+           either venture's — e.g. missing env vars. -->
       <div class="ver-drawer-section">
-        <h4>Task Inventory — KOS &amp; ODO</h4>
+        <h4>Task Inventory</h4>
         <p class="sub">Done vs. not done, by priority and phase — a running check so nothing gets forgotten.</p>
         <div id="ver-task-inventory"></div>
+        <form id="task-inventory-add-form" class="strategy-form" style="margin-top:10px;">
+          <label for="ti-title" style="position:absolute; left:-9999px;">Task title</label>
+          <input type="text" id="ti-title" required placeholder="New task title" />
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <select id="ti-ecosystem" style="flex:1;">
+              <option value="FOUNDER">Founder</option>
+              <option value="KOS">KOS</option>
+              <option value="ODO">ODO</option>
+            </select>
+            <select id="ti-priority" style="flex:1;">
+              <option value="high">High priority</option>
+              <option value="medium" selected>Medium priority</option>
+              <option value="low">Low priority</option>
+            </select>
+            <select id="ti-phase" style="flex:1;">
+              <option value="mvp" selected>MVP</option>
+              <option value="phase2">Phase 2</option>
+              <option value="phase3">Phase 3</option>
+            </select>
+          </div>
+          <label for="ti-notes" style="position:absolute; left:-9999px;">Notes</label>
+          <input type="text" id="ti-notes" placeholder="Notes (optional)" style="margin-top:8px;" />
+          <button type="submit" id="task-inventory-add-btn" style="width:100%; margin-top:8px;">+ Add task</button>
+          <p id="task-inventory-add-status" style="font-size:12px; margin:6px 0 0; min-height:16px;"></p>
+        </form>
       </div>
     </div>
   </div>
@@ -2734,7 +2765,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         if (TASK_PRIORITY_RANK[a.priority] !== TASK_PRIORITY_RANK[b.priority]) return TASK_PRIORITY_RANK[a.priority] - TASK_PRIORITY_RANK[b.priority];
         return TASK_PHASE_RANK[a.phase] - TASK_PHASE_RANK[b.phase];
       });
-      el.innerHTML = ['KOS', 'ODO'].map(eco => {
+      el.innerHTML = ['FOUNDER', 'KOS', 'ODO'].map(eco => {
         const items = sorted.filter(t => t.ecosystem === eco);
         if (!items.length) return '';
         const doneCount = items.filter(t => t.status === 'done').length;
@@ -2789,6 +2820,32 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       if (task) task.status = newStatus;
       renderTaskInventory();
     }
+
+    document.getElementById('task-inventory-add-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('task-inventory-add-status');
+      const btn = document.getElementById('task-inventory-add-btn');
+      const title = document.getElementById('ti-title').value.trim();
+      if (!title) return;
+      btn.disabled = true;
+      statusEl.textContent = '';
+      const { error } = await sb.from('founder_tasks').insert({
+        ecosystem: document.getElementById('ti-ecosystem').value,
+        title,
+        priority: document.getElementById('ti-priority').value,
+        phase: document.getElementById('ti-phase').value,
+        notes: document.getElementById('ti-notes').value.trim() || null,
+        status: 'not_done',
+      });
+      btn.disabled = false;
+      if (error) {
+        console.error('[task-inventory] add failed:', error);
+        statusEl.textContent = "Couldn't add — check console for details.";
+        return;
+      }
+      document.getElementById('task-inventory-add-form').reset();
+      loadTaskInventory();
+    });
 
     // R&D's write side: logs straight into improvement_signals — the
     // same table Intelligence reads — with signal_type: 'idea' to
