@@ -2038,8 +2038,8 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           { name: 'Open Decisions', value: decisionsRes.count, sub: 'Awaiting a founder call' },
           { name: 'Access Requests', value: accessRes.error ? null : (accessRes.data || []).length, sub: 'Signed in, no role yet' },
           { name: 'High-Priority Tasks', value: taskRes.count, sub: 'Not done, high priority — tap to open Task Inventory', action: 'task-inventory' },
-          { name: 'Compliance Due Soon', value: complianceDue, sub: 'Due within 7 days' },
-          { name: 'Priority Signals', value: signalsRes.count, sub: 'Open, non-bottleneck' },
+          { name: 'Compliance Due Soon', value: complianceDue, sub: 'Due within 7 days — tap to open Compliance', action: 'compliance' },
+          { name: 'Priority Signals', value: signalsRes.count, sub: 'Open, non-bottleneck — tap to view', action: 'priority-signals' },
         ];
         el.innerHTML = tiles.map(t => {
           const known = t.value != null;
@@ -2053,19 +2053,26 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
             </div>
           `;
         }).join('');
-        // High-Priority Tasks tile → jumps straight to Task Inventory
-        // in the Ver drawer, since it's a count of the same data —
-        // the tile is the glance/alarm, Task Inventory is the list to
-        // act on. Founder asked for this after confirming they're not
-        // duplicate features.
-        el.querySelectorAll('[data-tile-action="task-inventory"]').forEach(tile => {
-          const openTaskInventory = () => {
+        // Each clickable tile jumps to where the count actually lives
+        // — the tile is the glance/alarm, these are the lists to act
+        // on. Reuses jumpToTopic() (already built for Ver's Desk) for
+        // the accordion-gated Compliance section; Task Inventory and
+        // Priority Tasks aren't behind an accordion so those just
+        // open/scroll directly.
+        const TILE_ACTIONS = {
+          'task-inventory': () => {
             document.getElementById('ver-drawer').classList.add('open');
             document.getElementById('ver-task-inventory').scrollIntoView({ behavior: 'smooth', block: 'start' });
-          };
-          tile.addEventListener('click', openTaskInventory);
+          },
+          'compliance': () => jumpToTopic('Security / Privacy / Compliance'),
+          'priority-signals': () => document.getElementById('priority-tasks-list').scrollIntoView({ behavior: 'smooth', block: 'start' }),
+        };
+        el.querySelectorAll('[data-tile-action]').forEach(tile => {
+          const run = TILE_ACTIONS[tile.dataset.tileAction];
+          if (!run) return;
+          tile.addEventListener('click', run);
           tile.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTaskInventory(); }
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); run(); }
           });
         });
       } catch (err) {
