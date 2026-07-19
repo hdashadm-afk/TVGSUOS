@@ -1046,25 +1046,31 @@
           </div>
           <!-- Founder Notes / Quick Capture, moved here from the Act On
                row, 2026-07-19 — founder screenshot: "The founders note
-               to go inside ai tools and Voc." Not given a collapsible
-               sub-toggle like Voice of Customer/Priority Tasks above —
-               it's an input, not a list to hide, so it stays visibly
-               open like the AI Tools tiles. Kept the .quick-capture
-               wrapper div (textarea/button styling is scoped to that
-               class) and the same #quick-capture-form/-text/-btn/
-               -status ids — the existing submit-handler JS needs no
-               changes.
-               Heading shortened to "Notes" same session, founder:
-               "Remove the whole Founder Notes and Notes only" — part
-               of trimming AI Tools & Voice of Customer's overall
-               height, text-only change. -->
+               to go inside ai tools and Voc." Heading shortened to
+               "Notes" same session ("Remove the whole Founder Notes
+               and Notes only"). Given its own collapsible sub-toggle,
+               closed by default, same session — founder: "Notes,
+               shrunk n expand" — matching VOC/Priority Tasks above
+               instead of staying always-open (originally kept open
+               since it's an input not a list, but the founder wants
+               it collapsible too now for the same overall-height
+               reason). Kept the .quick-capture wrapper div (textarea/
+               button styling is scoped to that class) and the same
+               #quick-capture-form/-text/-btn/-status ids inside the
+               new section-body — existing submit-handler JS needs no
+               changes. -->
+          <button type="button" class="section-toggle" style="padding:20px 0 4px;">
+            <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0;">Notes</h3>
+            <span class="chevron">▶</span>
+          </button>
+          <div class="section-body">
           <div class="quick-capture">
-          <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:20px 0 12px;">Notes</h3>
           <form id="quick-capture-form">
             <textarea id="quick-capture-text" placeholder="Jot something down — saved as a note, separate from R&D's ideas." required></textarea>
             <button type="submit" id="quick-capture-btn">Save note</button>
           </form>
           <p id="quick-capture-status" style="font-size:12px; margin:6px 0 0;"></p>
+          </div>
           </div>
         </div>
         </div>
