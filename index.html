@@ -436,6 +436,50 @@
     text-align: center;
     color: var(--slate);
   }
+  /* VOC/Priority Tasks/Notes toggles, restyled from full-width dark
+     bars to small square tabs, 2026-07-19 — founder: "That big long
+     space can u make like square tab. That blends with the ai logos."
+     The dark full-width look was never deliberate: these .section-
+     toggle buttons sit inside .strategy-form (the AI Tools & Voice of
+     Customer wrapper), and ".strategy-form button" — meant for real
+     submit buttons like "Save note" — was bleeding onto them via a
+     plain element selector. .tab-toggle overrides that bleed with
+     higher specificity and gives them the same rounded-square, ~64px
+     badge language as .tool-tile-icon above, instead of reverting to
+     a plain full-width text row. Chevron hidden — a filled/expanded
+     background is the state indicator instead, same idea as the mode-
+     switcher's active pill. Left as inline-flex (shrink-to-fit, not
+     width:100%) rather than restructuring into a literal shared tab
+     bar: each button's .section-body sibling is display:none while
+     collapsed (taking no layout space, so the three still sit flush
+     next to each other by default) and only pushes later tabs onto a
+     new line once expanded — no changes needed to the shared
+     click-wiring JS, which keys off btn.nextElementSibling. */
+  .strategy-form .section-toggle.tab-toggle {
+    display: inline-flex;
+    width: auto;
+    margin: 0 8px 8px 0;
+    padding: 10px 14px;
+    background: var(--surface);
+    color: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .strategy-form .section-toggle.tab-toggle:hover { background: var(--white); }
+  .strategy-form .section-toggle.tab-toggle.expanded {
+    background: var(--brand-blue);
+    border-color: var(--brand-blue);
+    color: var(--white);
+  }
+  .tab-toggle h3 {
+    margin: 0;
+    color: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .tab-toggle .chevron { display: none; }
   .ecosystem-toggle-btn {
     border: none;
     background: none;
@@ -1013,8 +1057,8 @@
                data. Same section-toggle/section-body pattern, just
                nested one level — the global click handler queries all
                .section-toggle elements, no new JS needed. -->
-          <button type="button" class="section-toggle" style="padding:14px 0 4px;">
-            <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0;">VOC</h3>
+          <button type="button" class="section-toggle tab-toggle">
+            <h3>VOC</h3>
             <span class="chevron">▶</span>
           </button>
           <div class="section-body">
@@ -1036,8 +1080,8 @@
                as Voice of Customer got one: "shrink the priority tasks
                like VOC." Closed by default, same nested section-toggle/
                section-body pattern — no new JS wiring. -->
-          <button type="button" class="section-toggle" style="padding:20px 0 4px;">
-            <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0;">Priority Tasks</h3>
+          <button type="button" class="section-toggle tab-toggle">
+            <h3>Priority Tasks</h3>
             <span class="chevron">▶</span>
           </button>
           <div class="section-body">
@@ -1059,8 +1103,8 @@
                #quick-capture-form/-text/-btn/-status ids inside the
                new section-body — existing submit-handler JS needs no
                changes. -->
-          <button type="button" class="section-toggle" style="padding:20px 0 4px;">
-            <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0;">Notes</h3>
+          <button type="button" class="section-toggle tab-toggle">
+            <h3>Notes</h3>
             <span class="chevron">▶</span>
           </button>
           <div class="section-body">
