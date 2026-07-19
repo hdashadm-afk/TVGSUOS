@@ -793,6 +793,37 @@
     white-space: nowrap;
   }
   .decision-context { font-size: 14px; color: var(--slate); margin: 4px 0 0; line-height: 1.5; }
+  /* Ask Ver history — each Q&A shrunk/expanded per-item, 2026-07-19,
+     founder: "all questionz w answer can be shrunk and expand." Answer
+     hidden by default (just question + date visible, same as any
+     other .decision row) so 50 items (bumped up from 5 — "display at
+     least 50 questions") stays scannable instead of showing 50 full
+     answers inline. Reuses .decision/.decision-top/.decision-context
+     styling for the shrunk look; .chevron for the rotate animation is
+     the same class the static .section-toggle accordions use, but
+     these items don't reuse .section-toggle itself since that
+     class's click-wiring runs once on page load via querySelectorAll
+     — items rendered later by loadVerHistory() would never get bound.
+     Wired instead via one delegated listener on #ask-ver-history
+     (survives re-renders), see setup near loadVerHistory(). */
+  .ver-history-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0 0 4px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+  }
+  .ver-history-answer { display: none; }
+  .ver-history-item.expanded .ver-history-answer { display: block; }
+  .ver-history-item .chevron { transition: transform 0.15s ease; }
+  .ver-history-item.expanded .chevron { transform: rotate(90deg); }
   .decision-meta { font-size: 12px; color: var(--slate); margin-top: 8px; }
   .decision-meta .status-open { color: #B45309; font-weight: 600; }
   .decision-meta .status-decided { color: var(--good); font-weight: 600; }
@@ -3090,21 +3121,33 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         .select('question, answer, answered_at')
         .eq('status', 'answered')
         .order('answered_at', { ascending: false })
-        .limit(5);
+        .limit(50);
       if (error || !data || !data.length) {
         listEl.innerHTML = '';
         return;
       }
       listEl.innerHTML = data.map(q => `
-        <li class="decision">
-          <div class="decision-top">
-            <span class="decision-title">${escapeHtml(q.question)}</span>
-            <span class="decision-venture">${q.answered_at ? new Date(q.answered_at).toLocaleDateString() : ''}</span>
-          </div>
-          <p class="decision-context">${escapeHtml(q.answer)}</p>
+        <li class="decision ver-history-item">
+          <button type="button" class="ver-history-toggle">
+            <div class="decision-top" style="margin-bottom:0;">
+              <span class="decision-title">${escapeHtml(q.question)}</span>
+              <span class="decision-venture">${q.answered_at ? new Date(q.answered_at).toLocaleDateString() : ''}</span>
+            </div>
+            <span class="chevron">▶</span>
+          </button>
+          <p class="decision-context ver-history-answer">${escapeHtml(q.answer)}</p>
         </li>
       `).join('');
     }
+    // Delegated once (not re-bound per render, unlike the page's other
+    // .section-toggle instances which are wired at load time) since
+    // loadVerHistory() rebuilds #ask-ver-history's contents on every
+    // new question asked.
+    document.getElementById('ask-ver-history').addEventListener('click', (e) => {
+      const btn = e.target.closest('.ver-history-toggle');
+      if (!btn) return;
+      btn.closest('.ver-history-item').classList.toggle('expanded');
+    });
 
     // Today's Verse — ported verbatim from katiwala-owner-os-'s
     // Morning Brief (same 30-verse rotation, KJV, public domain).
