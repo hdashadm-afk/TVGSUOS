@@ -1665,13 +1665,30 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
            and api/security-check.js for the vera_status/
            governance_risk_note pieces instead of duplicating them —
            only api/generate-baseline-status.js (GitHub commit
-           activity) needed porting fresh. -->
+           activity) needed porting fresh.
+
+           Made collapsible, closed by default, same day — founder:
+           "The regeneration tabs must be shrinkable and expandable
+           but default as shrink." Reuses the page's standard
+           .section-toggle/.section-body pattern (not .strategy-form-
+           nested, so no bleed risk like the earlier VOC/Tasks/Notes
+           bug) — its click-wiring already queries every
+           .section-toggle on the page once at load time, and this
+           button exists in the initial HTML (unlike Task Inventory's
+           dynamically-rendered rows), so no new JS needed. Regenerate
+           button/id/handler completely untouched, just now sits
+           inside the collapsible body. -->
       <div class="ver-drawer-section">
-        <h4>Daily Baseline Check</h4>
+        <button type="button" class="section-toggle" style="padding:0 0 4px;">
+          <h4 style="margin:0;">Daily Baseline Check</h4>
+          <span class="chevron">▶</span>
+        </button>
+        <div class="section-body">
         <p class="sub">Ver's daily orchestration loop — generated via katiwala-owner-os-'s scheduled routine, or regenerate manually below.</p>
         <div id="ver-baseline-check"></div>
         <button type="button" class="nav-btn tap-target" id="ver-baseline-check-regenerate-btn" style="width:auto; display:inline-flex; margin-top:8px;">Regenerate</button>
         <p class="sub" id="ver-baseline-check-regenerate-status" style="margin:6px 0 0; min-height:16px;"></p>
+        </div>
       </div>
       <div class="ver-drawer-section">
         <h4>Ask Ver</h4>
@@ -1687,13 +1704,22 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       </div>
       <!-- Repo Tree — ported verbatim from katiwala-owner-os-'s
            api/generate-repo-tree.js (generic, not tied to that repo,
-           just a live GitHub API listing) plus its own card. -->
+           just a live GitHub API listing) plus its own card.
+           Made collapsible, closed by default, same reasoning/pattern
+           as Daily Baseline Check above — founder: "The regeneration
+           tabs must be shrinkable and expandable but default as
+           shrink." -->
       <div class="ver-drawer-section">
-        <h4>Repo Tree</h4>
+        <button type="button" class="section-toggle" style="padding:0 0 4px;">
+          <h4 style="margin:0;">Repo Tree</h4>
+          <span class="chevron">▶</span>
+        </button>
+        <div class="section-body">
         <p class="sub">Live snapshot of every repo under hdashadm-afk — most recently pushed first.</p>
         <div id="ver-repo-tree"></div>
         <button type="button" id="ver-repo-tree-regenerate-btn" style="width:100%; margin-top:8px;">Regenerate</button>
         <p id="ver-repo-tree-status" style="font-size:12px; margin:6px 0 0; min-height:16px;"></p>
+        </div>
       </div>
       <!-- AI Tools — logged 2026-07-19 as "research tab, task inventory
            plus the AI tools next to each other"; clarified via
