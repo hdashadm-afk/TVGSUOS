@@ -2037,21 +2037,37 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           { name: 'Critical Alerts', value: alertsRes.count, sub: 'Open bottlenecks, whole org' },
           { name: 'Open Decisions', value: decisionsRes.count, sub: 'Awaiting a founder call' },
           { name: 'Access Requests', value: accessRes.error ? null : (accessRes.data || []).length, sub: 'Signed in, no role yet' },
-          { name: 'High-Priority Tasks', value: taskRes.count, sub: 'Not done, high priority' },
+          { name: 'High-Priority Tasks', value: taskRes.count, sub: 'Not done, high priority — tap to open Task Inventory', action: 'task-inventory' },
           { name: 'Compliance Due Soon', value: complianceDue, sub: 'Due within 7 days' },
           { name: 'Priority Signals', value: signalsRes.count, sub: 'Open, non-bottleneck' },
         ];
         el.innerHTML = tiles.map(t => {
           const known = t.value != null;
           const cls = !known ? 'kpi-off' : t.value > 0 ? 'kpi-bad' : 'kpi-good';
+          const clickAttrs = t.action ? ` data-tile-action="${t.action}" role="button" tabindex="0" style="cursor:pointer;"` : '';
           return `
-            <div class="kpi-card ${cls}">
+            <div class="kpi-card ${cls}"${clickAttrs}>
               <p class="kpi-name">${t.name}</p>
               <p class="kpi-value${known ? '' : ' kpi-value-off'}">${known ? t.value : 'Not connected'}</p>
               <p class="kpi-sub">${t.sub}</p>
             </div>
           `;
         }).join('');
+        // High-Priority Tasks tile → jumps straight to Task Inventory
+        // in the Ver drawer, since it's a count of the same data —
+        // the tile is the glance/alarm, Task Inventory is the list to
+        // act on. Founder asked for this after confirming they're not
+        // duplicate features.
+        el.querySelectorAll('[data-tile-action="task-inventory"]').forEach(tile => {
+          const openTaskInventory = () => {
+            document.getElementById('ver-drawer').classList.add('open');
+            document.getElementById('ver-task-inventory').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          };
+          tile.addEventListener('click', openTaskInventory);
+          tile.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTaskInventory(); }
+          });
+        });
       } catch (err) {
         el.innerHTML = `<p class="cockpit-not-connected">Couldn't load — ${escapeHtml(err.message)}</p>`;
       }
