@@ -813,6 +813,32 @@
         <div class="verse-body" id="verse-body"></div>
       </details>
 
+      <!-- AI Tools & Voice of Customer — moved here 2026-07-19, second
+           placement change. Founder's own words: "should be I one box
+           as Rnd section" (one combined box) then, after seeing it
+           buried behind 5 accordion clicks, "it has to on top, easy to
+           access" — pointed directly at this spot, between Today's
+           Verse and Needs Your Attention. Same box, same content, just
+           moved out of the R&D accordion so it's visible without
+           opening anything. AI Tools: 5 external/in-page shortcut
+           links. Voice of Customer: real, non-bottleneck rows from the
+           same improvement_signals table Intelligence reads — fuel for
+           R&D ideas, not incident tracking. -->
+      <div class="strategy-form" style="margin:12px 0 0;">
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">AI Tools</h3>
+        <div class="quick-links" style="margin:0 0 20px;">
+          <a href="https://www.perplexity.ai" target="_blank" rel="noopener">Perplexity →</a>
+          <a href="https://claude.ai" target="_blank" rel="noopener">Claude →</a>
+          <a href="https://www.notion.so" target="_blank" rel="noopener">Notion →</a>
+          <a href="https://github.com/hdashadm-afk/TVGSUOS/blob/main/docs/MASTER_DIRECTION.md" target="_blank" rel="noopener">Master Direction →</a>
+          <a href="#" id="rd-jump-baseline">Daily Baseline Check →</a>
+        </div>
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Voice of Customer</h3>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 12px;">Real, non-bottleneck signals from KOS and ODO usage — fuel for R&D ideas, not incident tracking (that's Intelligence, further down).</p>
+        <ul class="decision-list" id="rd-voice-of-customer" style="margin:0;"></ul>
+        <p id="rd-voice-of-customer-empty" style="display:none; font-size:14px; color:var(--slate);">No non-bottleneck signals logged yet.</p>
+      </div>
+
       <!-- Needs Your Attention — founder request, 2026-07-19, modeled
            on KOS's Morning Brief tile grid. Fixed whole-org counts,
            deliberately NOT mode-aware (unlike the KPI grid below) —
@@ -1089,31 +1115,6 @@
             <button type="submit" id="idea-submit-btn">Log idea</button>
             <p id="idea-form-status"></p>
           </form>
-        </div>
-
-        <!-- AI Tools & Voice of Customer — one combined box, per
-             founder request ("should be in one box as R&D section").
-             AI Tools: same 3 external shortcut links, moved here from
-             the top-of-page row (consolidated, not duplicated). Voice
-             of Customer: read-only, real data — same improvement_signals
-             table Intelligence reads below, filtered to non-bottleneck
-             signals (bottlenecks already have their own home in
-             Intelligence) so this reads as genuine owner/user voice
-             feeding R&D ideation, not a duplicate of the Intelligence
-             table. -->
-        <div class="strategy-form" style="margin-top:24px;">
-          <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">AI Tools</h3>
-          <div class="quick-links" style="margin:0 0 20px;">
-            <a href="https://www.perplexity.ai" target="_blank" rel="noopener">Perplexity →</a>
-            <a href="https://claude.ai" target="_blank" rel="noopener">Claude →</a>
-            <a href="https://www.notion.so" target="_blank" rel="noopener">Notion →</a>
-            <a href="https://github.com/hdashadm-afk/TVGSUOS/blob/main/docs/MASTER_DIRECTION.md" target="_blank" rel="noopener">Master Direction →</a>
-            <a href="#" id="rd-jump-baseline">Daily Baseline Check →</a>
-          </div>
-          <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Voice of Customer</h3>
-          <p style="font-size:14px; color:var(--slate); margin:-8px 0 12px;">Real, non-bottleneck signals from KOS and ODO usage — fuel for R&D ideas, not incident tracking (that's Intelligence, below).</p>
-          <ul class="decision-list" id="rd-voice-of-customer" style="margin:0;"></ul>
-          <p id="rd-voice-of-customer-empty" style="display:none; font-size:14px; color:var(--slate);">No non-bottleneck signals logged yet.</p>
         </div>
 
         <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:24px 0 12px;">Early-stage / dormant exploration</h3>
@@ -2110,9 +2111,9 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       const emptyEl = document.getElementById('rd-voice-of-customer-empty');
       const { data: rawData, error } = await sb
         .from('improvement_signals')
-        .select('project_scope, feature_area, signal_summary, request_count, created_at')
+        .select('project_scope, feature_area, signal_summary, request_count, last_updated')
         .eq('bottleneck_flag', false)
-        .order('created_at', { ascending: false })
+        .order('last_updated', { ascending: false })
         .limit(8);
       const data = rawData ? rawData.filter(s => !isWposScope(s.project_scope)) : rawData;
       if (error) {
@@ -2134,7 +2135,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
             <span class="decision-venture">${escapeHtml(s.project_scope) || '—'}</span>
           </div>
           <div class="decision-meta">
-            ${s.feature_area ? `${escapeHtml(s.feature_area)} · ` : ''}${s.request_count ?? 1} request${(s.request_count ?? 1) === 1 ? '' : 's'} · ${new Date(s.created_at).toLocaleDateString()}
+            ${s.feature_area ? `${escapeHtml(s.feature_area)} · ` : ''}${s.request_count ?? 1} request${(s.request_count ?? 1) === 1 ? '' : 's'} · ${new Date(s.last_updated).toLocaleDateString()}
           </div>
         </li>
       `).join('');
