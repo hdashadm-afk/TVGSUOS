@@ -949,11 +949,21 @@
                through a different list component two sections away. Same
                #priority-tasks-list/#priority-tasks-empty ids and the same
                loadPriorityTasks()/renderAttentionList() call — the KPI
-               tile's "Priority Signals" scroll-to and the section's
-               expanded-by-default state both still work unchanged. -->
-          <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:20px 0 12px;">Priority Tasks</h3>
-          <ul class="attention-list" id="priority-tasks-list"></ul>
-          <p class="attention-empty" id="priority-tasks-empty" style="display:none;">No open signals right now.</p>
+               tile's "Priority Signals" scroll-to logic (below) was
+               updated to expand this toggle first, same as jumpToTopic
+               does for data-topic'd sections.
+               Given its own collapsible sub-toggle same day, same reason
+               as Voice of Customer got one: "shrink the priority tasks
+               like VOC." Closed by default, same nested section-toggle/
+               section-body pattern — no new JS wiring. -->
+          <button type="button" class="section-toggle" style="padding:20px 0 4px;">
+            <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0;">Priority Tasks</h3>
+            <span class="chevron">▶</span>
+          </button>
+          <div class="section-body">
+            <ul class="attention-list" id="priority-tasks-list"></ul>
+            <p class="attention-empty" id="priority-tasks-empty" style="display:none;">No open signals right now.</p>
+          </div>
         </div>
         </div>
       </section>
@@ -1373,12 +1383,17 @@
             <a href="https://katiwala-owner-os.vercel.app" target="_blank" rel="noopener">Open →</a>
           </li>
         </ul>
+        <!-- This footer note used to sit outside .section-body, so it
+             stayed visible even with Governed Ventures showing collapsed
+             (▶) — founder screenshot, 2026-07-19: "shrunk govern
+             ventures," pointing at exactly this mismatch. Moved inside
+             the section-body so the whole block, note included, hides
+             behind the same toggle. -->
+        <footer>
+Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dashboard — is native here, not a copy of Katiwala AI's. What's still elsewhere: the Daily Baseline Check's own scheduled routine (the process that actually generates each day's check) still runs via Katiwala AI's app; this app only reads its output (the governance risk log, in Security). See <code>FOUNDER_OS.md</code> and <code>docs/MASTER_DIRECTION.md</code> in this repo for exactly what's built, what's open, and why.
+        </footer>
         </div>
       </div>
-
-      <footer>
-Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dashboard — is native here, not a copy of Katiwala AI's. What's still elsewhere: the Daily Baseline Check's own scheduled routine (the process that actually generates each day's check) still runs via Katiwala AI's app; this app only reads its output (the governance risk log, in Security). See <code>FOUNDER_OS.md</code> and <code>docs/MASTER_DIRECTION.md</code> in this repo for exactly what's built, what's open, and why.
-      </footer>
     </div>
   </div>
 
@@ -2312,16 +2327,24 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         // Each clickable tile jumps to where the count actually lives
         // — the tile is the glance/alarm, these are the lists to act
         // on. Reuses jumpToTopic() (already built for Ver's Desk) for
-        // the accordion-gated Compliance section; Task Inventory and
-        // Priority Tasks aren't behind an accordion so those just
-        // open/scroll directly.
+        // the accordion-gated Compliance section; Task Inventory opens/
+        // scrolls directly (not behind an accordion). Priority Tasks
+        // got its own collapsible sub-toggle (2026-07-19, nested inside
+        // AI Tools & Voice of Customer, closed by default like Voice of
+        // Customer) — expand it first the same way jumpToTopic does,
+        // otherwise scrollIntoView lands on a display:none element.
         const TILE_ACTIONS = {
           'task-inventory': () => {
             document.getElementById('ver-drawer').classList.add('open');
             document.getElementById('ver-task-inventory').scrollIntoView({ behavior: 'smooth', block: 'start' });
           },
           'compliance': () => jumpToTopic('Security / Privacy / Compliance'),
-          'priority-signals': () => document.getElementById('priority-tasks-list').scrollIntoView({ behavior: 'smooth', block: 'start' }),
+          'priority-signals': () => {
+            const list = document.getElementById('priority-tasks-list');
+            const btn = list.closest('.section-body').previousElementSibling;
+            if (btn && btn.classList.contains('section-toggle') && !btn.classList.contains('expanded')) btn.click();
+            list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          },
         };
         el.querySelectorAll('[data-tile-action]').forEach(tile => {
           const run = TILE_ACTIONS[tile.dataset.tileAction];
