@@ -365,6 +365,47 @@
     text-decoration: none;
   }
   .quick-links a:hover { text-decoration: underline; }
+  /* Tool tiles — logo-style badges for the AI Tools row, added
+     2026-07-19 per founder request ("make it in logos, add Kimi and
+     gemini"). No hotlinked brand-image assets (fragile, trademark
+     risk, breaks if the other company's CDN changes) — monogram
+     badges in each product's real brand color instead, same idea as
+     an app-launcher grid. Master Direction/Daily Baseline Check stay
+     plain .quick-links text below since they're in-app navigation,
+     not third-party AI products. */
+  .tool-tile-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 12px 0 20px;
+  }
+  .tool-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 64px;
+    text-decoration: none;
+  }
+  .tool-tile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .tool-tile:hover .tool-tile-icon { filter: brightness(1.08); }
+  .tool-tile-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--slate);
+  }
   .ecosystem-toggle-btn {
     border: none;
     background: none;
@@ -856,10 +897,29 @@
         <div class="section-body expanded">
         <div class="strategy-form" style="margin:12px 0 0;">
           <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">AI Tools</h3>
+          <div class="tool-tile-row">
+            <a class="tool-tile" href="https://www.perplexity.ai" target="_blank" rel="noopener" title="Perplexity">
+              <span class="tool-tile-icon" style="background:#20808D;">P</span>
+              <span class="tool-tile-label">Perplexity</span>
+            </a>
+            <a class="tool-tile" href="https://claude.ai" target="_blank" rel="noopener" title="Claude">
+              <span class="tool-tile-icon" style="background:#CC785C;">✳</span>
+              <span class="tool-tile-label">Claude</span>
+            </a>
+            <a class="tool-tile" href="https://www.notion.so" target="_blank" rel="noopener" title="Notion">
+              <span class="tool-tile-icon" style="background:#191919;">N</span>
+              <span class="tool-tile-label">Notion</span>
+            </a>
+            <a class="tool-tile" href="https://www.kimi.com" target="_blank" rel="noopener" title="Kimi">
+              <span class="tool-tile-icon" style="background:#14171F;">K</span>
+              <span class="tool-tile-label">Kimi</span>
+            </a>
+            <a class="tool-tile" href="https://gemini.google.com" target="_blank" rel="noopener" title="Gemini">
+              <span class="tool-tile-icon" style="background:linear-gradient(135deg,#4285F4,#9B72CB 55%,#D96570);">G</span>
+              <span class="tool-tile-label">Gemini</span>
+            </a>
+          </div>
           <div class="quick-links" style="margin:0 0 20px;">
-            <a href="https://www.perplexity.ai" target="_blank" rel="noopener">Perplexity →</a>
-            <a href="https://claude.ai" target="_blank" rel="noopener">Claude →</a>
-            <a href="https://www.notion.so" target="_blank" rel="noopener">Notion →</a>
             <a href="https://github.com/hdashadm-afk/TVGSUOS/blob/main/docs/MASTER_DIRECTION.md" target="_blank" rel="noopener">Master Direction →</a>
             <a href="#" id="rd-jump-baseline">Daily Baseline Check →</a>
           </div>
