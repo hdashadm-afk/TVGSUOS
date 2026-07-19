@@ -1107,6 +1107,8 @@
             <a href="https://www.perplexity.ai" target="_blank" rel="noopener">Perplexity →</a>
             <a href="https://claude.ai" target="_blank" rel="noopener">Claude →</a>
             <a href="https://www.notion.so" target="_blank" rel="noopener">Notion →</a>
+            <a href="https://github.com/hdashadm-afk/TVGSUOS/blob/main/docs/MASTER_DIRECTION.md" target="_blank" rel="noopener">Master Direction →</a>
+            <a href="#" id="rd-jump-baseline">Daily Baseline Check →</a>
           </div>
           <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Voice of Customer</h3>
           <p style="font-size:14px; color:var(--slate); margin:-8px 0 12px;">Real, non-bottleneck signals from KOS and ODO usage — fuel for R&D ideas, not incident tracking (that's Intelligence, below).</p>
@@ -1445,6 +1447,11 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
 
     document.getElementById('ver-toggle-btn').addEventListener('click', () => {
       document.getElementById('ver-drawer').classList.add('open');
+    });
+    document.getElementById('rd-jump-baseline').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('ver-drawer').classList.add('open');
+      document.getElementById('ver-baseline-check').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     document.getElementById('ver-drawer-close').addEventListener('click', () => {
       document.getElementById('ver-drawer').classList.remove('open');
