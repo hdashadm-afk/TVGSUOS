@@ -324,6 +324,19 @@
     background: var(--surface);
     margin-bottom: 24px;
   }
+  /* Compact variant — founder, 2026-07-19: "Put the toggle (minimize)
+     on the right. For balance. Just below Sign In [out]." Paired with
+     Sign Out in a right-aligned column next to the brand row instead
+     of its own full-width line, so it needed to shrink to still read
+     as a toggle rather than a cramped row of text. */
+  .mode-switcher.mode-switcher-compact {
+    margin-bottom: 0;
+  }
+  .mode-switcher.mode-switcher-compact button,
+  .mode-switcher.mode-switcher-compact a {
+    padding: 5px 11px;
+    font-size: 11px;
+  }
   .mode-switcher button, .mode-switcher a {
     display: inline-flex;
     align-items: center;
@@ -747,7 +760,6 @@
     color: var(--slate);
     cursor: pointer;
     font-family: inherit;
-    float: right;
   }
 </style>
 </head>
@@ -836,16 +848,6 @@
 
   <div id="app">
     <div class="wrap">
-      <button id="sign-out-btn">Sign out</button>
-      <div class="brand-row">
-        <svg class="logo-mark" viewBox="0 0 200 224"><use href="#tvg-shield-def"/></svg>
-        <div>
-          <p class="eyebrow" style="margin:0 0 2px;">The Verified Group</p>
-          <h1 style="margin:0;">TVG</h1>
-          <p class="wordmark-sub">Founder OS</p>
-        </div>
-      </div>
-
       <!-- One 3-way toggle, not two separate ones. This used to be a
            FOS/KOS/ODO tab bar (FOS a static label, KOS/ODO external
            links out to their own domains) sitting above a second,
@@ -865,34 +867,40 @@
            bordered "link" variant (.mode-switcher-link) same day,
            founder: "make this like Mode Founder/KoS/Kweb... I want
            those in mode control to save space."
-           Relocated here, to the very top of the page (above Phase 4/
-           Today's Verse/Needs Your Attention), 2026-07-19 — founder
-           screenshot with an arrow pointing at the blank space under
-           Sign Out: "Relocate on top." Toggle behavior unchanged
-           (loadKpiGrid etc. all key off #ecosystem-toggle's
-           .ecosystem-toggle-btn buttons by class/id, not page
-           position). Labels shortened same message ("make it like
-           lesser words to reduce space") — "KOS — Gas Operations" to
-           "KOS", "ODO — OwnerDirect" to "ODO", and the Open KOS/ODO
-           links to an icon-only "↗" (title attr keeps the full
-           destination for a11y/tooltip) — this row now has to share
-           header space with Sign Out instead of a full-width strip
-           further down. -->
-      <!-- Phase 4 status badge used to sit right below this toggle —
-           removed 2026-07-19, founder: "should it be there?" / "Remove
-           it, put the toggle there." It was a one-time build-progress
-           marker (Phase 1-4, all 9 governance areas live) that doesn't
-           change day-to-day, competing for header space with things
-           that actually update. Build history stays in FOUNDER_OS.md,
-           which already tracks it in more detail; the toggle now
-           takes that spot as the last header element before Today's
-           Verse — .status/.dot CSS removed too, unused elsewhere. -->
-      <div class="mode-switcher" id="ecosystem-toggle" role="group" aria-label="Founder / KOS / ODO view">
-        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="founder">Founder</button>
-        <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="kos">KOS</button>
-        <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo" style="display:none;">ODO</button>
-        <a class="mode-switcher-link" href="https://katiwalaai.app" target="_blank" rel="noopener" title="Open KOS — katiwalaai.app">↗</a>
-        <a class="mode-switcher-link" href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;" title="Open ODO — ownerdirect.online">↗</a>
+           Relocated to the top of the page (above Phase 4/Today's
+           Verse/Needs Your Attention) 2026-07-19, then Phase 4 itself
+           removed the same day (static build marker, didn't change
+           day-to-day — "should it be there?" / "Remove it, put the
+           toggle there") leaving the toggle as its own full-width
+           line under the brand row.
+           Paired with Sign Out in a right-aligned column, shrunk via
+           .mode-switcher-compact, same day — founder: "Put the toggle
+           (minimize) on the right. For balance. Just below Sign
+           [out]." Brand row (left) and this Sign Out + toggle column
+           (right) now sit in one flex row, mirroring each other
+           instead of the toggle running full-width below both. Toggle
+           behavior unchanged throughout every move — loadKpiGrid()
+           etc. all key off #ecosystem-toggle's .ecosystem-toggle-btn
+           buttons by class/id, never page position. -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:20px;">
+        <div class="brand-row">
+          <svg class="logo-mark" viewBox="0 0 200 224"><use href="#tvg-shield-def"/></svg>
+          <div>
+            <p class="eyebrow" style="margin:0 0 2px;">The Verified Group</p>
+            <h1 style="margin:0;">TVG</h1>
+            <p class="wordmark-sub">Founder OS</p>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
+          <button id="sign-out-btn">Sign out</button>
+          <div class="mode-switcher mode-switcher-compact" id="ecosystem-toggle" role="group" aria-label="Founder / KOS / ODO view">
+            <button type="button" class="ecosystem-toggle-btn" data-ecosystem="founder">Founder</button>
+            <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="kos">KOS</button>
+            <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo" style="display:none;">ODO</button>
+            <a class="mode-switcher-link" href="https://katiwalaai.app" target="_blank" rel="noopener" title="Open KOS — katiwalaai.app">↗</a>
+            <a class="mode-switcher-link" href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;" title="Open ODO — ownerdirect.online">↗</a>
+          </div>
+        </div>
       </div>
 
       <!-- Today's Verse — moved here from katiwala-owner-os-'s
