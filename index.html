@@ -618,21 +618,6 @@
     text-align: right;
     flex-shrink: 0;
   }
-  .areas {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 12px;
-  }
-  .area {
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    background: var(--white);
-  }
-  .area-name { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
-  .area-state { font-size: 13px; color: var(--slate); margin: 0; }
-  .area.built { border-color: var(--brand-blue); background: var(--surface); }
-  .area.built .area-state { color: var(--brand-blue); font-weight: 600; }
   .hierarchy {
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -1198,7 +1183,12 @@
       <p class="cockpit-label">Today</p>
       <div class="kpi-grid" id="kpi-grid"></div>
 
-      <!-- Row 2: status & trends. -->
+      <!-- Row 2: status & trends. Weekly Trend Summary removed
+           2026-07-19 (founder: "check which are redundant" pass) — it
+           had no id, nothing ever populated it, and it always read
+           "Not connected" with no near-term plan to change that (would
+           need a scheduled snapshot job). cockpit-row2's auto-fit grid
+           just reflows to 2 columns, no CSS change needed. -->
       <p class="cockpit-label">Status</p>
       <div class="cockpit-row2">
         <div class="cockpit-panel">
@@ -1209,10 +1199,6 @@
         <div class="cockpit-panel">
           <h3 id="project-health-title">Project Health — KOS Gas</h3>
           <div id="project-health-list"></div>
-        </div>
-        <div class="cockpit-panel">
-          <h3>Weekly Trend Summary</h3>
-          <p class="cockpit-not-connected">Not connected — no historical daily/weekly snapshots are stored yet for finance, operations, or project velocity. Would need a scheduled snapshot job before real trend lines are possible.</p>
         </div>
       </div>
 
@@ -1498,60 +1484,25 @@
         </div>
       </section>
 
-      <section>
-        <button type="button" class="section-toggle"><h2>All 9 governance areas</h2><span class="chevron">▶</span></button>
-        <div class="section-body">
-        <div class="areas">
-          <div class="area built">
-            <p class="area-name">Founder's Space</p>
-            <p class="area-state">Built — lives in Katiwala AI for now</p>
-          </div>
-          <div class="area built">
-            <p class="area-name">Strategy</p>
-            <p class="area-state">Built — above</p>
-          </div>
-          <div class="area built">
-            <p class="area-name">Product</p>
-            <p class="area-state">Built — above</p>
-          </div>
-          <div class="area built">
-            <p class="area-name">Security / Privacy / Compliance</p>
-            <p class="area-state">Built — above</p>
-          </div>
-          <div class="area built">
-            <p class="area-name">Finance</p>
-            <p class="area-state">Built — above</p>
-          </div>
-          <div class="area built">
-            <p class="area-name">Marketing</p>
-            <p class="area-state">Built — above</p>
-          </div>
-          <div class="area built">
-            <p class="area-name">R&amp;D</p>
-            <p class="area-state">Built — above</p>
-          </div>
-          <div class="area built">
-            <p class="area-name">Intelligence</p>
-            <p class="area-state">Built — above</p>
-          </div>
-          <div class="area built">
-            <p class="area-name">People / Admin / Governance</p>
-            <p class="area-state">Built — above</p>
-          </div>
-        </div>
-        </div>
-      </section>
-
-      <section>
-        <button type="button" class="section-toggle"><h2>Agent hierarchy</h2><span class="chevron">▶</span></button>
-        <div class="section-body">
-        <div class="hierarchy">
-          <div><span class="name">Ver</span> <span class="role">— chief of staff, TVGSUOS layer</span></div>
-          <div style="padding-left: 20px;"><span class="name">Kath</span> <span class="role">— KOS / Katiwala AI</span></div>
-          <div style="padding-left: 20px;"><span class="name">Vera</span> <span class="role">— OWDO / ODO</span></div>
-        </div>
-        </div>
-      </section>
+      <!-- "All 9 governance areas" and "Agent hierarchy" sections
+           removed 2026-07-19 (founder: "check which are redundant"
+           pass, then "make sure the codes are not disturbed" before
+           acting). Verified safe first: neither had a data-topic (Ver's
+           Desk/jumpToTopic only targets the 8 governance-area
+           accordions above), and no JS anywhere referenced .area/
+           area-name/area-state or this specific .hierarchy instance.
+           "All 9 governance areas" was 100% static — every entry
+           literally read "Built — above," true of all 9 now that
+           Phase 4 shipped; it was a build-progress tracker that
+           stopped conveying anything once everything was actually
+           built. "Agent hierarchy" duplicated Ver/Kath/Vera as a
+           section on its own; its only non-duplicate content (Ver
+           sitting above Kath/Vera) is already stated in prose by
+           People/Admin/Governance's own "Decision rights & escalation"
+           bullets right below its hierarchy block ("Kath and Vera
+           escalate to Ver," "Ver never duplicates Kath/Vera domain
+           reasoning") — so removing this lost no information, nothing
+           needed merging in. -->
 
       <div class="ventures">
         <button type="button" class="section-toggle"><h2>Governed ventures</h2><span class="chevron">▶</span></button>
