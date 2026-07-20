@@ -521,7 +521,7 @@
   .ecosystem-toggle-btn:hover { background: var(--white); color: var(--brand-blue); }
   .ecosystem-toggle-btn.mode-active:hover { background: var(--brand-blue); color: var(--white); }
   /* Ver — floating assistant, same fixed-button + slide-in-drawer
-     pattern as katiwala-owner-os-'s Ask Kath assistant, so the two
+     pattern as katiwala-owner-os-'s Ask Lens assistant, so the two
      feel like one ecosystem rather than two different conventions. */
   #ver-toggle-btn {
     position: fixed;
@@ -1208,7 +1208,7 @@
            already built this session (Strategy/Product/Finance/
            Marketing/R&D/Intelligence/Security) or compliance_items
            (read-only rollup — detailed compliance management stays
-           Kath's, this just surfaces the count). Nothing fabricated:
+           Lens's, this just surfaces the count). Nothing fabricated:
            anything without a live source shows "Not connected." Mode-
            aware since the ecosystem toggle above — see loadKpiGrid. -->
       <!-- Today, Status, YC Snapshot, Venture Updates, Act On — made
@@ -1385,7 +1385,7 @@
       <section>
         <button type="button" class="section-toggle" data-topic="Product"><h2>Product — portfolio consistency rollup</h2><span class="chevron">▶</span></button>
         <div class="section-body">
-        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Every venture's stage and build readiness in one place — catches drift, not a duplicate of each venture's own feature work (that stays with Kath/Vera).</p>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Every venture's stage and build readiness in one place — catches drift, not a duplicate of each venture's own feature work (that stays with Lens/Vera).</p>
         <div class="table-wrap">
           <table id="product-table">
             <thead>
@@ -1467,7 +1467,7 @@
         <button type="button" class="section-toggle" data-topic="R&D"><h2>R&amp;D</h2><span class="chevron">▶</span></button>
         <div class="section-body">
         <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Log a new idea</h3>
-        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Writes straight into the same signal feed Intelligence reads below — a founder-originated idea sits alongside whatever Kath and Vera surface, not in a separate silo.</p>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Writes straight into the same signal feed Intelligence reads below — a founder-originated idea sits alongside whatever Lens and Vera surface, not in a separate silo.</p>
         <div class="strategy-form">
           <form id="idea-form">
             <label for="idea-scope">Venture / scope</label>
@@ -1544,7 +1544,7 @@
              ported from katiwala-owner-os- below this table — a real
              naming collision this comment previously papered over,
              found and fixed while doing that port, not before. -->
-        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">What Kath and Vera are surfacing from real usage — requests, bottlenecks, and what needs founder attention, as individual raw signals.</p>
+        <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">What Lens and Vera are surfacing from real usage — requests, bottlenecks, and what needs founder attention, as individual raw signals.</p>
         <div class="table-wrap">
           <table id="intelligence-table">
             <thead>
@@ -1561,7 +1561,7 @@
              all layers, Kath Vera n ver"): this is docs/MASTER_
              DIRECTION.md §4's own named example of what the "Signal"
              step looks like — a curated weekly digest per venture,
-             meant to be populated from what Kath/Vera see in real
+             meant to be populated from what Lens/Vera see in real
              usage, that Ver/Founder OS reviews here to set updated
              direction. Same weekly_innovation_summary table/columns/
              (project_scope, week_start) upsert-conflict-key as the
@@ -1661,15 +1661,15 @@
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">The governance rules this whole app runs on — not a database view, the actual rules from docs/GOVERNANCE_MODEL.md, surfaced here instead of staying buried in the repo.</p>
         <div class="hierarchy" style="margin-bottom:16px;">
           <div style="margin-bottom:10px;"><span class="name">Ver</span> <span class="role">— founder priorities, cross-venture synthesis, daily baseline review, security posture, data privacy compliance, business continuity, escalation, policy enforcement.</span></div>
-          <div style="margin-bottom:10px;"><span class="name">Kath</span> <span class="role">— KOS memory, gas station owner decision support, CEO's Space signals, HR/payroll intelligence, gas station operational loops.</span></div>
+          <div style="margin-bottom:10px;"><span class="name">Lens</span> <span class="role">— KOS memory, gas station owner decision support, CEO's Space signals, HR/payroll intelligence, gas station operational loops.</span></div>
           <div><span class="name">Vera</span> <span class="role">— OWDO memory, trust loops, verification workflows, buyer/seller/provider progression, marketplace reliability signals.</span></div>
         </div>
         <p style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 8px;">Decision rights &amp; escalation</p>
         <ul style="margin:0; padding-left:20px; font-size:14px; color:var(--ink); line-height:1.8;">
           <li>The founder is final authority on strategy and anything not already settled by the master docs.</li>
           <li>Ver escalates to the founder: security/privacy/compliance risks, cross-venture conflicts, anything changing baseline direction.</li>
-          <li>Kath and Vera escalate to Ver: blockers needing founder-level resourcing or cross-venture coordination — not routine operations.</li>
-          <li>Non-redundancy rule: Ver never duplicates Kath/Vera domain reasoning; Kath/Vera never own founder-level orchestration.</li>
+          <li>Lens and Vera escalate to Ver: blockers needing founder-level resourcing or cross-venture coordination — not routine operations.</li>
+          <li>Non-redundancy rule: Ver never duplicates Lens/Vera domain reasoning; Lens/Vera never own founder-level orchestration.</li>
         </ul>
 
         <!-- Access Requests — ported from katiwala-owner-os-'s Founder
@@ -1707,12 +1707,12 @@
            literally read "Built — above," true of all 9 now that
            Phase 4 shipped; it was a build-progress tracker that
            stopped conveying anything once everything was actually
-           built. "Agent hierarchy" duplicated Ver/Kath/Vera as a
+           built. "Agent hierarchy" duplicated Ver/Lens/Vera as a
            section on its own; its only non-duplicate content (Ver
-           sitting above Kath/Vera) is already stated in prose by
+           sitting above Lens/Vera) is already stated in prose by
            People/Admin/Governance's own "Decision rights & escalation"
-           bullets right below its hierarchy block ("Kath and Vera
-           escalate to Ver," "Ver never duplicates Kath/Vera domain
+           bullets right below its hierarchy block ("Lens and Vera
+           escalate to Ver," "Ver never duplicates Lens/Vera domain
            reasoning") — so removing this lost no information, nothing
            needed merging in. -->
 
@@ -2587,7 +2587,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
 
     // Intelligence: improvement_signals — the "Weekly Innovation
     // Summary" katiwala-owner-os- built a home for but never
-    // populated (sat empty waiting for Kath/Vera to auto-fill it).
+    // populated (sat empty waiting for Lens/Vera to auto-fill it).
     // Real, already-populated table; read-only rollup here, no new
     // schema.
     let intelligenceSignalsState = [];
@@ -2664,7 +2664,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     }
 
     // Ties Intelligence's raw signals to the Weekly Innovation Summary
-    // form so the founder isn't retyping what Kath/Vera already
+    // form so the founder isn't retyping what Lens/Vera already
     // surfaced — same improvement_signals rows as the table above,
     // filtered to this venture and still open, one click into the
     // matching textarea (bottleneck -> Key bottlenecks, else -> Top
@@ -2772,7 +2772,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // summary + venture-select-driven form idiom as Weekly Innovation
     // Summary just above.
     const WEEKLY_UPDATE_LABELS = {
-      kos: { primary: 'What It Means for SME Owners', project: 'What It Means for KOS', assistant: 'Kath Focus', name: 'KOS' },
+      kos: { primary: 'What It Means for SME Owners', project: 'What It Means for KOS', assistant: 'Lens Focus', name: 'KOS' },
       odo: { primary: 'What It Means for OFWs', project: 'What It Means for ODO', assistant: 'Vera Focus', name: 'ODO' },
     };
     let weeklyMarketUpdateState = {};
@@ -3330,7 +3330,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // "escrow/protection cases" has no real source; deals is the
     // closest honest live proxy, relabeled rather than passed off as
     // a literal match. compliance_items is read as a rollup count
-    // only (detail/management stays Kath's per
+    // only (detail/management stays Lens's per
     // docs/GOVERNANCE_MODEL.md's ownership table).
     async function loadKpiGrid() {
       const el = document.getElementById('kpi-grid');
@@ -3913,7 +3913,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         return;
       }
       const rows = [
-        ['App/repo status (Kath signal)', data.app_status],
+        ['App/repo status (Lens signal)', data.app_status],
         ['Notion status', data.notion_status],
         ['OWDO status (Vera signal)', data.vera_status],
         ['Last agreed direction', data.last_direction],
@@ -4188,7 +4188,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // real time?" / "Add real-time updates so it syncs automatically."
     // Before this, founder_tasks only refreshed on this session's own
     // actions (page load, mark done/reopen, +Add task, Ask Ver/Vera
-    // logging a follow-up) — a row written by Kath, Vera, or another
+    // logging a follow-up) — a row written by Lens, Vera, or another
     // browser tab never showed up without a manual reload. Subscribes
     // to every change (insert/update/delete) on founder_tasks and
     // re-fetches; debounced 300ms so a burst of several rows changing
@@ -4324,7 +4324,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
 
     // R&D's write side: logs straight into improvement_signals — the
     // same table Intelligence reads — with signal_type: 'idea' to
-    // distinguish founder-originated ideas from whatever Kath/Vera
+    // distinguish founder-originated ideas from whatever Lens/Vera
     // eventually auto-populate (signal_type: 'recurring_request' on
     // the existing seed rows). Refreshes Intelligence's rollup too so
     // the link between the two areas is visible immediately, not just
