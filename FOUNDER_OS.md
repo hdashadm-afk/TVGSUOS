@@ -342,5 +342,8 @@ Persistent, dated implementation log for this repo. Read this first in any new s
   - Security note caught and fixed before shipping: the first draft put each signal's raw text into a `data-text="..."` HTML attribute; this file's existing `escapeHtml()` only escapes `&`/`<`/`>` (via `textContent`→`innerHTML`), not `"`, so a signal containing a double-quote could have broken out of the attribute. Rewrote to pass an index into a kept-in-memory array instead of round-tripping text through an attribute — no untrusted text ever lands in an HTML attribute now.
   - JS/tag-balance checked before commit (module script parses clean; div/form/button counts balanced: 103/103, 10/10, 40/40). **Not yet verified live.**
 - **Next step, founder's call:** confirm the "From Intelligence this week" suggestions show the right open signals per venture and "+ Add" correctly fills Key bottlenecks/Top requests without duplicating on repeat clicks.
+- **Founder (screenshot of Ver's Task Inventory): "Pls put remove button option its getting so much populated."** Completed tasks only had "Reopen" — no way to actually clear a done item out, so the list just kept growing entry by entry. Added a "Remove" button next to Reopen/Mark done on every task row, with a confirm prompt before it deletes the row from `founder_tasks` outright (no soft-delete/archive column exists on that table to fall back on, so this is a real delete, not a hide).
+  - JS/tag-balance checked before commit (module script parses clean; div/form/button/span counts balanced: 103/103, 10/10, 41/41, 73/73).
+- **Next step, founder's call:** confirm Remove actually clears a task from the list and asks for confirmation first.
 
 
