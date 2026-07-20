@@ -4140,7 +4140,10 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
               <div style="padding:6px 0; border-bottom:1px solid var(--border);">
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
                   <span style="font-size:13px; ${t.status === 'done' ? 'text-decoration:line-through; color:var(--slate);' : ''}">${escapeHtml(t.title)}</span>
-                  <button type="button" class="task-inventory-toggle-btn" data-id="${t.id}" data-status="${t.status}" style="width:auto; flex-shrink:0; font-size:11px; padding:3px 8px;">${t.status === 'done' ? 'Reopen' : 'Mark done'}</button>
+                  <span style="display:flex; gap:6px; flex-shrink:0;">
+                    <button type="button" class="task-inventory-toggle-btn" data-id="${t.id}" data-status="${t.status}" style="width:auto; font-size:11px; padding:3px 8px;">${t.status === 'done' ? 'Reopen' : 'Mark done'}</button>
+                    <button type="button" class="task-inventory-remove-btn" data-id="${t.id}" style="width:auto; font-size:11px; padding:3px 8px; color:var(--danger); border-color:var(--danger);">Remove</button>
+                  </span>
                 </div>
                 <p class="sub" style="margin:2px 0 0;"><span class="decision-venture" style="margin-right:6px;">${escapeHtml(t.ecosystem)}</span>${escapeHtml(t.priority)} priority · ${TASK_PHASE_LABEL[t.phase] || t.phase}${
                   t.status === 'done'
@@ -4154,6 +4157,9 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       }).join('');
       el.querySelectorAll('.task-inventory-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => toggleTaskInventoryItem(btn.dataset.id, btn.dataset.status));
+      });
+      el.querySelectorAll('.task-inventory-remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => removeTaskInventoryItem(btn.dataset.id));
       });
       el.querySelectorAll('.task-inventory-attachment-link').forEach(link => {
         link.addEventListener('click', async (e) => {
@@ -4246,6 +4252,22 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       }
       const task = taskInventoryState.find(t => t.id === id);
       if (task) task.status = newStatus;
+      renderTaskInventory();
+    }
+
+    // Founder: "Pls put remove button option its getting so much
+    // populated" — completed tasks only had Reopen, no way to actually
+    // clear them out, so the list kept growing. Deletes the row outright
+    // (not a soft-hide) since founder_tasks has no archive/soft-delete
+    // column to fall back on.
+    async function removeTaskInventoryItem(id) {
+      if (!window.confirm('Remove this task from the inventory? This cannot be undone.')) return;
+      const { error } = await sb.from('founder_tasks').delete().eq('id', id);
+      if (error) {
+        console.error('[task-inventory] remove failed:', error);
+        return;
+      }
+      taskInventoryState = taskInventoryState.filter(t => t.id !== id);
       renderTaskInventory();
     }
 
