@@ -3161,22 +3161,66 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // already query, kept as an independent query here rather than
     // reading their internal state, so this tile grid's meaning stays
     // constant regardless of the Founder/KOS/ODO toggle below it.
+    // Maps this app's existing Founder/KOS/ODO ecosystem toggle onto
+    // the new Notion Founder OS's Venture values (Dipstify/StationRescue/
+    // ODO/Risks-BASELINE_CHECK) for internal filtering only — no new
+    // visible selector added this pass (StationRescue has no toggle
+    // position here yet; add one when there's a real reason to filter
+    // to it specifically). 'founder' (whole org) means no Notion-side
+    // venture filter, matching how 'founder' already means unfiltered
+    // on the Supabase side.
+    function notionVentureForEcosystem() {
+      if (currentEcosystem === 'odo') return 'ODO';
+      if (currentEcosystem === 'kos') return 'Dipstify';
+      return null;
+    }
+
+    // Reads the new Notion-based Founder OS (see api/founder-os-notion.js
+    // for what's wired and why only these two tiles). Degrades to an
+    // empty, "not connected" result on any error — including
+    // NOTION_API_KEY not being configured yet — rather than breaking
+    // the existing Supabase-backed half of the tile grid.
+    async function fetchNotionTile(tile) {
+      try {
+        const venture = notionVentureForEcosystem();
+        const qs = new URLSearchParams({ tile, ...(venture ? { venture } : {}) });
+        const res = await fetch(`/api/founder-os-notion?${qs}`);
+        const body = await res.json();
+        if (body.error) return { count: 0, items: [], notConnected: true };
+        return { count: body.count || 0, items: body.items || [] };
+      } catch {
+        return { count: 0, items: [], notConnected: true };
+      }
+    }
+
     async function loadAttentionTiles() {
       const el = document.getElementById('attention-tiles');
       try {
         const weekOut = new Date(Date.now() + 7 * 86400000);
-        const [decisionsRes, alertsRes, accessRes, taskRes, complianceRes, signalsRes] = await Promise.all([
+        const [decisionsRes, alertsRes, accessRes, taskRes, complianceRes, signalsRes, notionAlerts, notionDecisions] = await Promise.all([
           sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open').neq('project_id', WPOS_PROJECT_ID),
           sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true).eq('status', 'open').not('project_scope', 'ilike', '%wp%os%'),
           sb.rpc('list_pending_users'),
           sb.from('founder_tasks').select('id', { count: 'exact', head: true }).eq('status', 'not_done').eq('priority', 'high'),
           sb.from('compliance_items').select('due_date, status'),
           sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', false).eq('status', 'open').not('project_scope', 'ilike', '%wp%os%'),
+          fetchNotionTile('critical-alerts'),
+          fetchNotionTile('open-decisions'),
         ]);
         const complianceDue = complianceRes.error ? null : (complianceRes.data || []).filter(c => c.status !== 'complete' && c.due_date && new Date(c.due_date) <= weekOut).length;
+        // Critical Alerts and Open Decisions are the only two tiles
+        // combined with the new Notion Founder OS — see this file's
+        // fetchNotionTile/notionVentureForEcosystem comments and
+        // api/founder-os-notion.js's header for why the other four
+        // stay Supabase-only (they already have real, populated,
+        // differently-scoped sources that Notion doesn't replace yet).
+        const alertsTotal = (alertsRes.count ?? 0) + notionAlerts.count;
+        const decisionsTotal = (decisionsRes.count ?? 0) + notionDecisions.count;
+        const notionSuffix = notionAlerts.notConnected ? ' (Notion not connected)' : ` — ${alertsRes.count ?? 0} app + ${notionAlerts.count} Notion`;
+        const decisionsSuffix = notionDecisions.notConnected ? ' (Notion not connected)' : ` — ${decisionsRes.count ?? 0} app + ${notionDecisions.count} Notion`;
         const tiles = [
-          { name: 'Critical Alerts', value: alertsRes.count, sub: 'Open bottlenecks, whole org' },
-          { name: 'Open Decisions', value: decisionsRes.count, sub: 'Awaiting a founder call' },
+          { name: 'Critical Alerts', value: alertsTotal, sub: `Open bottlenecks, whole org${notionSuffix}`, action: 'critical-alerts' },
+          { name: 'Open Decisions', value: decisionsTotal, sub: `Awaiting a founder call${decisionsSuffix}`, action: 'open-decisions' },
           { name: 'Access Requests', value: accessRes.error ? null : (accessRes.data || []).length, sub: 'Signed in, no role yet' },
           { name: 'High-Priority Tasks', value: taskRes.count, sub: 'Not done, high priority — tap to open Task Inventory', action: 'task-inventory' },
           { name: 'Compliance Due Soon', value: complianceDue, sub: 'Due within 7 days — tap to open Compliance', action: 'compliance' },
@@ -3215,6 +3259,12 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
             if (btn && btn.classList.contains('section-toggle') && !btn.classList.contains('expanded')) btn.click();
             list.scrollIntoView({ behavior: 'smooth', block: 'start' });
           },
+          'critical-alerts': () => {
+            document.getElementById('attention-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          },
+          'open-decisions': () => {
+            document.getElementById('decision-queue-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          },
         };
         el.querySelectorAll('[data-tile-action]').forEach(tile => {
           const run = TILE_ACTIONS[tile.dataset.tileAction];
@@ -3247,7 +3297,12 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       const items = (data || [])
         .filter(s => !isWposScope(s.project_scope))
         .map(s => ({ tag: 'Bottleneck', label: `${s.project_scope || 'Unscoped'}: ${s.signal_summary || 'Untitled signal'}` }));
-      renderAttentionList('attention-list', 'attention-empty', items);
+      // Merged in from the new Notion Founder OS — same "combined
+      // count" this tile's grid card shows, spelled out into the
+      // actual list. See api/founder-os-notion.js.
+      const notionRes = await fetchNotionTile('critical-alerts');
+      const notionItems = (notionRes.items || []).map(i => ({ tag: 'Bottleneck · Notion', label: `${i.venture || 'Unscoped'}: ${i.title}` }));
+      renderAttentionList('attention-list', 'attention-empty', [...items, ...notionItems]);
     }
 
     async function loadDecisionQueue() {
@@ -3265,7 +3320,10 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         .map(d => ({ d, proj: Array.isArray(d.projects) ? d.projects[0] : d.projects }))
         .filter(({ proj }) => !(proj && isWposScope(proj.name)))
         .map(({ d, proj }) => ({ label: `${(proj && proj.name) || 'Unknown venture'}: ${d.title}` }));
-      renderAttentionList('decision-queue-list', 'decision-queue-empty', items);
+      // Merged in from the new Notion Founder OS — see api/founder-os-notion.js.
+      const notionRes = await fetchNotionTile('open-decisions');
+      const notionItems = (notionRes.items || []).map(d => ({ tag: 'Notion', label: `${d.venture || 'Unknown venture'}: ${d.title}` }));
+      renderAttentionList('decision-queue-list', 'decision-queue-empty', [...items, ...notionItems]);
     }
 
     async function loadPriorityTasks() {
