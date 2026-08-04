@@ -520,6 +520,13 @@
   }
   .ecosystem-toggle-btn:hover { background: var(--white); color: var(--brand-blue); }
   .ecosystem-toggle-btn.mode-active:hover { background: var(--brand-blue); color: var(--white); }
+  /* Notion venture filter — same visual family as .ecosystem-toggle-btn,
+     separate class so its click handler stays independent (see
+     #notion-venture-filter's own comment for why the two toggles don't
+     share state). */
+  .venture-filter-btn { border: none; background: none; cursor: pointer; color: var(--slate); }
+  .venture-filter-btn:hover { background: var(--white); color: var(--brand-blue); }
+  .venture-filter-btn.mode-active:hover { background: var(--brand-blue); color: var(--white); }
   /* Ver — floating assistant, same fixed-button + slide-in-drawer
      pattern as katiwala-owner-os-'s Ask Lens assistant, so the two
      feel like one ecosystem rather than two different conventions. */
@@ -1003,6 +1010,25 @@
             <a class="mode-switcher-link" href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;" title="Open ODO — ownerdirect.online">↗</a>
           </div>
         </div>
+      </div>
+
+      <!-- Venture filter — 2026-08-04, founder-usable pass on top of
+           the Notion Founder OS wiring (api/founder-os-notion.js).
+           Independent from #ecosystem-toggle above: that toggle still
+           only controls the existing Supabase-side "app" queries,
+           unchanged. This one only scopes the Notion-side half of
+           Critical Alerts / Open Decisions (and any future tile wired
+           to Notion) — reuses the same .mode-switcher/.mode-active
+           pill styling as the ecosystem toggle for visual consistency,
+           no new visual language. Default "All" = no Notion venture
+           filter, matching the combined app+Notion counts already
+           wired. -->
+      <div class="mode-switcher mode-switcher-compact" id="notion-venture-filter" role="group" aria-label="Notion venture filter" style="margin-bottom:16px;">
+        <button type="button" class="venture-filter-btn mode-active" data-venture="All">All</button>
+        <button type="button" class="venture-filter-btn" data-venture="Dipstify">Dipstify</button>
+        <button type="button" class="venture-filter-btn" data-venture="StationRescue">StationRescue</button>
+        <button type="button" class="venture-filter-btn" data-venture="ODO">ODO</button>
+        <button type="button" class="venture-filter-btn" data-venture="Risks">Risks</button>
       </div>
 
       <!-- Today's Verse — moved here from katiwala-owner-os-'s
@@ -3161,19 +3187,18 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // already query, kept as an independent query here rather than
     // reading their internal state, so this tile grid's meaning stays
     // constant regardless of the Founder/KOS/ODO toggle below it.
-    // Maps this app's existing Founder/KOS/ODO ecosystem toggle onto
-    // the new Notion Founder OS's Venture values (Dipstify/StationRescue/
-    // ODO/Risks-BASELINE_CHECK) for internal filtering only — no new
-    // visible selector added this pass (StationRescue has no toggle
-    // position here yet; add one when there's a real reason to filter
-    // to it specifically). 'founder' (whole org) means no Notion-side
-    // venture filter, matching how 'founder' already means unfiltered
-    // on the Supabase side.
-    function notionVentureForEcosystem() {
-      if (currentEcosystem === 'odo') return 'ODO';
-      if (currentEcosystem === 'kos') return 'Dipstify';
-      return null;
-    }
+    // 2026-08-04: the visible #notion-venture-filter pills replaced the
+    // earlier internal-only ecosystem->venture mapping. "Risks" is the
+    // short pill label; the Notion Venture property's actual stored
+    // value is "Risks / BASELINE_CHECK" — map it here so the pill can
+    // stay short without renaming the Notion data.
+    const VENTURE_FILTER_TO_NOTION_VALUE = {
+      All: null,
+      Dipstify: 'Dipstify',
+      StationRescue: 'StationRescue',
+      ODO: 'ODO',
+      Risks: 'Risks / BASELINE_CHECK',
+    };
 
     // Reads the new Notion-based Founder OS (see api/founder-os-notion.js
     // for what's wired and why only these two tiles). Degrades to an
@@ -3182,7 +3207,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // the existing Supabase-backed half of the tile grid.
     async function fetchNotionTile(tile) {
       try {
-        const venture = notionVentureForEcosystem();
+        const venture = VENTURE_FILTER_TO_NOTION_VALUE[selectedVenture];
         const qs = new URLSearchParams({ tile, ...(venture ? { venture } : {}) });
         const res = await fetch(`/api/founder-os-notion?${qs}`);
         const body = await res.json();
@@ -3191,6 +3216,23 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       } catch {
         return { count: 0, items: [], notConnected: true };
       }
+    }
+
+    // Founder-friendly caption built from the actual Notion item titles
+    // (2026-08-04 pass) — replaces the earlier "X app + Y Notion" debug
+    // subtext. The tile's big number still reflects the combined
+    // app+Notion total (unchanged); this caption is Notion-only detail,
+    // falling back to the tile's plain description when there's nothing
+    // in Notion matching the current venture filter.
+    function truncateTitle(s, max) {
+      return s.length > max ? `${s.slice(0, max - 1)}…` : s;
+    }
+    function notionCaption(notionRes, fallback) {
+      if (notionRes.notConnected) return `${fallback} (Notion not connected)`;
+      if (!notionRes.items.length) return fallback;
+      const shown = notionRes.items.slice(0, 2).map(i => truncateTitle(i.title, 40));
+      const more = notionRes.items.length > 2 ? `, +${notionRes.items.length - 2} more` : '';
+      return `${notionRes.items.length} – ${shown.join(', ')}${more}`;
     }
 
     async function loadAttentionTiles() {
@@ -3216,11 +3258,9 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         // differently-scoped sources that Notion doesn't replace yet).
         const alertsTotal = (alertsRes.count ?? 0) + notionAlerts.count;
         const decisionsTotal = (decisionsRes.count ?? 0) + notionDecisions.count;
-        const notionSuffix = notionAlerts.notConnected ? ' (Notion not connected)' : ` — ${alertsRes.count ?? 0} app + ${notionAlerts.count} Notion`;
-        const decisionsSuffix = notionDecisions.notConnected ? ' (Notion not connected)' : ` — ${decisionsRes.count ?? 0} app + ${notionDecisions.count} Notion`;
         const tiles = [
-          { name: 'Critical Alerts', value: alertsTotal, sub: `Open bottlenecks, whole org${notionSuffix}`, action: 'critical-alerts' },
-          { name: 'Open Decisions', value: decisionsTotal, sub: `Awaiting a founder call${decisionsSuffix}`, action: 'open-decisions' },
+          { name: 'Critical Alerts', value: alertsTotal, sub: notionCaption(notionAlerts, 'Open bottlenecks, whole org'), action: 'critical-alerts' },
+          { name: 'Open Decisions', value: decisionsTotal, sub: notionCaption(notionDecisions, 'Awaiting a founder call'), action: 'open-decisions' },
           { name: 'Access Requests', value: accessRes.error ? null : (accessRes.data || []).length, sub: 'Signed in, no role yet' },
           { name: 'High-Priority Tasks', value: taskRes.count, sub: 'Not done, high priority — tap to open Task Inventory', action: 'task-inventory' },
           { name: 'Compliance Due Soon', value: complianceDue, sub: 'Due within 7 days — tap to open Compliance', action: 'compliance' },
@@ -3374,6 +3414,10 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // and still whole-org (incl. ODO data) if clicked; this only
     // changes what loads first.
     let currentEcosystem = 'kos';
+    // Notion venture filter (#notion-venture-filter) — independent of
+    // currentEcosystem above. 'All' = no filter, matching the combined
+    // app+Notion counts already wired.
+    let selectedVenture = 'All';
 
     // Row 1 KPI strip — real data only, mode-aware. Anything without
     // a live source reads "Not connected" rather than a fabricated
@@ -3513,6 +3557,20 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         currentEcosystem = btn.dataset.ecosystem;
         document.querySelectorAll('.ecosystem-toggle-btn').forEach(b => b.classList.toggle('mode-active', b === btn));
         refreshEcosystemView();
+      });
+    });
+
+    // Notion venture filter pills — independent of the ecosystem toggle
+    // above (see #notion-venture-filter's own comment). Only re-runs the
+    // three functions that actually call fetchNotionTile.
+    document.querySelectorAll('.venture-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.venture === selectedVenture) return;
+        selectedVenture = btn.dataset.venture;
+        document.querySelectorAll('.venture-filter-btn').forEach(b => b.classList.toggle('mode-active', b === btn));
+        loadAttentionTiles();
+        loadCriticalAlerts();
+        loadDecisionQueue();
       });
     });
 

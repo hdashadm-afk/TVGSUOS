@@ -149,6 +149,11 @@ module.exports = async function handler(req, res) {
     }
 
     if (tile === 'open-decisions') {
+      // Spec calls this "Ventures contains selected venture" — today's
+      // Decisions.Venture is a single-select, not multi-select/relation,
+      // so equals and "contains a single value" are the same filter.
+      // Written as equals here rather than introducing a schema change
+      // this pass; revisit if Venture ever becomes multi-valued.
       const filter = {
         and: [
           statusIsOneOf('Status', OPEN_DECISION_STATUSES),
