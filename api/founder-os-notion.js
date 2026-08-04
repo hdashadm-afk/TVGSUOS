@@ -18,19 +18,30 @@
 // Vercel env var, AND that integration must be explicitly shared on
 // the Issues and Decisions databases inside Notion — API integrations
 // only see what's shared with them, this repo's env var alone isn't
-// enough. Neither is set up yet as of this commit; returns a clear
-// "not configured" shape (same pattern every other api/*.js file here
-// uses for a missing credential) rather than crashing the tile grid.
+// enough. Returns a clear "not configured" shape (same pattern every
+// other api/*.js file here uses for a missing credential) rather than
+// crashing the tile grid if the key is absent.
+//
+// 2026-08-04 fix: originally pointed at these databases' page-level
+// IDs (what you get back after Notion "moves" a database into a
+// parent page) and queried the classic /v1/databases/{id}/query
+// endpoint on API version 2022-06-28. That 404'd with "could not find
+// database" even once sharing was correctly set up on the right
+// integration/workspace — the page-level ID isn't a queryable data
+// source. Switched to the actual data source IDs (captured at
+// creation time, confirmed via direct fetch) and the current
+// /v1/data_sources/{id}/query endpoint on API version 2025-09-03,
+// which is what this workspace's multi-source-database model
+// actually expects.
 
-const NOTION_VERSION = '2022-06-28';
+const NOTION_VERSION = '2025-09-03';
 
-// Database IDs (not data source IDs — these are single-source
-// databases, so Notion's classic /v1/databases/{id}/query endpoint
-// takes the database id directly), from the Ventures/Issues/Decisions
-// databases created under Notion's "Founder OS Home" page.
-const DB = {
-  issues: 'dedf21d4-9853-43f8-b470-a9c1516aad89',
-  decisions: 'e70202a5-f2d6-4d1a-b6c0-02e2008378c6',
+// Data source IDs (not the databases' own page-level IDs — see the
+// note above), for the Issues/Decisions databases created under
+// Notion's "Founder OS Home" page.
+const DATA_SOURCE = {
+  issues: '20f17e4c-a5b0-4b60-8b18-23171fdfc3d0',
+  decisions: '27165119-b76f-4169-a647-f7e6bcbfe7ca',
 };
 
 const OPEN_ISSUE_STATUSES = ['New', 'In analysis', 'New decision needed'];
@@ -48,11 +59,11 @@ function statusIsOneOf(property, values) {
 // "total count" field) — these databases are tiny today (single
 // digits to low tens of rows), so a bounded pagination loop is enough
 // to get an exact count/list without assuming a hard cap.
-async function notionQueryAll(databaseId, filter, apiKey, { maxPages = 5 } = {}) {
+async function notionQueryAll(dataSourceId, filter, apiKey, { maxPages = 5 } = {}) {
   const results = [];
   let cursor;
   for (let page = 0; page < maxPages; page++) {
-    const res = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+    const res = await fetch(`https://api.notion.com/v1/data_sources/${dataSourceId}/query`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -132,7 +143,7 @@ module.exports = async function handler(req, res) {
           ...(venture ? [selectEq('Venture', venture)] : []),
         ],
       };
-      const pages = await notionQueryAll(DB.issues, filter, apiKey);
+      const pages = await notionQueryAll(DATA_SOURCE.issues, filter, apiKey);
       res.status(200).json({ count: pages.length, items: pages.map(pageToIssue) });
       return;
     }
@@ -144,7 +155,7 @@ module.exports = async function handler(req, res) {
           ...(venture ? [selectEq('Venture', venture)] : []),
         ],
       };
-      const pages = await notionQueryAll(DB.decisions, filter, apiKey);
+      const pages = await notionQueryAll(DATA_SOURCE.decisions, filter, apiKey);
       res.status(200).json({ count: pages.length, items: pages.map(pageToDecision) });
       return;
     }
