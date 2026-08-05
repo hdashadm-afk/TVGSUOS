@@ -3,12 +3,21 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>TVGSUOS</title>
+<title>Founder OS — TVG</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
+  /* Dipstify identity colors on Founder OS (docs/DIPSTIFY_BRAND_GUIDE.md
+     via katiwala-owner-os-): black / white / steel / safety yellow.
+     TVG shield logo stays — Founder OS is the group layer, not Dipstify
+     product chrome. --brand-blue kept as an alias so existing selectors
+     keep working while primary accent shifts to yellow-on-black. */
   :root {
-    --brand-blue: #0A1D4D;
-    --ink: #0F172A;
+    --brand-blue: #141414;
+    --brand-yellow: #F5C400;
+    --ink: #0B0B0C;
     --slate: #475569;
     --border: #CBD5E1;
     --surface: #F8FAFC;
@@ -19,7 +28,7 @@
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
     color: var(--ink);
     background: var(--white);
   }
@@ -58,10 +67,11 @@
   .brand-row .eyebrow { margin: 0 0 4px; font-size: 11px; letter-spacing: 0.03em; white-space: nowrap; }
   .brand-row h1 { font-size: 28px; }
   h1 {
+    font-family: 'Inter Tight', 'Inter', sans-serif;
     font-size: 34px;
     line-height: 1.2;
     margin: 0 0 8px;
-    color: var(--brand-blue);
+    color: var(--ink);
   }
   .wordmark-sub {
     font-size: 15px;
@@ -176,11 +186,109 @@
   }
   .verse-row[open] > summary::after { transform: rotate(180deg); }
   .verse-row > .verse-body {
-    padding: 0 12px 10px;
-    font-size: 13px;
+    padding: 4px 12px 14px;
+    font-size: 18px;
+    font-weight: 700;
     font-style: italic;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .verse-row > .verse-body .sub {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.75;
+  }
+
+  /* Top 3 Today — decision-first daily loop (2026-08-05). */
+  .top3-list {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .top3-item {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--brand-yellow);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: var(--white);
+  }
+  .top3-item.top3-blocked { border-left-color: var(--danger); }
+  .top3-item.top3-wait { border-left-color: var(--border); opacity: 0.85; }
+  .top3-rank {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin: 0 0 4px;
+  }
+  .top3-title {
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 4px;
+    color: var(--ink);
+  }
+  .top3-next {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+  }
+  .top3-next span { color: var(--slate); font-weight: 500; }
+  .top3-empty {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--good);
+    margin: 0 0 16px;
+  }
+  .can-wait-row {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 0 0 16px;
+  }
+  .can-wait-row > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--slate);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .can-wait-row > summary::-webkit-details-marker { display: none; }
+  .can-wait-row > summary::after {
+    content: '▾';
+    font-size: 11px;
     color: var(--slate);
   }
+  .can-wait-row[open] > summary::after { transform: rotate(180deg); }
+  .can-wait-row > .can-wait-body { padding: 0 8px 10px; }
+  .kpi-next {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 6px 0 0;
+  }
+  .kpi-card details.kpi-detail {
+    margin-top: 8px;
+  }
+  .kpi-card details.kpi-detail > summary {
+    cursor: pointer;
+    list-style: none;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--slate);
+  }
+  .kpi-card details.kpi-detail > summary::-webkit-details-marker { display: none; }
+  .kpi-card details.kpi-detail > summary::after { content: ' · details'; }
+  .kpi-card details.kpi-detail[open] > summary::after { content: ' · hide'; }
+  .kpi-card details.kpi-detail .kpi-sub { margin-top: 6px; }
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -359,8 +467,9 @@
     font-family: inherit;
   }
   .mode-switcher .mode-active {
-    background: var(--brand-blue);
-    color: var(--white);
+    background: var(--brand-yellow);
+    color: var(--ink);
+    border-color: var(--brand-yellow);
   }
   /* "Open KOS/ODO" used to be a separate .quick-links row below the
      mode switcher — founder, 2026-07-19, circling both in a
@@ -518,15 +627,15 @@
     cursor: pointer;
     color: var(--slate);
   }
-  .ecosystem-toggle-btn:hover { background: var(--white); color: var(--brand-blue); }
-  .ecosystem-toggle-btn.mode-active:hover { background: var(--brand-blue); color: var(--white); }
+  .ecosystem-toggle-btn:hover { background: var(--white); color: var(--ink); }
+  .ecosystem-toggle-btn.mode-active:hover { background: var(--brand-yellow); color: var(--ink); }
   /* Notion venture filter — same visual family as .ecosystem-toggle-btn,
      separate class so its click handler stays independent (see
      #notion-venture-filter's own comment for why the two toggles don't
      share state). */
   .venture-filter-btn { border: none; background: none; cursor: pointer; color: var(--slate); }
-  .venture-filter-btn:hover { background: var(--white); color: var(--brand-blue); }
-  .venture-filter-btn.mode-active:hover { background: var(--brand-blue); color: var(--white); }
+  .venture-filter-btn:hover { background: var(--white); color: var(--ink); }
+  .venture-filter-btn.mode-active:hover { background: var(--brand-yellow); color: var(--ink); }
   /* Ver — floating assistant, same fixed-button + slide-in-drawer
      pattern as katiwala-owner-os-'s Ask Lens assistant, so the two
      feel like one ecosystem rather than two different conventions. */
@@ -538,16 +647,17 @@
     display: none;
     align-items: center;
     gap: 8px;
-    background: var(--brand-blue);
-    color: var(--white);
+    background: var(--ink);
+    color: var(--brand-yellow);
     border: none;
     border-radius: 999px;
-    padding: 12px 20px;
+    padding: 12px 18px;
     font-size: 13px;
-    font-weight: 700;
-    font-family: inherit;
+    font-weight: 800;
+    font-family: 'Inter Tight', 'Inter', sans-serif;
     cursor: pointer;
-    box-shadow: 0 6px 18px rgba(10,29,77,0.35);
+    box-shadow: 0 6px 18px rgba(11,11,12,0.35);
+    max-width: calc(100vw - 44px);
   }
   #ver-drawer {
     position: fixed;
@@ -690,14 +800,16 @@
   #login-screen button {
     width: 100%;
     padding: 11px;
-    background: var(--brand-blue);
-    color: var(--white);
+    background: var(--brand-yellow);
+    color: var(--ink);
     border: none;
     border-radius: 8px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 800;
     cursor: pointer;
-    font-family: inherit;
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
   #login-screen button:disabled { opacity: 0.6; cursor: default; }
   #login-error {
@@ -761,14 +873,14 @@
   .strategy-form button {
     margin-top: 14px;
     padding: 9px 18px;
-    background: var(--brand-blue);
-    color: var(--white);
+    background: var(--brand-yellow);
+    color: var(--ink);
     border: none;
     border-radius: 7px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 800;
     cursor: pointer;
-    font-family: inherit;
+    font-family: 'Inter Tight', 'Inter', sans-serif;
   }
   .strategy-form button:disabled { opacity: 0.6; cursor: default; }
   #strategy-form-status { font-size: 13px; margin-top: 8px; }
@@ -1012,24 +1124,21 @@
         </div>
       </div>
 
-      <!-- Venture filter — 2026-08-04, founder-usable pass on top of
-           the Notion Founder OS wiring (api/founder-os-notion.js).
-           Independent from #ecosystem-toggle above: that toggle still
-           only controls the existing Supabase-side "app" queries,
-           unchanged. This one only scopes the Notion-side half of
-           Critical Alerts / Open Decisions (and any future tile wired
-           to Notion) — reuses the same .mode-switcher/.mode-active
-           pill styling as the ecosystem toggle for visual consistency,
-           no new visual language. Default "All" = no Notion venture
-           filter, matching the combined app+Notion counts already
-           wired. -->
-      <div class="mode-switcher mode-switcher-compact" id="notion-venture-filter" role="group" aria-label="Notion venture filter" style="margin-bottom:16px;">
-        <button type="button" class="venture-filter-btn mode-active" data-venture="All">All</button>
-        <button type="button" class="venture-filter-btn" data-venture="Dipstify">Dipstify</button>
-        <button type="button" class="venture-filter-btn" data-venture="StationRescue">StationRescue</button>
-        <button type="button" class="venture-filter-btn" data-venture="ODO">ODO</button>
-        <button type="button" class="venture-filter-btn" data-venture="Risks">Risks</button>
-      </div>
+      <!-- Venture filter — collapsed by default (2026-08-05 decision-
+           first pass). Mode switcher above stays always visible;
+           Notion venture scope is secondary noise for most mornings. -->
+      <details class="can-wait-row" id="notion-venture-filter-wrap" style="margin-bottom:16px;">
+        <summary>Notion venture filter <span class="sub" style="font-weight:500;">· tap if needed</span></summary>
+        <div class="can-wait-body">
+          <div class="mode-switcher mode-switcher-compact" id="notion-venture-filter" role="group" aria-label="Notion venture filter">
+            <button type="button" class="venture-filter-btn mode-active" data-venture="All">All</button>
+            <button type="button" class="venture-filter-btn" data-venture="Dipstify">Dipstify</button>
+            <button type="button" class="venture-filter-btn" data-venture="StationRescue">StationRescue</button>
+            <button type="button" class="venture-filter-btn" data-venture="ODO">ODO</button>
+            <button type="button" class="venture-filter-btn" data-venture="Risks">Risks</button>
+          </div>
+        </div>
+      </details>
 
       <!-- Today's Verse — moved here from katiwala-owner-os-'s
            Morning Brief, 2026-07-19, per founder request ("move from
@@ -1045,30 +1154,24 @@
         <div class="verse-body" id="verse-body"></div>
       </details>
 
-      <!-- Needs Your Attention — founder request, 2026-07-19, modeled
-           on KOS's Morning Brief tile grid. Fixed whole-org counts,
-           deliberately NOT mode-aware (unlike the KPI grid below): it
-           reads the same regardless of which mode is selected —
-           everything that genuinely needs attention right now, in one
-           glance, no scrolling through all 9 governance-area cards to
-           find it. Not new data — same counts loadKpiGrid/
-           loadAccessRequests/loadTaskInventory already compute, just
-           surfaced together here first. See loadAttentionTiles().
+      <!-- Top 3 Today — 2026-08-05. First screen answers: what matters
+           now, what to do next. Built from the same live counts as
+           Needs Your Attention; only the top 3 actionable items. -->
+      <p class="cockpit-label" style="margin-top:0;">Top 3 Today</p>
+      <div id="top3-today"><p class="top3-empty">Loading…</p></div>
 
-           2026-07-19, fourth pass: moved above AI Tools & Voice of
-           Customer — founder: "Alerts are more important than
-           Research and AI tools." Alerts is now the first real
-           content on the page after Today's Verse.
-
-           2026-07-19, fifth pass: the Founder/KOS/ODO toggle itself
-           relocated above this (now up near Sign Out/brand-row,
-           "Relocate on top") — its mode-independence is a data
-           property (the query never filters by currentEcosystem), not
-           a position one, so this note's original "reads the same
-           regardless of mode" claim still holds even though the
-           toggle no longer sits directly below it. -->
-      <p class="cockpit-label" style="margin-top:0;">Needs Your Attention</p>
+      <!-- Needs Your Attention — decision-first tiles (next action on
+           the face; details collapsed). Critical / blocked lead;
+           lower-priority signals sit in Can Wait below. -->
+      <p class="cockpit-label">What is blocked</p>
       <div class="kpi-grid" id="attention-tiles"></div>
+
+      <details class="can-wait-row" id="can-wait-wrap">
+        <summary>What can wait <span class="sub" id="can-wait-count" style="font-weight:500;"></span></summary>
+        <div class="can-wait-body">
+          <div class="kpi-grid" id="can-wait-tiles"></div>
+        </div>
+      </details>
 
       <!-- AI Tools & Voice of Customer — moved here 2026-07-19, second
            placement change. Founder's own words: "should be I one box
@@ -1091,8 +1194,8 @@
            the section-toggle/section-body accordion so it CAN still be
            collapsed manually — just starts open now, not closed. -->
       <section>
-        <button type="button" class="section-toggle expanded"><h2>AI Tools &amp; Voice of Customer</h2><span class="chevron">▶</span></button>
-        <div class="section-body expanded">
+        <button type="button" class="section-toggle"><h2>AI Tools &amp; Voice of Customer</h2><span class="chevron">▶</span></button>
+        <div class="section-body">
         <div class="strategy-form" style="margin:12px 0 0;">
           <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">AI Tools</h3>
           <div class="tool-tile-row">
@@ -1785,7 +1888,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
   </div>
 
   <button id="ver-toggle-btn" type="button">
-    Ask Ver
+    Ask Ver: what should I do first?
   </button>
   <div id="ver-drawer">
     <div class="ver-drawer-header">
@@ -1899,11 +2002,11 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       </div>
       <div class="ver-drawer-section">
         <h4>Ask Ver</h4>
-        <p class="sub">Grounded in TVGSUOS's real docs and what's open right now.</p>
+        <p class="sub">Answers with your top 3 actions for today — not a long report.</p>
         <form id="ask-ver-form" class="strategy-form" style="margin:0;">
           <label for="ask-ver-question" style="position:absolute; left:-9999px;">Question for Ver</label>
-          <input type="text" id="ask-ver-question" required placeholder="e.g. What should I focus on today?" style="margin-bottom:10px;" />
-          <button type="submit" id="ask-ver-btn" style="width:100%;">Ask Ver</button>
+          <input type="text" id="ask-ver-question" required placeholder="Ask Ver: what should I do first?" value="What should I do first today?" style="margin-bottom:10px;" />
+          <button type="submit" id="ask-ver-btn" style="width:100%;">Ask Ver: what should I do first?</button>
           <p id="ask-ver-status"></p>
         </form>
         <div id="ask-ver-answer" class="decision" style="display:none; margin-top:14px;"></div>
@@ -3237,6 +3340,9 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
 
     async function loadAttentionTiles() {
       const el = document.getElementById('attention-tiles');
+      const canWaitEl = document.getElementById('can-wait-tiles');
+      const top3El = document.getElementById('top3-today');
+      const canWaitCount = document.getElementById('can-wait-count');
       try {
         const weekOut = new Date(Date.now() + 7 * 86400000);
         const [decisionsRes, alertsRes, accessRes, taskRes, complianceRes, signalsRes, notionAlerts, notionDecisions] = await Promise.all([
@@ -3250,43 +3356,113 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           fetchNotionTile('open-decisions'),
         ]);
         const complianceDue = complianceRes.error ? null : (complianceRes.data || []).filter(c => c.status !== 'complete' && c.due_date && new Date(c.due_date) <= weekOut).length;
-        // Critical Alerts and Open Decisions are the only two tiles
-        // combined with the new Notion Founder OS — see this file's
-        // fetchNotionTile/notionVentureForEcosystem comments and
-        // api/founder-os-notion.js's header for why the other four
-        // stay Supabase-only (they already have real, populated,
-        // differently-scoped sources that Notion doesn't replace yet).
         const alertsTotal = (alertsRes.count ?? 0) + notionAlerts.count;
         const decisionsTotal = (decisionsRes.count ?? 0) + notionDecisions.count;
+        const accessCount = accessRes.error ? null : (accessRes.data || []).length;
+
+        // Decision-first tiles: nextAction on the face; detail text
+        // only in the collapsed <details>. Priority = blocked / must
+        // act; canWait = lower urgency, collapsed behind tap.
         const tiles = [
-          { name: 'Critical Alerts', value: alertsTotal, sub: notionCaption(notionAlerts, 'Open bottlenecks, whole org'), action: 'critical-alerts' },
-          { name: 'Open Decisions', value: decisionsTotal, sub: notionCaption(notionDecisions, 'Awaiting a founder call'), action: 'open-decisions' },
-          { name: 'Access Requests', value: accessRes.error ? null : (accessRes.data || []).length, sub: 'Signed in, no role yet' },
-          { name: 'High-Priority Tasks', value: taskRes.count, sub: 'Not done, high priority — tap to open Task Inventory', action: 'task-inventory' },
-          { name: 'Compliance Due Soon', value: complianceDue, sub: 'Due within 7 days — tap to open Compliance', action: 'compliance' },
-          { name: 'Priority Signals', value: signalsRes.count, sub: 'Open, non-bottleneck — tap to view', action: 'priority-signals' },
+          {
+            name: 'Critical Alerts',
+            value: alertsTotal,
+            detail: notionCaption(notionAlerts, 'Open bottlenecks, whole org'),
+            next: alertsTotal > 0 ? 'Open Critical Alerts and clear the top bottleneck' : 'None — keep scanning',
+            action: 'critical-alerts',
+            bucket: 'blocked',
+            priority: alertsTotal > 0 ? 1 : 99,
+          },
+          {
+            name: 'Open Decisions',
+            value: decisionsTotal,
+            detail: notionCaption(notionDecisions, 'Awaiting a founder call'),
+            next: decisionsTotal > 0 ? 'Make or defer the oldest open decision' : 'None waiting',
+            action: 'open-decisions',
+            bucket: 'blocked',
+            priority: decisionsTotal > 0 ? 2 : 99,
+          },
+          {
+            name: 'High-Priority Tasks',
+            value: taskRes.count,
+            detail: 'Not done, high priority — Task Inventory',
+            next: (taskRes.count || 0) > 0 ? 'Open Task Inventory and finish #1' : 'No high-priority tasks open',
+            action: 'task-inventory',
+            bucket: 'blocked',
+            priority: (taskRes.count || 0) > 0 ? 3 : 99,
+          },
+          {
+            name: 'Access Requests',
+            value: accessCount,
+            detail: 'Signed in, no role yet',
+            next: (accessCount || 0) > 0 ? 'Approve or deny pending access' : 'No pending access',
+            action: null,
+            bucket: 'wait',
+            priority: (accessCount || 0) > 0 ? 4 : 99,
+          },
+          {
+            name: 'Compliance Due Soon',
+            value: complianceDue,
+            detail: 'Due within 7 days',
+            next: (complianceDue || 0) > 0 ? 'Open Compliance and clear due items' : 'Nothing due this week',
+            action: 'compliance',
+            bucket: 'wait',
+            priority: (complianceDue || 0) > 0 ? 5 : 99,
+          },
+          {
+            name: 'Priority Signals',
+            value: signalsRes.count,
+            detail: 'Open, non-bottleneck',
+            next: (signalsRes.count || 0) > 0 ? 'Skim Priority Signals after Top 3' : 'No open signals',
+            action: 'priority-signals',
+            bucket: 'wait',
+            priority: (signalsRes.count || 0) > 0 ? 6 : 99,
+          },
         ];
-        el.innerHTML = tiles.map(t => {
+
+        function renderTileCard(t) {
           const known = t.value != null;
           const cls = !known ? 'kpi-off' : t.value > 0 ? 'kpi-bad' : 'kpi-good';
           const clickAttrs = t.action ? ` data-tile-action="${t.action}" role="button" tabindex="0" style="cursor:pointer;"` : '';
+          const detail = t.detail ? `<details class="kpi-detail" onclick="event.stopPropagation()"><summary>More</summary><p class="kpi-sub">${escapeHtml(t.detail)}</p></details>` : '';
           return `
             <div class="kpi-card ${cls}"${clickAttrs}>
-              <p class="kpi-name">${t.name}</p>
+              <p class="kpi-name">${escapeHtml(t.name)}</p>
               <p class="kpi-value${known ? '' : ' kpi-value-off'}">${known ? t.value : 'Not connected'}</p>
-              <p class="kpi-sub">${t.sub}</p>
+              <p class="kpi-next">Next: ${escapeHtml(t.next)}</p>
+              ${detail}
             </div>
           `;
-        }).join('');
-        // Each clickable tile jumps to where the count actually lives
-        // — the tile is the glance/alarm, these are the lists to act
-        // on. Reuses jumpToTopic() (already built for Ver's Desk) for
-        // the accordion-gated Compliance section; Task Inventory opens/
-        // scrolls directly (not behind an accordion). Priority Tasks
-        // got its own collapsible sub-toggle (2026-07-19, nested inside
-        // AI Tools & Voice of Customer, closed by default like Voice of
-        // Customer) — expand it first the same way jumpToTopic does,
-        // otherwise scrollIntoView lands on a display:none element.
+        }
+
+        const blocked = tiles.filter(t => t.bucket === 'blocked');
+        const waiting = tiles.filter(t => t.bucket === 'wait');
+        el.innerHTML = blocked.map(renderTileCard).join('');
+        if (canWaitEl) canWaitEl.innerHTML = waiting.map(renderTileCard).join('');
+        if (canWaitCount) {
+          const waitingHot = waiting.filter(t => (t.value || 0) > 0).length;
+          canWaitCount.textContent = waitingHot ? `· ${waitingHot} with counts` : '· clear';
+        }
+
+        // Top 3 Today — only actionable items (value > 0), ranked.
+        const top3 = tiles
+          .filter(t => t.value != null && t.value > 0 && t.priority < 99)
+          .sort((a, b) => a.priority - b.priority)
+          .slice(0, 3);
+        if (top3El) {
+          if (!top3.length) {
+            top3El.innerHTML = `<p class="top3-empty">Nothing blocking — scan Can Wait, then Ask Ver if you want a second opinion.</p>`;
+          } else {
+            top3El.innerHTML = `<ol class="top3-list">${top3.map((t, i) => `
+              <li class="top3-item ${t.bucket === 'blocked' ? 'top3-blocked' : ''}"${t.action ? ` data-tile-action="${t.action}" role="button" tabindex="0" style="cursor:pointer;"` : ''}>
+                <p class="top3-rank">#${i + 1} · ${escapeHtml(t.name)} · ${t.value}</p>
+                <p class="top3-title">${escapeHtml(t.name)}</p>
+                <p class="top3-next"><span>Next:</span> ${escapeHtml(t.next)}</p>
+              </li>
+            `).join('')}</ol>`;
+          }
+        }
+
         const TILE_ACTIONS = {
           'task-inventory': () => {
             document.getElementById('ver-drawer').classList.add('open');
@@ -3306,7 +3482,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
             document.getElementById('decision-queue-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
           },
         };
-        el.querySelectorAll('[data-tile-action]').forEach(tile => {
+        document.querySelectorAll('#attention-tiles [data-tile-action], #can-wait-tiles [data-tile-action], #top3-today [data-tile-action]').forEach(tile => {
           const run = TILE_ACTIONS[tile.dataset.tileAction];
           if (!run) return;
           tile.addEventListener('click', run);
@@ -3316,6 +3492,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         });
       } catch (err) {
         el.innerHTML = `<p class="cockpit-not-connected">Couldn't load — ${escapeHtml(err.message)}</p>`;
+        if (top3El) top3El.innerHTML = `<p class="cockpit-not-connected">Couldn't load Top 3</p>`;
       }
     }
 
@@ -3916,7 +4093,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         statusEl.textContent = "Couldn't get an answer — try again in a moment.";
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Ask Ver';
+        btn.textContent = 'Ask Ver: what should I do first?';
       }
     });
 
