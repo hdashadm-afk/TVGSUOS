@@ -13,6 +13,7 @@
 |-------|--------|--------|
 | Active Decision Queue | `#decision-queue-list` | Live items only (archive filter applied) |
 | Archived decisions | `#decision-archive-list` | Historical — **not** top priority |
+| Topic action plans | Ver's Desk `[Plan] …` tasks | Per governance topic; Done removes |
 | SR status card | `FOUNDER_OS_COCKPIT.srStatus` | Edit text there; layout stays put |
 | Wired metrics | KPI strip | Open decisions, alerts, runway/burn (when wired), stages |
 | Security / risk | Security status KPI + Critical Alerts | Step 1 in prioritization |

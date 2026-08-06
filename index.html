@@ -706,7 +706,7 @@
     margin: 0 0 4px;
   }
   .ver-drawer-section .sub { font-size: 12px; color: var(--slate); margin: 0 0 12px; }
-  .ver-nav-list { display: flex; flex-direction: column; gap: 6px; }
+  .ver-nav-list { display: flex; flex-direction: column; gap: 8px; }
   .ver-nav-item {
     display: flex;
     justify-content: space-between;
@@ -734,6 +734,97 @@
     margin: 0;
     text-align: right;
     flex-shrink: 0;
+  }
+  /* Topic action plans + collapsed task groups (2026-08-06). */
+  .ver-topic {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .ver-topic > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .ver-topic > summary::-webkit-details-marker { display: none; }
+  .ver-topic > summary::after {
+    content: '▶';
+    font-size: 10px;
+    color: var(--slate);
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+  }
+  .ver-topic[open] > summary::after { transform: rotate(90deg); }
+  .ver-topic-summary-main { min-width: 0; flex: 1; }
+  .ver-topic-summary-main .stat-label { display: block; font-size: 13px; font-weight: 600; margin: 0; }
+  .ver-topic-summary-main .stat-value { display: block; font-size: 11px; color: var(--slate); margin: 2px 0 0; }
+  .ver-topic-plan-chip {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--brand-blue);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 8px;
+    flex-shrink: 0;
+  }
+  .ver-topic-plan-chip.is-empty { color: var(--slate); opacity: 0.75; }
+  .ver-topic-body { padding: 0 12px 12px; border-top: 1px solid var(--border); }
+  .ver-topic-body textarea {
+    width: 100%;
+    min-height: 72px;
+    margin: 8px 0;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .ver-topic-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ver-topic-actions button { width: auto; font-size: 11px; padding: 5px 10px; }
+  .task-date-group {
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .task-date-group > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .task-date-group > summary::-webkit-details-marker { display: none; }
+  .task-date-group > summary::after { content: '▶'; font-size: 10px; color: var(--slate); }
+  .task-date-group[open] > summary::after { display: inline-block; transform: rotate(90deg); }
+  .task-date-group-body { padding: 0 12px 10px; border-top: 1px solid var(--border); }
+  .task-edit-row { display: none; margin-top: 8px; }
+  .task-edit-row.is-open { display: block; }
+  .task-edit-row input,
+  .task-edit-row textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 9px;
   }
   .hierarchy {
     border: 1px solid var(--border);
@@ -1909,9 +2000,14 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     </div>
     <div class="ver-drawer-body">
       <div class="ver-drawer-section">
-        <h4>Ver's Desk</h4>
-        <p class="sub">One line per area — click one to jump straight there.</p>
+        <button type="button" class="section-toggle" style="padding:0 0 4px;">
+          <h4 style="margin:0;">Ver's Desk</h4>
+          <span class="chevron">▶</span>
+        </button>
+        <div class="section-body">
+        <p class="sub">Each topic is collapsed. Open one → write an action plan, edit it, or mark Done to remove it. Tap Jump to open that section on the page.</p>
         <div class="ver-nav-list" id="ver-stats"></div>
+        </div>
       </div>
       <!-- Task Inventory — ported from katiwala-owner-os-'s Founder
            mode (founder_tasks table, same shared Supabase project).
@@ -1939,12 +2035,22 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
            already run elsewhere — read-only, no new table. Moved to
            sit right after Ver's Desk since it's now the drawer's main
            "what to act on" surface — see loadTaskInventoryAlerts()/
-           renderTaskInventory() below for the actual grouping logic. -->
+           renderTaskInventory() below for the actual grouping logic.
+
+           2026-08-06: section + date groups collapsed by default;
+           Done removes the row; Edit for title/notes; topic [Plan]
+           rows live under Ver's Desk, not this list. -->
       <div class="ver-drawer-section">
-        <h4>Task Inventory</h4>
-        <p class="sub">Grouped by date — what's been acted on, what hasn't (and why), plus any open critical alerts.</p>
+        <button type="button" class="section-toggle" style="padding:0 0 4px;">
+          <h4 style="margin:0;">Task Inventory</h4>
+          <span class="chevron">▶</span>
+        </button>
+        <div class="section-body">
+        <p class="sub">Collapsed by date. Edit or Done (removes). Topic action plans live under Ver's Desk.</p>
         <div id="ver-task-alerts"></div>
         <div id="ver-task-inventory"></div>
+        <details style="margin-top:10px;">
+          <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--slate);">+ Add a task</summary>
         <form id="task-inventory-add-form" class="strategy-form" style="margin-top:10px;">
           <label for="ti-title" style="position:absolute; left:-9999px;">Task title</label>
           <input type="text" id="ti-title" required placeholder="New task title" />
@@ -1972,6 +2078,8 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           <button type="submit" id="task-inventory-add-btn" style="width:100%; margin-top:8px;">+ Add task</button>
           <p id="task-inventory-add-status" style="font-size:12px; margin:6px 0 0; min-height:16px;"></p>
         </form>
+        </details>
+        </div>
       </div>
       <!-- Daily Baseline Check — ported from katiwala-owner-os-'s
            Founder mode. The check itself is still generated by a
@@ -2013,7 +2121,11 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         </div>
       </div>
       <div class="ver-drawer-section">
-        <h4>Ask Ver</h4>
+        <button type="button" class="section-toggle" style="padding:0 0 4px;">
+          <h4 style="margin:0;">Ask Ver</h4>
+          <span class="chevron">▶</span>
+        </button>
+        <div class="section-body">
         <p class="sub">Answers with your top 3 actions for today — not a long report.</p>
         <form id="ask-ver-form" class="strategy-form" style="margin:0;">
           <label for="ask-ver-question" style="position:absolute; left:-9999px;">Question for Ver</label>
@@ -2022,7 +2134,11 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           <p id="ask-ver-status"></p>
         </form>
         <div id="ask-ver-answer" class="decision" style="display:none; margin-top:14px;"></div>
-        <ul class="decision-list" id="ask-ver-history" style="margin-top:16px;"></ul>
+        <details style="margin-top:12px;">
+          <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--slate);">Past answers</summary>
+          <ul class="decision-list" id="ask-ver-history" style="margin-top:10px;"></ul>
+        </details>
+        </div>
       </div>
       <!-- Repo Tree — ported verbatim from katiwala-owner-os-'s
            api/generate-repo-tree.js (generic, not tied to that repo,
@@ -2051,12 +2167,17 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
            adjacent here — just external shortcut links, no API
            integration, so plain <a> tags reusing .quick-links. -->
       <div class="ver-drawer-section">
-        <h4>AI Tools</h4>
+        <button type="button" class="section-toggle" style="padding:0 0 4px;">
+          <h4 style="margin:0;">AI Tools</h4>
+          <span class="chevron">▶</span>
+        </button>
+        <div class="section-body">
         <p class="sub">Quick jumps for research and cross-referencing.</p>
         <div class="quick-links" style="margin:8px 0 0;">
           <a href="https://www.perplexity.ai" target="_blank" rel="noopener">Perplexity →</a>
           <a href="https://claude.ai" target="_blank" rel="noopener">Claude →</a>
           <a href="https://www.notion.so" target="_blank" rel="noopener">Notion →</a>
+        </div>
         </div>
       </div>
     </div>
@@ -4116,6 +4237,15 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // 7-row display (kos counted once, not twice for CEO Space +
     // PnLVerified).
     const VER_DESK_ACTIVE_SLUGS = ['kos', 'staff_verified', 'gas_ops', 'tv', 'rv', 'tvgsuos'];
+    const TOPIC_PLAN_PREFIX = '[Plan] ';
+
+    function topicPlanTitle(label) {
+      return `${TOPIC_PLAN_PREFIX}${label}`;
+    }
+
+    function isTopicPlanTask(title) {
+      return typeof title === 'string' && title.startsWith(TOPIC_PLAN_PREFIX);
+    }
 
     async function loadVerDesk() {
       const el = document.getElementById('ver-stats');
@@ -4128,6 +4258,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         cashDataCount,
         openSignals,
         bottleneckSignals,
+        planRows,
       ] = await Promise.all([
         sb.from('decisions').select('id', { count: 'exact', head: true }).eq('status', 'open').neq('project_id', WPOS_PROJECT_ID),
         sb.from('projects').select('project_status(build_readiness)').in('slug', VER_DESK_ACTIVE_SLUGS),
@@ -4137,6 +4268,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         sb.from('projects').select('project_status(cash_pulse)').in('slug', VER_DESK_ACTIVE_SLUGS),
         sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('status', 'open').not('project_scope', 'ilike', '%wp%os%'),
         sb.from('improvement_signals').select('id', { count: 'exact', head: true }).eq('bottleneck_flag', true).not('project_scope', 'ilike', '%wp%os%'),
+        sb.from('founder_tasks').select('id, title, notes, status').like('title', `${TOPIC_PLAN_PREFIX}%`).eq('status', 'not_done'),
       ]);
 
       const trackedCount = (activeModules.data || []).filter(p => {
@@ -4148,6 +4280,11 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         return s && s.cash_pulse;
       }).length;
       const noteRow = (lastGovernanceNote.data || [])[0];
+      const plansByTopic = {};
+      for (const row of (planRows.data || [])) {
+        const label = (row.title || '').slice(TOPIC_PLAN_PREFIX.length);
+        if (label) plansByTopic[label] = row;
+      }
 
       const stats = [
         { label: 'Strategy', value: `${openDecisions.count ?? 0} open decision${openDecisions.count === 1 ? '' : 's'}` },
@@ -4160,15 +4297,106 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         { label: 'People / Admin / Governance', value: 'Rules documented' },
       ];
 
-      el.innerHTML = stats.map(s => `
-        <button type="button" class="ver-nav-item" data-topic="${escapeHtml(s.label)}">
-          <span class="stat-label">${escapeHtml(s.label)}</span>
-          <span class="stat-value">${escapeHtml(s.value)}</span>
-        </button>
-      `).join('');
-      el.querySelectorAll('.ver-nav-item').forEach(btn => {
-        btn.addEventListener('click', () => jumpToTopic(btn.dataset.topic));
+      el.innerHTML = stats.map(s => {
+        const plan = plansByTopic[s.label];
+        const planText = plan && plan.notes ? plan.notes : '';
+        const hasPlan = Boolean(planText.trim());
+        return `
+          <details class="ver-topic" data-topic="${escapeHtml(s.label)}" data-plan-id="${plan ? escapeHtml(plan.id) : ''}">
+            <summary>
+              <div class="ver-topic-summary-main">
+                <span class="stat-label">${escapeHtml(s.label)}</span>
+                <span class="stat-value">${escapeHtml(s.value)}</span>
+              </div>
+              <span class="ver-topic-plan-chip${hasPlan ? '' : ' is-empty'}">${hasPlan ? 'Plan' : 'No plan'}</span>
+            </summary>
+            <div class="ver-topic-body">
+              <p class="sub" style="margin:10px 0 0;">Status: ${escapeHtml(s.value)}. Write what you will do for this topic.</p>
+              <label class="sub" style="display:block; margin-top:8px;">Action plan</label>
+              <textarea class="ver-topic-plan-input" placeholder="e.g. Close 1 open decision today; skip the rest until tomorrow.">${escapeHtml(planText)}</textarea>
+              <div class="ver-topic-actions">
+                <button type="button" class="ver-topic-save-btn">Save plan</button>
+                <button type="button" class="ver-topic-done-btn" ${hasPlan || plan ? '' : 'disabled'}>Done (remove)</button>
+                <button type="button" class="ver-topic-jump-btn">Jump to section</button>
+              </div>
+              <p class="sub ver-topic-status" style="margin:8px 0 0; min-height:16px;"></p>
+            </div>
+          </details>
+        `;
+      }).join('');
+
+      el.querySelectorAll('.ver-topic-jump-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const topic = btn.closest('.ver-topic')?.dataset.topic;
+          if (topic) jumpToTopic(topic);
+        });
       });
+      el.querySelectorAll('.ver-topic-save-btn').forEach(btn => {
+        btn.addEventListener('click', () => saveTopicPlan(btn.closest('.ver-topic')));
+      });
+      el.querySelectorAll('.ver-topic-done-btn').forEach(btn => {
+        btn.addEventListener('click', () => completeTopicPlan(btn.closest('.ver-topic')));
+      });
+    }
+
+    async function saveTopicPlan(detailsEl) {
+      if (!detailsEl) return;
+      const topic = detailsEl.dataset.topic;
+      const statusEl = detailsEl.querySelector('.ver-topic-status');
+      const input = detailsEl.querySelector('.ver-topic-plan-input');
+      const planText = (input?.value || '').trim();
+      if (!planText) {
+        statusEl.textContent = 'Write a plan before saving.';
+        return;
+      }
+      statusEl.textContent = 'Saving…';
+      const planId = detailsEl.dataset.planId;
+      const payload = {
+        ecosystem: 'FOUNDER',
+        title: topicPlanTitle(topic),
+        notes: planText,
+        priority: 'high',
+        phase: 'mvp',
+        status: 'not_done',
+        updated_at: new Date().toISOString(),
+      };
+      let error;
+      if (planId) {
+        ({ error } = await sb.from('founder_tasks').update(payload).eq('id', planId));
+      } else {
+        const insert = await sb.from('founder_tasks').insert(payload).select('id').single();
+        error = insert.error;
+        if (!error && insert.data) detailsEl.dataset.planId = insert.data.id;
+      }
+      if (error) {
+        console.error('[topic-plan] save failed:', error);
+        statusEl.textContent = "Couldn't save — check console.";
+        return;
+      }
+      statusEl.textContent = 'Saved.';
+      loadVerDesk();
+    }
+
+    async function completeTopicPlan(detailsEl) {
+      if (!detailsEl) return;
+      const planId = detailsEl.dataset.planId;
+      const statusEl = detailsEl.querySelector('.ver-topic-status');
+      if (!planId) {
+        const input = detailsEl.querySelector('.ver-topic-plan-input');
+        if (input) input.value = '';
+        statusEl.textContent = 'Cleared.';
+        return;
+      }
+      if (!window.confirm('Mark this topic plan done and remove it?')) return;
+      statusEl.textContent = 'Removing…';
+      const { error } = await sb.from('founder_tasks').delete().eq('id', planId);
+      if (error) {
+        console.error('[topic-plan] remove failed:', error);
+        statusEl.textContent = "Couldn't remove — check console.";
+        return;
+      }
+      loadVerDesk();
     }
 
     // Ask Ver: calls the new /api/ask-ver (this repo's own endpoint,
@@ -4527,12 +4755,14 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
 
     function renderTaskInventory() {
       const el = document.getElementById('ver-task-inventory');
-      if (!taskInventoryState.length) {
-        el.innerHTML = `<p class="cockpit-not-connected">No tasks tracked yet.</p>`;
+      // Open work only — Done removes the row. Topic [Plan] rows live on Ver's Desk.
+      const openTasks = taskInventoryState.filter(t => t.status !== 'done' && !isTopicPlanTask(t.title));
+      if (!openTasks.length) {
+        el.innerHTML = `<p class="cockpit-not-connected">No open tasks. Add one below if needed.</p>`;
         return;
       }
       const groups = new Map();
-      for (const t of taskInventoryState) {
+      for (const t of openTasks) {
         const key = taskDateKey(t.created_at);
         if (!groups.has(key)) groups.set(key, []);
         groups.get(key).push(t);
@@ -4540,41 +4770,63 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       const sortedKeys = Array.from(groups.keys()).sort((a, b) => b.localeCompare(a));
       el.innerHTML = sortedKeys.map(key => {
         const items = [...groups.get(key)].sort((a, b) => {
-          if (a.status !== b.status) return a.status === 'done' ? 1 : -1;
           if (TASK_PRIORITY_RANK[a.priority] !== TASK_PRIORITY_RANK[b.priority]) return TASK_PRIORITY_RANK[a.priority] - TASK_PRIORITY_RANK[b.priority];
           return TASK_PHASE_RANK[a.phase] - TASK_PHASE_RANK[b.phase];
         });
-        const doneCount = items.filter(t => t.status === 'done').length;
         return `
-          <div style="margin-bottom:14px;">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-              <strong style="font-size:13px;">${escapeHtml(taskDateLabel(key))}</strong>
-              <span class="sub" style="margin:0;">${doneCount}/${items.length} acted on</span>
-            </div>
+          <details class="task-date-group">
+            <summary>
+              <span>${escapeHtml(taskDateLabel(key))}</span>
+              <span class="sub" style="margin:0; font-weight:500;">${items.length} open</span>
+            </summary>
+            <div class="task-date-group-body">
             ${items.map(t => `
-              <div style="padding:6px 0; border-bottom:1px solid var(--border);">
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                  <span style="font-size:13px; ${t.status === 'done' ? 'text-decoration:line-through; color:var(--slate);' : ''}">${escapeHtml(t.title)}</span>
-                  <span style="display:flex; gap:6px; flex-shrink:0;">
-                    <button type="button" class="task-inventory-toggle-btn" data-id="${t.id}" data-status="${t.status}" style="width:auto; font-size:11px; padding:3px 8px;">${t.status === 'done' ? 'Reopen' : 'Mark done'}</button>
+              <div class="task-inventory-item" data-id="${t.id}" style="padding:8px 0; border-bottom:1px solid var(--border);">
+                <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
+                  <span class="task-title-text" style="font-size:13px; font-weight:600;">${escapeHtml(t.title)}</span>
+                  <span style="display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end;">
+                    <button type="button" class="task-inventory-edit-btn" data-id="${t.id}" style="width:auto; font-size:11px; padding:3px 8px;">Edit</button>
+                    <button type="button" class="task-inventory-done-btn" data-id="${t.id}" style="width:auto; font-size:11px; padding:3px 8px;">Done</button>
                     <button type="button" class="task-inventory-remove-btn" data-id="${t.id}" style="width:auto; font-size:11px; padding:3px 8px; color:var(--danger); border-color:var(--danger);">Remove</button>
                   </span>
                 </div>
-                <p class="sub" style="margin:2px 0 0;"><span class="decision-venture" style="margin-right:6px;">${escapeHtml(t.ecosystem)}</span>${escapeHtml(t.priority)} priority · ${TASK_PHASE_LABEL[t.phase] || t.phase}${
-                  t.status === 'done'
-                    ? (t.completed_at ? ` · Acted on ${new Date(t.completed_at).toLocaleDateString()}` : '')
-                    : (t.notes ? ` · Why not yet: ${escapeHtml(t.notes)}` : '')
+                <p class="sub task-meta-text" style="margin:2px 0 0;"><span class="decision-venture" style="margin-right:6px;">${escapeHtml(t.ecosystem)}</span>${escapeHtml(t.priority)} priority · ${TASK_PHASE_LABEL[t.phase] || t.phase}${
+                  t.notes ? ` · Why not yet: ${escapeHtml(t.notes)}` : ''
                 }${t.attachment_path ? ` · <a href="#" class="task-inventory-attachment-link" data-path="${escapeHtml(t.attachment_path)}">📎 ${escapeHtml(t.attachment_name || 'attachment')}</a>` : ''}</p>
+                <div class="task-edit-row" data-edit-for="${t.id}">
+                  <input type="text" class="task-edit-title" value="${escapeHtml(t.title)}" />
+                  <textarea class="task-edit-notes" rows="2" placeholder="Why not yet / notes">${escapeHtml(t.notes || '')}</textarea>
+                  <div style="display:flex; gap:6px; margin-top:6px;">
+                    <button type="button" class="task-edit-save-btn" data-id="${t.id}" style="width:auto; font-size:11px; padding:3px 8px;">Save</button>
+                    <button type="button" class="task-edit-cancel-btn" data-id="${t.id}" style="width:auto; font-size:11px; padding:3px 8px;">Cancel</button>
+                  </div>
+                </div>
               </div>
             `).join('')}
-          </div>
+            </div>
+          </details>
         `;
       }).join('');
-      el.querySelectorAll('.task-inventory-toggle-btn').forEach(btn => {
-        btn.addEventListener('click', () => toggleTaskInventoryItem(btn.dataset.id, btn.dataset.status));
+      el.querySelectorAll('.task-inventory-done-btn').forEach(btn => {
+        btn.addEventListener('click', () => completeTaskInventoryItem(btn.dataset.id));
       });
       el.querySelectorAll('.task-inventory-remove-btn').forEach(btn => {
         btn.addEventListener('click', () => removeTaskInventoryItem(btn.dataset.id));
+      });
+      el.querySelectorAll('.task-inventory-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const row = el.querySelector(`.task-edit-row[data-edit-for="${btn.dataset.id}"]`);
+          if (row) row.classList.toggle('is-open');
+        });
+      });
+      el.querySelectorAll('.task-edit-cancel-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const row = el.querySelector(`.task-edit-row[data-edit-for="${btn.dataset.id}"]`);
+          if (row) row.classList.remove('is-open');
+        });
+      });
+      el.querySelectorAll('.task-edit-save-btn').forEach(btn => {
+        btn.addEventListener('click', () => saveTaskInventoryEdit(btn.dataset.id));
       });
       el.querySelectorAll('.task-inventory-attachment-link').forEach(link => {
         link.addEventListener('click', async (e) => {
@@ -4646,27 +4898,67 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         return;
       }
       el.innerHTML = `
-        <div style="margin-bottom:14px; padding:10px 12px; border:1px solid var(--border); border-left:3px solid #B45309; border-radius:8px; background:var(--surface);">
-          <strong style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:#B45309;">Major Alerts</strong>
+        <details class="task-date-group" style="margin-bottom:14px;">
+          <summary>
+            <span style="color:#B45309;">Major Alerts</span>
+            <span class="sub" style="margin:0; font-weight:500;">${data.length} open</span>
+          </summary>
+          <div class="task-date-group-body">
           <ul style="margin:8px 0 0; padding-left:18px; font-size:13px; color:var(--ink); line-height:1.6;">
             ${data.map(s => `<li>${escapeHtml(s.project_scope || 'Unscoped')}: ${escapeHtml(s.signal_summary || 'Untitled signal')}</li>`).join('')}
           </ul>
-        </div>
+          </div>
+        </details>
       `;
     }
 
-    async function toggleTaskInventoryItem(id, currentStatus) {
-      const newStatus = currentStatus === 'done' ? 'not_done' : 'done';
+    async function completeTaskInventoryItem(id) {
+      // Done = remove from inventory (founder: less overwhelm).
+      if (!window.confirm('Done — remove this task?')) return;
+      const { error } = await sb.from('founder_tasks').delete().eq('id', id);
+      if (error) {
+        console.error('[task-inventory] done/remove failed:', error);
+        return;
+      }
+      taskInventoryState = taskInventoryState.filter(t => t.id !== id);
+      renderTaskInventory();
+    }
+
+    async function saveTaskInventoryEdit(id) {
+      const row = document.querySelector(`.task-edit-row[data-edit-for="${id}"]`);
+      if (!row) return;
+      const title = (row.querySelector('.task-edit-title')?.value || '').trim();
+      const notes = (row.querySelector('.task-edit-notes')?.value || '').trim();
+      if (!title) return;
       const { error } = await sb
         .from('founder_tasks')
-        .update({ status: newStatus, completed_at: newStatus === 'done' ? new Date().toISOString() : null, updated_at: new Date().toISOString() })
+        .update({ title, notes: notes || null, updated_at: new Date().toISOString() })
+        .eq('id', id);
+      if (error) {
+        console.error('[task-inventory] edit failed:', error);
+        return;
+      }
+      const task = taskInventoryState.find(t => t.id === id);
+      if (task) {
+        task.title = title;
+        task.notes = notes || null;
+      }
+      renderTaskInventory();
+    }
+
+    async function toggleTaskInventoryItem(id, currentStatus) {
+      // Kept for any leftover callers; UI now uses completeTaskInventoryItem (Done = delete).
+      if (currentStatus !== 'done') return completeTaskInventoryItem(id);
+      const { error } = await sb
+        .from('founder_tasks')
+        .update({ status: 'not_done', completed_at: null, updated_at: new Date().toISOString() })
         .eq('id', id);
       if (error) {
         console.error('[task-inventory] toggle failed:', error);
         return;
       }
       const task = taskInventoryState.find(t => t.id === id);
-      if (task) task.status = newStatus;
+      if (task) task.status = 'not_done';
       renderTaskInventory();
     }
 
