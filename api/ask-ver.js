@@ -26,7 +26,25 @@ const GROUNDING_DOCS = [
   'docs/GOVERNANCE_MODEL.md',
   'docs/PORTFOLIO_MAP.md',
   'FOUNDER_OS.md',
+  'docs/VER_BEHAVIOR.md',
 ];
+
+// Local mirror of Command Center focus (edit with FOUNDER_OS_COCKPIT in index.html).
+// Notion SoT when MCP/API available: Founder OS Command Center + Strategic Charter.
+const MASTERPLAN_CONTEXT = `
+## Current masterplan focus (Aug 2026)
+Active: StationRescue (SR), Dipstify, Consolidated Platform.
+Parked/secondary: Gas Ops whole-app sprint, RV MVP, some KOS/RV work, stale Helium pricing, decided ODO umbrella.
+
+Phases:
+1. SR trust & governance (pilot) — September pilot path.
+2. Dipstify ops/data + station needs engine — October early market.
+3. Vertical marketplace on SR trust + Dipstify data.
+
+SR status (dashboard SoT): MVP schema live on Supabase & Vercel; next = test interest on station-rescue.vercel.app, then auth/verification modals.
+
+Do NOT treat archived Decision Queue items as top priorities (Gas Ops finish-this-week, RV MVP, old Helium pricing, ODO umbrella).
+`;
 
 async function fetchDoc(path, headers) {
   const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
@@ -92,17 +110,22 @@ module.exports = async function handler(req, res) {
         model: 'claude-sonnet-5',
         max_tokens: 600,
         output_config: { effort: 'low' },
-        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — the umbrella above KOS/Dipstify and ODO. The founder is asking what to do first today.
+        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for StationRescue (SR), Dipstify, and the Consolidated Platform. The founder is asking what to do first today.
 
 Answer format — STRICT:
 1. Reply with exactly **3 numbered actions**, nothing else before them.
 2. Each line: \`N. [Action] — [one-line why / where to tap]\`
-3. Rank by urgency: blocked/bottlenecks first, then open decisions, then high-priority tasks.
-4. No long report, no essay, no preamble, no closing pep talk. Max ~120 words total.
-5. If nothing is open, say so in one line, then still give 3 light next moves (scan Can Wait, check Cash, Ask Ver again later).
+3. Prioritize in this order ONLY:
+   Step 1: Critical security / trust / governance risks (Security status, bottleneck signals).
+   Step 2: SR work for the September pilot (test interest on station-rescue.vercel.app, auth/verification modals, governance flows).
+   Step 3: Dipstify early market / October work (early adopters, Field Kit pricing as hardware add-on).
+   Step 4: Only then other ecosystem tasks still active in the masterplan (e.g. KOS→Dipstify rename if pending execution).
+4. Never promote archived/parked decisions (Gas Ops whole-app, RV MVP, stale Helium pricing, decided ODO umbrella) into the top 3.
+5. No long report, no essay, no preamble, no closing pep talk. Max ~120 words total.
+6. If nothing is open, say so in one line, then still give 3 light next moves grounded in Steps 1–3.
 
-Ground every action in the live open items and docs below. If data doesn't cover the ask, say so in one short line after the 3 actions — do not invent counts.
-${docsContext}${liveContext}`,
+Ground every action in the live open items, masterplan focus, and docs below. If data doesn't cover the ask, say so in one short line after the 3 actions — do not invent counts.
+${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
         tools: [{
           name: 'log_follow_up_task',
           description: 'Log a concrete, actionable follow-up task to the founder\'s Task Inventory. Only call this for something genuinely new and specific — not for every question.',

@@ -32,7 +32,7 @@ See `docs/GOVERNANCE_MODEL.md` for what each area actually owns and `docs/PORTFO
 
 ## Agents
 
-- **Ver** — chief of staff (TVGSUOS layer), above Kath and Vera. Security posture, data privacy compliance, business continuity, escalation, cross-venture alignment, daily baseline review.
+- **Ver** — chief of staff (TVGSUOS layer), above Kath and Vera. Security posture, data privacy compliance, business continuity, escalation, cross-venture alignment, daily baseline review. See **`docs/VER_BEHAVIOR.md`** for dashboard inputs and “what should I do first?” prioritization (SR → Dipstify → other).
 - **Kath** — KOS agent. Owner decision support for gas stations.
 - **Vera** — ODO agent. Trust marketplace coordination.
 
@@ -63,6 +63,7 @@ Kath and Vera report to Ver. Full role spec: `docs/GOVERNANCE_MODEL.md` (this re
 ## Key docs
 
 - `FOUNDER_OS.md` — running, dated implementation log. Read this first in any new session.
+- `docs/VER_BEHAVIOR.md` — Ver’s cockpit inputs and prioritization order (SR / Dipstify / ecosystem).
 - `docs/MASTER_DIRECTION.md` — the baseline: mission, ecosystem, governance areas, ventures, working rules.
 - `docs/GOVERNANCE_MODEL.md` — how governance actually operates: agent responsibilities, decision rights, escalation.
 - `docs/PORTFOLIO_MAP.md` — the real portfolio: every layer/venture, its repo/domain/data store/stage, and what's built vs. planned.
