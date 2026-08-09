@@ -2200,9 +2200,22 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // When Notion MCP is available, prefer live Command Center text; until then keep this
     // object current by hand. Ver (api/ask-ver.js) and the Decision Queue both respect it.
     const FOUNDER_OS_COCKPIT = {
-      updatedAt: '2026-08-06',
+      updatedAt: '2026-08-07',
       activeFocus: ['StationRescue', 'Dipstify', 'Consolidated Platform'],
-      parked: ['Gas Ops whole-app sprint', 'RV MVP', 'some KOS/RV secondary work'],
+      // Taxonomy (founder 2026-08-07): Gas Ops = Dipstify workstream; RV MVP under ODO umbrella;
+      // Helium pricing = Dipstify commercial (₱7k + ₱1k/station, Aug start, collect EOM).
+      ventureMap: {
+        gasOps: 'Dipstify',
+        rvMvp: 'ODO umbrella',
+        heliumPricing: 'Dipstify',
+      },
+      parked: ['some KOS/RV secondary work (not RV-under-ODO core)'],
+      heliumBilling: {
+        basePhp: 7000,
+        perStationPhp: 1000,
+        starts: '2026-08',
+        collect: 'every end of month',
+      },
       phases: {
         1: 'SR trust & governance (pilot)',
         2: 'Dipstify ops/data + station needs engine',
@@ -2211,7 +2224,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       // Single source of truth for the SR status card — change text here, not in layout.
       srStatus: {
         label: 'SR status',
-        text: 'MVP schema is live on Supabase & Vercel; next step = submit one test interest on station-rescue.vercel.app, then implement auth / verification modals.',
+        text: 'Auth migration live; signup smoke blocked on profiles schema cache — deferred. Waitlist OK.',
         href: 'https://station-rescue.vercel.app/',
         hrefLabel: 'Open station-rescue.vercel.app →',
       },
@@ -2220,20 +2233,20 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         /field\s*kit/i,
         /station\s*rescue.*phase\s*2|sr\s*phase\s*2|vendor\/tech marketplace|vendor.*marketplace/i,
         /kos\s*[→\-–].*dipstify|kos.*rename|dipstify.*rename/i,
+        /helium.*(pricing|billing|collect)|₱\s*7\s*k|7k.*station/i,
+        /gas\s*ops/i,
       ],
       // Title patterns → archive out of live queue (stale / decided / not current focus).
       decisionArchive: [
         /gas\s*ops.*(finish|whole\s*app|this\s*week)/i,
-        /\brv\b.*\bmvp\b|\bmvp\b.*\brv\b/i,
-        /helium.*(pricing|kos\s*pricing)|kos\s*pricing.*helium|pricing\s*tier.*pilot/i,
         /odo\s*umbrella/i,
       ],
-      // Recorded historical decisions (not deleted — shown under Archived decisions).
+      // Recorded historical / mapped decisions (not deleted — shown under Archived when matched).
       decisionHistory: [
-        { label: 'Gas Ops: Finish the whole app this week', reason: 'Stale — not current SR+Dipstify focus' },
-        { label: 'RV: MVP', reason: 'Parked — not current priority' },
-        { label: 'Helium Fuels: Confirm KOS pricing tier for pilot client', reason: 'Not active in current masterplan focus' },
-        { label: 'ODO umbrella decision', reason: 'Already decided — historical' },
+        { label: 'Gas Ops: Finish the whole app this week', reason: 'Stale sprint wording — Gas Ops itself is Dipstify workstream' },
+        { label: 'RV: MVP', reason: 'Under ODO umbrella (not a free-floating parked venture)' },
+        { label: 'Helium Fuels: Confirm KOS pricing tier for pilot client', reason: 'Superseded — Dipstify Helium: ₱7k + ₱1k/station, Aug start, collect EOM' },
+        { label: 'ODO umbrella decision', reason: 'RV MVP sits under ODO umbrella' },
       ],
     };
 

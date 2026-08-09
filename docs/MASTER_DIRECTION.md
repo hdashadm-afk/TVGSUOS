@@ -51,15 +51,17 @@ These areas are **connected but modular** — no area is hard-dependent on anoth
 ```text
 TVGSUOS
 └── Ver  (chief of staff / founder-level governance)
-    ├── Kath  (KOS / Katiwala AI)
+    ├── Lens  (Dipstify / KOS; legacy name Kath)
+    ├── SERA (Station Rescue only — not built as Ver peer UI yet)
     └── Vera  (OWDO / ODO)
 ```
 
 - **Ver** — chief of staff. Owns founder-level governance, security posture, data privacy compliance, business continuity, escalation, cross-venture alignment, and continuity of execution.
-- **Kath** — KOS/Katiwala AI venture agent. Reports to Ver.
-- **Vera** — OWDO/ODO venture agent. Reports to Ver.
+- **Lens** — Dipstify/KOS venture agent (UI: Ask Lens; Helium pilot data absorption). Legacy docs may still say **Kath**. Reports to Ver.
+- **Vera** — OWDO/ODO venture agent. Reports to Ver. Ver ≠ Vera.
+- **SERA** — Station Rescue AI only; not Lens; rename only if founder directs.
 
-Full responsibilities and the non-redundancy rule (Ver must not duplicate Kath/Vera domain reasoning, and vice versa) are in `docs/GOVERNANCE_MODEL.md`.
+Full responsibilities and the non-redundancy rule (Ver must not duplicate Lens/Vera domain reasoning, and vice versa) are in `docs/GOVERNANCE_MODEL.md`.
 
 ---
 

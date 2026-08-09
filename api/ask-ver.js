@@ -3,12 +3,11 @@
 // api/answer-ver-query.js implements (that one waits for a scheduled
 // Routine or a manual "Answer now" click on a pending row). This is
 // the synchronous version — ask, get an answer in the same request —
-// grounded in TVGSUOS's own governance docs plus live open items
-// (Strategy's open decisions, Intelligence's open/bottleneck
-// signals), so the answer reflects what's actually happening right
-// now, not just static documentation. The answer is still saved into
-// ver_queries afterward, same table katiwala-owner-os- already uses,
-// so there's a persistent history either way it's answered.
+// Grounded in TVGSUOS governance docs plus live loop inputs:
+// today's daily_baseline_checks row, open decisions, open/bottleneck
+// signals, and open founder_tasks (Lens/Helium catch when logged).
+// Answer is saved into ver_queries afterward (same table as the
+// async answer-ver-query path in katiwala-owner-os-).
 //
 // Requires ANTHROPIC_API_KEY and SUPABASE_SERVICE_ROLE_KEY. Not
 // configured until the founder adds them — returns a clear "not
@@ -34,16 +33,16 @@ const GROUNDING_DOCS = [
 const MASTERPLAN_CONTEXT = `
 ## Current masterplan focus (Aug 2026)
 Active: StationRescue (SR), Dipstify, Consolidated Platform.
-Parked/secondary: Gas Ops whole-app sprint, RV MVP, some KOS/RV work, stale Helium pricing, decided ODO umbrella.
+Venture map (founder 2026-08-07): Gas Ops = Dipstify workstream; RV MVP under ODO umbrella; Helium pricing = Dipstify commercial (₱7k + ₱1k/station, start Aug, collect every month-end).
+Field Kit pricing decision locked (hardware add-on); public/site revisit scheduled Sep 1.
+Do NOT treat stale sprint wording (“Gas Ops finish whole app this week”) as top priority — Gas Ops itself is Dipstify.
 
 Phases:
 1. SR trust & governance (pilot) — September pilot path.
 2. Dipstify ops/data + station needs engine — October early market.
 3. Vertical marketplace on SR trust + Dipstify data.
 
-SR status (dashboard SoT): MVP schema live on Supabase & Vercel; next = test interest on station-rescue.vercel.app, then auth/verification modals.
-
-Do NOT treat archived Decision Queue items as top priorities (Gas Ops finish-this-week, RV MVP, old Helium pricing, ODO umbrella).
+SR status (dashboard SoT): Auth migration live; profiles schema-cache smoke deferred; waitlist OK.
 `;
 
 async function fetchDoc(path, headers) {
@@ -81,15 +80,51 @@ module.exports = async function handler(req, res) {
   if (process.env.GITHUB_TOKEN) ghHeaders.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
 
   try {
-    const [docs, decisionsRes, signalsRes] = await Promise.all([
+    const manilaDate = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Manila', year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(new Date());
+
+    const [docs, decisionsRes, signalsRes, baselineRes, tasksRes] = await Promise.all([
       Promise.all(GROUNDING_DOCS.map(path => fetchDoc(path, ghHeaders))),
       fetch(`${SUPABASE_URL}/rest/v1/decisions?status=eq.open&select=title,context,status,created_at&order=created_at.desc&limit=10`, { headers: sbHeaders }),
       fetch(`${SUPABASE_URL}/rest/v1/improvement_signals?status=eq.open&select=project_scope,feature_area,signal_summary,bottleneck_flag,status&order=attention_score.desc&limit=10`, { headers: sbHeaders }),
+      // Same grounding as legacy answer-ver-query.js — Ver's own loop output
+      // for today (Manila), falling back to latest row if today is empty.
+      fetch(`${SUPABASE_URL}/rest/v1/daily_baseline_checks?check_date=eq.${manilaDate}&select=*&limit=1`, { headers: sbHeaders }),
+      fetch(`${SUPABASE_URL}/rest/v1/founder_tasks?status=eq.not_done&select=ecosystem,title,priority,phase,notes,created_at&order=priority.asc&limit=15`, { headers: sbHeaders }),
     ]);
+
+    let baselineRow = null;
+    if (baselineRes.ok) {
+      const todayRows = await baselineRes.json();
+      if (Array.isArray(todayRows) && todayRows.length) baselineRow = todayRows[0];
+    }
+    if (!baselineRow) {
+      const latestRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/daily_baseline_checks?select=*&order=check_date.desc&limit=1`,
+        { headers: sbHeaders },
+      );
+      if (latestRes.ok) {
+        const latest = await latestRes.json();
+        if (Array.isArray(latest) && latest.length) baselineRow = latest[0];
+      }
+    }
 
     const docsContext = GROUNDING_DOCS.map((path, i) => docs[i] ? `\n\n## ${path}\n${docs[i]}` : `\n\n## ${path}\n(couldn't fetch)`).join('');
 
     let liveContext = '';
+    if (baselineRow) {
+      liveContext += `\n\n## Daily Baseline Check (${baselineRow.check_date || 'latest'})\n`
+        + `- app_status: ${baselineRow.app_status || '—'}\n`
+        + `- notion_status: ${baselineRow.notion_status || '—'}\n`
+        + `- vera_status: ${baselineRow.vera_status || '—'}\n`
+        + `- last_direction: ${baselineRow.last_direction || '—'}\n`
+        + `- priorities: ${baselineRow.priorities || '—'}\n`
+        + `- governance_risk_note: ${baselineRow.governance_risk_note || '—'}\n`
+        + `- discussion_question: ${baselineRow.discussion_question || '—'}\n`;
+    } else {
+      liveContext += `\n\n## Daily Baseline Check\nNo baseline row found — prioritize regenerating Baseline in Ver's drawer if asked what to do first.\n`;
+    }
     if (decisionsRes.ok) {
       const decisions = await decisionsRes.json();
       if (decisions.length) liveContext += `\n\n## Open Strategy decisions right now\n${decisions.map(d => `- ${d.title}${d.context ? ` — ${d.context}` : ''}`).join('\n')}`;
@@ -97,6 +132,13 @@ module.exports = async function handler(req, res) {
     if (signalsRes.ok) {
       const signals = await signalsRes.json();
       if (signals.length) liveContext += `\n\n## Open Intelligence signals right now\n${signals.map(s => `- [${s.project_scope || 'unscoped'}] ${s.signal_summary}${s.bottleneck_flag ? ' (BOTTLENECK)' : ''}`).join('\n')}`;
+    }
+    if (tasksRes.ok) {
+      const tasks = await tasksRes.json();
+      if (tasks.length) {
+        liveContext += `\n\n## Open Task Inventory (includes Lens/Helium catch when logged)\n`
+          + tasks.map(t => `- [${t.ecosystem}/${t.priority}] ${t.title}${t.notes ? ` — ${t.notes}` : ''}`).join('\n');
+      }
     }
 
     const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
@@ -110,21 +152,23 @@ module.exports = async function handler(req, res) {
         model: 'claude-sonnet-5',
         max_tokens: 600,
         output_config: { effort: 'low' },
-        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for StationRescue (SR), Dipstify, and the Consolidated Platform. The founder is asking what to do first today.
+        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for StationRescue (SR), Dipstify (Lens / Helium pilot), and the Consolidated Platform. You sit ABOVE Lens (Dipstify/KOS) and Vera (ODO) — do not do their domain work; synthesize what they surface into founder actions.
 
 Answer format — STRICT:
 1. Reply with exactly **3 numbered actions**, nothing else before them.
 2. Each line: \`N. [Action] — [one-line why / where to tap]\`
 3. Prioritize in this order ONLY:
-   Step 1: Critical security / trust / governance risks (Security status, bottleneck signals).
+   Step 1: Critical security / trust / governance risks (baseline governance_risk_note, Security status, bottleneck signals).
    Step 2: SR work for the September pilot (test interest on station-rescue.vercel.app, auth/verification modals, governance flows).
-   Step 3: Dipstify early market / October work (early adopters, Field Kit pricing as hardware add-on).
-   Step 4: Only then other ecosystem tasks still active in the masterplan (e.g. KOS→Dipstify rename if pending execution).
-4. Never promote archived/parked decisions (Gas Ops whole-app, RV MVP, stale Helium pricing, decided ODO umbrella) into the top 3.
+   Step 3: Dipstify early market / Helium pilot data absorption (Field Kit revisit Sep 1; Helium ₱7k+₱1k/station EOM collect from Aug; Gas Ops as Dipstify workstream). Prefer actions that use Lens/Helium live signals when Task Inventory or baseline mentions them.
+   Step 4: ODO umbrella work (RV MVP under ODO) only when it does not displace Steps 1–3.
+   Step 5: Only then other ecosystem tasks still active in the masterplan (e.g. KOS→Dipstify rename if pending execution).
+4. Never promote stale sprint wording (Gas Ops finish-this-week) or free-floating “RV parked” into the top 3; use the venture map above.
 5. No long report, no essay, no preamble, no closing pep talk. Max ~120 words total.
 6. If nothing is open, say so in one line, then still give 3 light next moves grounded in Steps 1–3.
+7. Prefer the Daily Baseline Check section when present — it is Ver's own loop output for the day.
 
-Ground every action in the live open items, masterplan focus, and docs below. If data doesn't cover the ask, say so in one short line after the 3 actions — do not invent counts.
+Ground every action in the live baseline, open items, masterplan focus, and docs below. If data doesn't cover the ask, say so in one short line after the 3 actions — do not invent counts.
 ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
         tools: [{
           name: 'log_follow_up_task',
@@ -132,7 +176,7 @@ ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
           input_schema: {
             type: 'object',
             properties: {
-              ecosystem: { type: 'string', enum: ['FOUNDER', 'KOS', 'ODO'], description: 'FOUNDER for TVGSUOS/infra-level items, KOS or ODO for venture-specific ones.' },
+              ecosystem: { type: 'string', enum: ['FOUNDER', 'KOS', 'ODO'], description: 'FOUNDER for TVGSUOS/infra-level items, KOS (Dipstify/Lens/Helium) or ODO for venture-specific ones.' },
               title: { type: 'string', description: 'Short, specific task title.' },
               priority: { type: 'string', enum: ['high', 'medium', 'low'] },
               phase: { type: 'string', enum: ['mvp', 'phase2', 'phase3'] },

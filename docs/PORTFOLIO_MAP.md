@@ -15,14 +15,14 @@ The real portfolio as it actually exists today — repos, domains, data stores, 
 | Layer | System | Repo | Domain | Data store | Stage | Reports to |
 |---|---|---|---|---|---|---|
 | 1 | TVGSUOS (incl. Founder's Space) | `TVGSUOS` (this repo) | `theverifiedgroup.org` (not wired yet) / `tvgsuosweb.vercel.app` (live today, GitHub-connected — deploys from `main` automatically) | Reads/writes the KOS Supabase project — no dedicated database. `api/odo-status.js` also reads ODO's own separate project (`qhjhsdsluxgyjevbhfmk`) via service-role key. Founder's Space's Daily Baseline Check *display* reads `daily_baseline_checks` from the same KOS project; the check's own scheduled routine still runs via `katiwala-owner-os-`. | Phase 4 — all 9 governance areas live | Founder direct |
-| 2 | Katiwala AI / KOS | `katiwala-owner-os-` | `katiwalaai.app` (target) / `katiwala-owner-os.vercel.app` (live today) | KOS Supabase project (`jbhfdmujqrtqkhacfegl`) | MVP_BUILD | Kath → Ver |
+| 2 | Dipstify / KOS (Lens; Helium pilot) | `katiwala-owner-os-` | `katiwalaai.app` (target) / `katiwala-owner-os.vercel.app` (live today) | KOS Supabase project (`jbhfdmujqrtqkhacfegl`) | MVP_BUILD | Lens → Ver |
 | 3 | ODO / OwnerDirect Online | separate repo (not in this session's scope) | `ownerdirect.online` | Own, separate Supabase project | MVP_BUILD (Phase 1: buyer-side trust flow) | Vera → Ver |
 
 ## 2) Shared services (not a layer on their own)
 
 | System | Repo | Data store | Stage | Reports to |
 |---|---|---|---|---|
-| StaffVerified (KOS's HR & Payroll module) | `staffverified-app` | Own, separate Supabase project | Built — Tier 1 (employee records, time/attendance, payroll, PH statutory contributions, payslips) live | Kath → Ver |
+| StaffVerified (KOS's HR & Payroll module) | `staffverified-app` | Own, separate Supabase project | Built — Tier 1 (employee records, time/attendance, payroll, PH statutory contributions, payslips) live | Lens → Ver |
 
 ---
 

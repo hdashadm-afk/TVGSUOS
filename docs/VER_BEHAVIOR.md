@@ -11,6 +11,8 @@
 
 | Input | Where | Notes |
 |-------|--------|--------|
+| **Daily Baseline Check** | `daily_baseline_checks` via `api/ask-ver.js` | Today's Manila row (else latest) — Ver's own loop output; prefer when answering “what first?” |
+| Open Task Inventory | `founder_tasks` via `api/ask-ver.js` | Includes Lens/Helium catches when logged as KOS tasks |
 | Active Decision Queue | `#decision-queue-list` | Live items only (archive filter applied) |
 | Archived decisions | `#decision-archive-list` | Historical — **not** top priority |
 | Topic action plans | Ver's Desk `[Plan] …` tasks | Per governance topic; Done removes |
@@ -19,19 +21,24 @@
 | Security / risk | Security status KPI + Critical Alerts | Step 1 in prioritization |
 | Open Supabase decisions / signals | `api/ask-ver.js` live fetch | Same tables as Strategy / Intelligence |
 
+## Hierarchy (locked)
+
+`TVGSUOS → Ver → (Lens / SERA / Vera)`. Ver does not absorb Helium DB or rebuild Lens. Phase 1 = harden Ver on this cockpit; Phase 2 = auto Lens→Ver signal pipe.
+
 ## Prioritization order (“what should I do first?”)
 
 1. **Critical security / trust / governance risks**
 2. **SR September pilot work** — test interest on https://station-rescue.vercel.app/, then auth / verification modals / governance flows
-3. **Dipstify October / early market** — early adopters, Field Kit pricing (hardware add-on, not bundle replacement)
-4. **Other ecosystem** only if still active in the masterplan (e.g. KOS→Dipstify rename when execution is still pending)
+3. **Dipstify October / early market** — early adopters; Field Kit pricing revisit Sep 1; Helium billing (₱7k + ₱1k/station, Aug start, collect every month-end); Gas Ops is a Dipstify workstream
+4. **ODO umbrella** — RV MVP sits under ODO (not a free-floating parked venture)
+5. **Other ecosystem** only if still active in the masterplan (e.g. KOS→Dipstify rename when execution is still pending)
 
 ## Do not elevate
 
-- Gas Ops: finish the whole app this week (stale)
-- RV MVP (parked)
-- Helium KOS pricing tier (if not in active masterplan)
-- ODO umbrella (already decided — historical)
+- Gas Ops: “finish the whole app this week” (stale sprint wording) — Gas Ops itself = Dipstify
+- Free-floating “RV MVP parked” framing — use **ODO umbrella → RV**
+- Old Helium “confirm KOS pricing tier” wording — superseded by ₱7k + ₱1k/station EOM collect
+- ODO umbrella as unresolved — umbrella placement is set; execute under it
 
 ## Implementation
 
