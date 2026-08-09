@@ -1,6 +1,6 @@
 # TVGSUOS — Master Direction
 
-Last updated: 2026-07-18
+Last updated: 2026-08-09
 Status: Active — baseline source of truth for this repo
 Owner: Edgardo Castro
 
@@ -49,10 +49,11 @@ These areas are **connected but modular** — no area is hard-dependent on anoth
 ## 4) Agent hierarchy
 
 ```text
-TVGSUOS
+TVGSUOS / Founder OS
 └── Ver  (chief of staff / founder-level governance)
     ├── Lens  (Dipstify / KOS; legacy name Kath)
     ├── SERA (Station Rescue only — not built as Ver peer UI yet)
+    ├── Delivery signals (Dipstify Delivery — separate app; domain agent TBD)
     └── Vera  (OWDO / ODO)
 ```
 
@@ -60,6 +61,7 @@ TVGSUOS
 - **Lens** — Dipstify/KOS venture agent (UI: Ask Lens; Helium pilot data absorption). Legacy docs may still say **Kath**. Reports to Ver.
 - **Vera** — OWDO/ODO venture agent. Reports to Ver. Ver ≠ Vera.
 - **SERA** — Station Rescue AI only; not Lens; rename only if founder directs.
+- **Dipstify Delivery** — separate product under Founder OS (locked 2026-08-09). Inline with Dipstify + Station Rescue (shared station/trust/variance language), not a third brand. Ver reads Delivery signals only — does not absorb Delivery DB or do depot/driver domain work.
 
 Full responsibilities and the non-redundancy rule (Ver must not duplicate Lens/Vera domain reasoning, and vice versa) are in `docs/GOVERNANCE_MODEL.md`.
 
@@ -67,7 +69,9 @@ Full responsibilities and the non-redundancy rule (Ver must not duplicate Lens/V
 
 ## 5) Governed ventures
 
-- **KOS / Katiwala AI** — owner-space business system (CEO's Space, HR & Payroll, Simple P&L, Ops/industry modules). Lives in `hdashadm-afk/katiwala-owner-os-`.
+- **Dipstify / KOS** — owner-space business system (Owner's Lens, HR & Payroll, Simple P&L, Ops/industry modules). Lives in `hdashadm-afk/katiwala-owner-os-`.
+- **Station Rescue** — trust / pilot path; SERA later. Separate repo.
+- **Dipstify Delivery** — fuel delivery verification (depot → driver → station). Separate app when built; Cursor/Drive prompt is SoT until repo exists. Spec: Notion `Dipstify Delivery Module` + Drive `Dipstify Delivery Module Cursor_Prompt.md`.
 - **OWDO / ODO** — property/vehicle trust marketplace. Own repo and own Supabase project, separate from KOS.
 
 Venture-specific logic stays in each venture's own repo/domain. Cross-venture governance belongs here.

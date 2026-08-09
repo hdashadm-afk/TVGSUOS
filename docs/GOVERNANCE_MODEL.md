@@ -6,7 +6,7 @@ Owner: Edgardo Castro
 
 Where `docs/MASTER_DIRECTION.md` states *what* TVGSUOS is, this doc states *how* it actually operates — who owns what, who decides what, and what happens when something needs to escalate.
 
-**Naming (2026-08):** Dipstify/KOS assistant is **Lens** (UI: Ask Lens). Older docs/code may still say **Kath** — treat Kath as the legacy name for Lens. Ver ≠ Vera; Lens ≠ SERA (SERA is Station Rescue only).
+**Naming (2026-08):** Dipstify/KOS assistant is **Lens** (UI: Ask Lens). Older docs/code may still say **Kath** — treat Kath as the legacy name for Lens. Ver ≠ Vera; Lens ≠ SERA (SERA is Station Rescue only). **Dipstify Delivery** (locked 2026-08-09) is a separate app under Founder OS, inline with Dipstify + Station Rescue — not a third brand; Ver reads Delivery signals only.
 
 ---
 

@@ -23,7 +23,9 @@
 
 ## Hierarchy (locked)
 
-`TVGSUOS → Ver → (Lens / SERA / Vera)`. Ver does not absorb Helium DB or rebuild Lens. Phase 1 = harden Ver on this cockpit; Phase 2 = auto Lens→Ver signal pipe.
+`TVGSUOS → Ver → (Lens / SERA / Delivery signals / Vera)`.
+
+Fuel vertical under Founder OS (2026-08-09): **Dipstify** + **Station Rescue** + **Dipstify Delivery** (separate app, inline — not a third brand). Ver does not absorb Helium or Delivery DB, does not rebuild Lens/SERA/Delivery domain work. Phase 1 = harden Ver on this cockpit; Phase 2 = auto Lens→Ver signal pipe; Delivery pipe later when the app exists.
 
 ## Prioritization order (“what should I do first?”)
 

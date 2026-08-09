@@ -1,6 +1,6 @@
 # TVGSUOS — Portfolio Map
 
-Last updated: 2026-07-18
+Last updated: 2026-08-09
 Status: Active
 Owner: Edgardo Castro
 
@@ -10,12 +10,16 @@ The real portfolio as it actually exists today — repos, domains, data stores, 
 
 ## 1) Layers and ventures
 
-**Three layers, not four.** Founder's OS is not a separate layer — it's TVGSUOS itself. Founder's Space (Ver, the Daily Baseline Check's output, the cross-venture dashboard) is one of TVGSUOS's 9 governance areas, live in this repo's `index.html`. The Daily Baseline Check's actual scheduled *routine* (the process that generates that output) still runs via `katiwala-owner-os-` — a routine-execution detail noted under TVGSUOS's row below, not a reason to model it as its own layer.
+**Founder's OS is not a separate layer — it's TVGSUOS itself.** Founder's Space (Ver, the Daily Baseline Check's output, the cross-venture dashboard) is one of TVGSUOS's 9 governance areas, live in this repo's `index.html`. The Daily Baseline Check's actual scheduled *routine* (the process that generates that output) still runs via `katiwala-owner-os-` — a routine-execution detail noted under TVGSUOS's row below, not a reason to model it as its own layer.
+
+**Fuel vertical under Founder OS (locked 2026-08-09):** Dipstify + Station Rescue + **Dipstify Delivery** (separate app, inline — not a third brand). All report to Ver.
 
 | Layer | System | Repo | Domain | Data store | Stage | Reports to |
 |---|---|---|---|---|---|---|
 | 1 | TVGSUOS (incl. Founder's Space) | `TVGSUOS` (this repo) | `theverifiedgroup.org` (not wired yet) / `tvgsuosweb.vercel.app` (live today, GitHub-connected — deploys from `main` automatically) | Reads/writes the KOS Supabase project — no dedicated database. `api/odo-status.js` also reads ODO's own separate project (`qhjhsdsluxgyjevbhfmk`) via service-role key. Founder's Space's Daily Baseline Check *display* reads `daily_baseline_checks` from the same KOS project; the check's own scheduled routine still runs via `katiwala-owner-os-`. | Phase 4 — all 9 governance areas live | Founder direct |
-| 2 | Dipstify / KOS (Lens; Helium pilot) | `katiwala-owner-os-` | `katiwalaai.app` (target) / `katiwala-owner-os.vercel.app` (live today) | KOS Supabase project (`jbhfdmujqrtqkhacfegl`) | MVP_BUILD | Lens → Ver |
+| 2a | Dipstify / KOS (Lens; Helium pilot) | `katiwala-owner-os-` | `katiwalaai.app` (target) / `katiwala-owner-os.vercel.app` (live today) | KOS Supabase project (`jbhfdmujqrtqkhacfegl`) | MVP_BUILD | Lens → Ver |
+| 2b | Station Rescue | Station RESQ (separate) | `station-rescue.vercel.app` | Own / SR Supabase | Pilot path | SERA → Ver (runtime later) |
+| 2c | Dipstify Delivery | *not created yet* — separate app when built | TBD | Own or shared Supabase (not absorbed into Ver) | Spec only (Drive + Notion Cursor prompt) | Delivery signals → Ver |
 | 3 | ODO / OwnerDirect Online | separate repo (not in this session's scope) | `ownerdirect.online` | Own, separate Supabase project | MVP_BUILD (Phase 1: buyer-side trust flow) | Vera → Ver |
 
 ## 2) Shared services (not a layer on their own)
