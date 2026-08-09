@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#007A45" />
+  <meta name="description" content="Dipstify Delivery — MVP demo (no database). Carfax for fuel drops." />
+  <title>Dipstify Delivery — MVP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #007A45;
+      --green-deep: #005C34;
+      --orange: #FF6B00;
+      --bg: #F4F6F5;
+      --surface: #FFFFFF;
+      --ink: #1A1A1A;
+      --muted: #5C6660;
+      --line: #D8DED9;
+      --ok: #00A854;
+      --warn: #FF6B00;
+      --bad: #E11D48;
+      --radius: 14px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08);
+      --font: "DM Sans", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select { font: inherit; }
+    .app {
+      max-width: 440px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #E8F2EC 0%, var(--bg) 28%);
+    }
+    .topbar {
+      padding: 14px 16px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .shield {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: var(--green);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: -0.02em;
+    }
+    .brand h1 { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+    .brand p { font-size: 11px; color: var(--muted); font-weight: 500; }
+    .pill {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--green-deep);
+      padding: 5px 8px;
+      border-radius: 999px;
+    }
+    .roles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 0 16px 12px;
+    }
+    .role-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .role-btn.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .main { flex: 1; padding: 0 16px 28px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .card h2 {
+      font-size: 18px;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+    .sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .kpi {
+      background: #F7FAF8;
+      border-radius: 12px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+    .kpi b { display: block; font-size: 18px; font-weight: 700; }
+    .kpi span { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .btn {
+      width: 100%;
+      min-height: 52px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 12px 14px;
+    }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      margin-top: 8px;
+    }
+    .btn-danger { background: var(--bad); color: #fff; }
+    .btn-orange { background: var(--orange); color: #fff; }
+    .list { display: flex; flex-direction: column; gap: 8px; }
+    .row {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+      width: 100%;
+    }
+    .row:hover { border-color: #B7C8BC; }
+    .row-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .mono { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 4px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .b-pending { background: #EEF1EF; color: var(--muted); }
+    .b-dispatched, .b-en_route { background: #E6F4EC; color: var(--green-deep); }
+    .b-at_station, .b-offloading { background: #FFF1E6; color: #B34A00; }
+    .b-completed { background: #E6F8EE; color: #067A3A; }
+    .b-disputed { background: #FDE8EC; color: var(--bad); }
+    .field { margin-bottom: 12px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .field input, .field select {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+    }
+    .steps {
+      display: flex;
+      gap: 6px;
+      margin: 12px 0 16px;
+    }
+    .step-dot {
+      flex: 1;
+      height: 6px;
+      border-radius: 999px;
+      background: #E2E8E4;
+    }
+    .step-dot.on { background: var(--orange); }
+    .step-dot.done { background: var(--ok); }
+    .map-fake {
+      height: 180px;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, rgba(0,122,69,.12), rgba(255,107,0,.08)),
+        repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(0,0,0,.03) 19px),
+        repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,0,0,.03) 19px),
+        #DDE8E1;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .map-fake::after {
+      content: "";
+      position: absolute;
+      left: 18%; right: 18%;
+      top: 42%;
+      height: 0;
+      border-top: 2px dashed var(--green);
+    }
+    .map-label {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,.92);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--line);
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .photo-slot {
+      min-height: 88px;
+      border: 1.5px dashed var(--line);
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 8px;
+      background: #FAFBFA;
+      cursor: pointer;
+    }
+    .photo-slot.shot {
+      border-style: solid;
+      border-color: var(--ok);
+      background: #EFFFF5;
+      color: var(--green-deep);
+    }
+    .banner {
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .banner-info { background: #E8F2EC; color: var(--green-deep); }
+    .banner-warn { background: #FFF1E6; color: #9A4A00; }
+    .banner-bad { background: #FDE8EC; color: var(--bad); }
+    .banner-ok { background: #E6F8EE; color: #067A3A; }
+    .meta { font-size: 13px; color: var(--muted); }
+    .meta strong { color: var(--ink); }
+    .stack { display: flex; flex-direction: column; gap: 6px; margin: 10px 0 14px; }
+    .check {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      font-size: 13px;
+    }
+    .foot {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      padding: 8px 16px 20px;
+    }
+    .hidden { display: none !important; }
+    .variance {
+      font-family: var(--mono);
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      margin: 8px 0;
+    }
+    .v-ok { color: var(--ok); }
+    .v-warn { color: var(--warn); }
+    .v-bad { color: var(--bad); }
+    .back {
+      background: none;
+      border: none;
+      color: var(--green-deep);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      padding: 0;
+    }
+    .proto-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .proto-list li {
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: flex-start;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .proto-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .proto-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      padding: 3px 7px;
+      border-radius: 999px;
+    }
+    .proto-live { background: #E6F8EE; color: #067A3A; }
+    .proto-partial { background: #FFF1E6; color: #9A4A00; }
+    .proto-later { background: #EEF1EF; color: var(--muted); }
+    .price-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #F7FAF8;
+    }
+    .price-row strong { font-family: var(--mono); font-size: 16px; }
+    .quote-box {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #FAFBFA;
+      margin: 12px 0;
+    }
+    .quote-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
+    .quote-line strong { color: var(--ink); font-family: var(--mono); font-weight: 500; }
+    .quote-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      font-weight: 700;
+    }
+    .quote-total span:last-child {
+      font-family: var(--mono);
+      font-size: 20px;
+      color: var(--green-deep);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="shield" aria-hidden="true">D</div>
+        <div>
+          <h1>Dipstify Delivery</h1>
+          <p>MVP demo · no database</p>
+        </div>
+      </div>
+      <span class="pill">Under Founder OS</span>
+    </header>
+
+    <div class="roles" role="tablist" aria-label="Role">
+      <button type="button" class="role-btn active" data-role="depot">Depot</button>
+      <button type="button" class="role-btn" data-role="driver">Driver</button>
+      <button type="button" class="role-btn" data-role="station">Station</button>
+    </div>
+
+    <main class="main" id="main"></main>
+    <p class="foot">Inline with Dipstify + Station Rescue · Ver reads signals later · Dummy North Luzon data</p>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'dipstify_delivery_mvp_v2';
+
+    // Today's rack/depot prices (demo, ₱/L) — station books against these.
+    const PRICING_TODAY = {
+      asOf: '2026-08-09',
+      label: 'North Luzon depot rack — today',
+      Diesel: 58.20,
+      Unleaded: 62.45,
+      Premium: 69.80,
+    };
+
+    // Freight: base + per-km + volume tier (demo).
+    const FREIGHT = {
+      basePhp: 3500,
+      perKmPhp: 45,
+      per1000LPhp: 280,
+    };
+
+    const STATIONS = [
+      { id: 'st-unioil-dagupan', name: 'Unioil Dagupan', address: 'Dagupan City', coords: '16.0434, 120.3333', kmFromDepot: 8 },
+      { id: 'st-shell-urdaneta', name: 'Shell Urdaneta', address: 'Urdaneta City', coords: '15.9758, 120.5706', kmFromDepot: 42 },
+      { id: 'st-petron-calasiao', name: 'Petron Calasiao', address: 'Calasiao', coords: '16.0115, 120.3600', kmFromDepot: 14 },
+      { id: 'st-caltex-lingayen', name: 'Caltex Lingayen', address: 'Lingayen', coords: '16.0208, 120.2319', kmFromDepot: 28 },
+      { id: 'st-phoenix-alaminos', name: 'Phoenix Alaminos', address: 'Alaminos', coords: '16.1554, 119.9808', kmFromDepot: 68 },
+    ];
+
+    const DRIVERS = [
+      { id: 'drv-juan', name: 'Juan dela Cruz', phone: '+639171234567', truck: 'ABC-1234' },
+      { id: 'drv-pedro', name: 'Pedro Santos', phone: '+639189876543', truck: 'XYZ-5678' },
+    ];
+
+    const PRODUCTS = ['Diesel', 'Unleaded', 'Premium'];
+
+    const SECURITY_PROTOCOLS = [
+      { name: 'Seal match (depot → station)', status: 'live', note: 'Blocks if serials differ' },
+      { name: 'Geofence (50m)', status: 'live', note: 'Arrive disabled until in range' },
+      { name: 'Photo chain (4 shots)', status: 'live', note: 'Must capture all before meter' },
+      { name: 'Variance gate', status: 'live', note: '<0.5% / 0.5–2% / >2%' },
+      { name: 'Driver identity (selfie + ID)', status: 'partial', note: 'Banner only in MVP' },
+      { name: 'Time lock (4h from dispatch)', status: 'later', note: 'Full product' },
+      { name: 'Idempotent complete-once', status: 'later', note: 'Server reject dupes' },
+    ];
+
+    function peso(n) {
+      return `₱${Math.round(n).toLocaleString('en-PH')}`;
+    }
+
+    function buildQuote(stationId, product, liters) {
+      const st = STATIONS.find(s => s.id === stationId) || STATIONS[0];
+      const pricePerL = PRICING_TODAY[product] || 0;
+      const fuelCost = pricePerL * liters;
+      const freight =
+        FREIGHT.basePhp +
+        FREIGHT.perKmPhp * (st.kmFromDepot || 20) +
+        FREIGHT.per1000LPhp * (liters / 1000);
+      return {
+        stationId: st.id,
+        product,
+        liters,
+        pricePerL,
+        fuelCost,
+        freight,
+        km: st.kmFromDepot || 20,
+        total: fuelCost + freight,
+        asOf: PRICING_TODAY.asOf,
+      };
+    }
+
+    function renderSecurityCard() {
+      const rows = SECURITY_PROTOCOLS.map(p => {
+        const cls = p.status === 'live' ? 'proto-live' : p.status === 'partial' ? 'proto-partial' : 'proto-later';
+        const label = p.status === 'live' ? 'In MVP' : p.status === 'partial' ? 'Partial' : 'Later';
+        return `<li><span><strong>${p.name}</strong><br/><span class="meta">${p.note}</span></span><span class="proto-tag ${cls}">${label}</span></li>`;
+      }).join('');
+      return `
+        <section class="card">
+          <h2 style="font-size:15px;">Security protocols</h2>
+          <p class="sub">Trust rules for every drop — demo vs full product.</p>
+          <ul class="proto-list">${rows}</ul>
+        </section>`;
+    }
+
+    function renderPricingTodayCard(ctaId) {
+      const rows = PRODUCTS.map(p => `
+        <div class="price-row">
+          <span><strong>${p}</strong><br/><span class="meta">₱/L rack today</span></span>
+          <strong>${PRICING_TODAY[p].toFixed(2)}</strong>
+        </div>`).join('');
+      return `
+        <section class="card">
+          <h2 style="font-size:15px;">Pricing today</h2>
+          <p class="sub">${PRICING_TODAY.label} · ${PRICING_TODAY.asOf} (demo)</p>
+          <div class="price-grid">${rows}</div>
+          ${ctaId ? `<button type="button" class="btn btn-primary" id="${ctaId}">Book delivery with quote</button>` : ''}
+        </section>`;
+    }
+
+    const defaultState = () => ({
+      role: 'station',
+      view: 'home',
+      selectedId: null,
+      photoStep: 0,
+      photos: [false, false, false, false],
+      geofenceReady: false,
+      sealMatch: null,
+      otpOk: false,
+      bookStationId: 'st-unioil-dagupan',
+      bookProduct: 'Diesel',
+      bookLiters: 10000,
+      deliveries: [
+        {
+          id: 'DEL-20260809-001',
+          stationId: 'st-unioil-dagupan',
+          product: 'Diesel',
+          ordered: 10000,
+          delivered: null,
+          dipstick: null,
+          driverId: 'drv-juan',
+          truck: 'ABC-1234',
+          sealBefore: 'SN-2026-88421',
+          sealAfter: null,
+          status: 'pending',
+          notes: '',
+          source: 'depot',
+          pricePerL: PRICING_TODAY.Diesel,
+          freight: null,
+          quoteTotal: null,
+        },
+        {
+          id: 'DEL-20260809-002',
+          stationId: 'st-shell-urdaneta',
+          product: 'Unleaded',
+          ordered: 8000,
+          delivered: 7920,
+          dipstick: 7904,
+          driverId: 'drv-pedro',
+          truck: 'XYZ-5678',
+          sealBefore: 'SN-2026-77102',
+          sealAfter: 'SN-2026-77102',
+          status: 'completed',
+          notes: 'Demo completed (−1.2%)',
+          source: 'depot',
+          pricePerL: PRICING_TODAY.Unleaded,
+          freight: 8200,
+          quoteTotal: null,
+        },
+        {
+          id: 'DEL-20260808-003',
+          stationId: 'st-petron-calasiao',
+          product: 'Diesel',
+          ordered: 12000,
+          delivered: 11680,
+          dipstick: 11640,
+          driverId: 'drv-juan',
+          truck: 'ABC-1234',
+          sealBefore: 'SN-2026-55001',
+          sealAfter: 'SN-2026-55001',
+          status: 'disputed',
+          notes: 'Variance >2% — locked for review',
+          source: 'depot',
+          pricePerL: PRICING_TODAY.Diesel,
+          freight: null,
+          quoteTotal: null,
+        },
+      ],
+    });
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return defaultState();
+        return { ...defaultState(), ...JSON.parse(raw) };
+      } catch {
+        return defaultState();
+      }
+    }
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    let state = load();
+
+    function station(id) { return STATIONS.find(s => s.id === id); }
+    function driver(id) { return DRIVERS.find(d => d.id === id); }
+    function delivery(id) { return state.deliveries.find(d => d.id === id); }
+
+    function variancePct(d) {
+      if (d.ordered == null || d.dipstick == null) return null;
+      return ((d.dipstick - d.ordered) / d.ordered) * 100;
+    }
+
+    function varianceBand(pct) {
+      if (pct == null) return null;
+      const abs = Math.abs(pct);
+      if (abs < 0.5) return 'ok';
+      if (abs <= 2) return 'warn';
+      return 'bad';
+    }
+
+    function varianceAction(band) {
+      if (band === 'ok') return 'Accept invoice';
+      if (band === 'warn') return 'Flag for review';
+      if (band === 'bad') return 'Lock + investigate';
+      return '—';
+    }
+
+    function statusLabel(s) {
+      return String(s).replace(/_/g, ' ');
+    }
+
+    function badgeClass(s) {
+      return `badge b-${s}`;
+    }
+
+    function setRole(role) {
+      state.role = role;
+      state.view = 'home';
+      state.selectedId = null;
+      state.photoStep = 0;
+      state.photos = [false, false, false, false];
+      state.geofenceReady = false;
+      state.sealMatch = null;
+      save();
+      render();
+    }
+
+    function go(view, id) {
+      state.view = view;
+      if (id) state.selectedId = id;
+      save();
+      render();
+    }
+
+    function updateDelivery(id, patch) {
+      const d = delivery(id);
+      Object.assign(d, patch);
+      save();
+      render();
+    }
+
+    function counts() {
+      const list = state.deliveries;
+      return {
+        today: list.length,
+        transit: list.filter(d => ['dispatched', 'en_route', 'at_station', 'offloading'].includes(d.status)).length,
+        done: list.filter(d => d.status === 'completed').length,
+        disputed: list.filter(d => d.status === 'disputed').length,
+      };
+    }
+
+    function render() {
+      document.querySelectorAll('.role-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.role === state.role);
+      });
+      const main = document.getElementById('main');
+      if (state.role === 'depot') main.innerHTML = renderDepot();
+      else if (state.role === 'driver') main.innerHTML = renderDriver();
+      else main.innerHTML = renderStation();
+      wire();
+    }
+
+    function renderDepot() {
+      if (state.view === 'create') return renderCreateOrder();
+      if (state.view === 'detail') return renderDepotDetail();
+      const c = counts();
+      const rows = state.deliveries.map(d => {
+        const st = station(d.stationId);
+        const drv = driver(d.driverId);
+        return `
+          <button type="button" class="row" data-open="${d.id}">
+            <div class="row-top">
+              <span class="mono">${d.id}</span>
+              <span class="${badgeClass(d.status)}">${statusLabel(d.status)}</span>
+            </div>
+            <div><strong>${st.name}</strong> · ${d.product} · ${d.ordered.toLocaleString()} L</div>
+            <div class="meta">${drv ? drv.name : 'Unassigned'} · ${d.truck || 'TBD'}${d.quoteTotal != null ? ` · ${peso(d.quoteTotal)}` : ''}</div>
+          </button>`;
+      }).join('');
+      return `
+        <section class="card">
+          <h2>North Luzon Fuel Distribution</h2>
+          <p class="sub">Depot dashboard — Dagupan. Assign truck + driver, track seals & variance.</p>
+          <div class="kpi-row">
+            <div class="kpi"><b>${c.today}</b><span>Today</span></div>
+            <div class="kpi"><b>${c.transit}</b><span>Transit</span></div>
+            <div class="kpi"><b>${c.done}</b><span>Done</span></div>
+            <div class="kpi"><b>${c.disputed}</b><span>Dispute</span></div>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-create">Create new order</button>
+        </section>
+        ${renderPricingTodayCard()}
+        ${renderSecurityCard()}
+        <section class="card">
+          <h2 style="font-size:15px;margin-bottom:10px;">Deliveries</h2>
+          <div class="list">${rows}</div>
+        </section>`;
+    }
+
+    function renderCreateOrder() {
+      const stationOpts = STATIONS.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+      const driverOpts = DRIVERS.map(d => `<option value="${d.id}">${d.name} (${d.truck})</option>`).join('');
+      const productOpts = PRODUCTS.map(p => `<option value="${p}">${p}</option>`).join('');
+      return `
+        <button type="button" class="back" data-back>← Depot home</button>
+        <section class="card">
+          <h2>Create order</h2>
+          <p class="sub">Generates Delivery ID + seal serial (demo).</p>
+          <div class="field"><label>Station</label><select id="f-station">${stationOpts}</select></div>
+          <div class="field"><label>Product</label><select id="f-product">${productOpts}</select></div>
+          <div class="field"><label>Ordered volume (L)</label><input id="f-vol" type="number" value="10000" min="100" step="100" /></div>
+          <div class="field"><label>Driver / truck</label><select id="f-driver">${driverOpts}</select></div>
+          <button type="button" class="btn btn-primary" id="btn-save-order">Dispatch order</button>
+        </section>`;
+    }
+
+    function renderDepotDetail() {
+      const d = delivery(state.selectedId);
+      if (!d) return `<p class="card">Missing delivery.</p>`;
+      const st = station(d.stationId);
+      const drv = driver(d.driverId);
+      const pct = variancePct(d);
+      const band = varianceBand(pct);
+      return `
+        <button type="button" class="back" data-back>← Depot home</button>
+        <section class="card">
+          <div class="row-top">
+            <h2>${d.id}</h2>
+            <span class="${badgeClass(d.status)}">${statusLabel(d.status)}</span>
+          </div>
+          <p class="sub">${st.name} · ${d.product}${d.source === 'station_book' ? ' · Station book' : ''}</p>
+          <div class="stack meta">
+            <div>Ordered: <strong>${d.ordered.toLocaleString()} L</strong></div>
+            <div>Driver: <strong>${drv ? drv.name : 'Unassigned'}</strong> · ${d.truck || 'TBD'}</div>
+            <div>Seal: <strong class="mono">${d.sealBefore}</strong></div>
+            ${d.pricePerL != null ? `<div>Rack: <strong>₱${Number(d.pricePerL).toFixed(2)}/L</strong></div>` : ''}
+            ${d.freight != null ? `<div>Freight: <strong>${peso(d.freight)}</strong></div>` : ''}
+            ${d.quoteTotal != null ? `<div>Quote: <strong>${peso(d.quoteTotal)}</strong></div>` : ''}
+            ${d.delivered != null ? `<div>Meter: <strong>${d.delivered.toLocaleString()} L</strong></div>` : ''}
+            ${d.dipstick != null ? `<div>Dipstick: <strong>${d.dipstick.toLocaleString()} L</strong></div>` : ''}
+          </div>
+          ${pct != null ? `
+            <div class="variance v-${band}">${pct.toFixed(2)}%</div>
+            <div class="banner banner-${band === 'ok' ? 'ok' : band === 'warn' ? 'warn' : 'bad'}">${varianceAction(band)}</div>
+          ` : `<div class="banner banner-info">Waiting on driver + station receive.</div>`}
+          ${d.status === 'pending' ? `<button type="button" class="btn btn-primary" id="btn-dispatch">Confirm & assign (dispatch)</button>` : ''}
+        </section>`;
+    }
+
+    function renderDriver() {
+      if (!state.otpOk && state.view === 'home') return renderDriverLogin();
+      if (state.view === 'detail') return renderDriverDetail();
+      if (state.view === 'enroute') return renderEnRoute();
+      if (state.view === 'atstation') return renderAtStation();
+      if (state.view === 'photos') return renderPhotos();
+      if (state.view === 'complete') return renderDriverComplete();
+
+      const mine = state.deliveries.filter(d => d.driverId === 'drv-juan' || d.status !== 'completed');
+      const active = state.deliveries.filter(d => ['pending', 'dispatched', 'en_route', 'at_station', 'offloading'].includes(d.status));
+      const rows = active.map(d => {
+        const st = station(d.stationId);
+        return `
+          <button type="button" class="row" data-open="${d.id}">
+            <div class="row-top">
+              <span class="mono">${d.id}</span>
+              <span class="${badgeClass(d.status)}">${statusLabel(d.status)}</span>
+            </div>
+            <div><strong>${st.name}</strong></div>
+            <div class="meta">${d.product} · ${d.ordered.toLocaleString()} L · ${d.truck}</div>
+          </button>`;
+      }).join('') || `<p class="meta">No active deliveries.</p>`;
+
+      return `
+        <section class="card">
+          <h2>Magandang umaga, Juan</h2>
+          <p class="sub">Driver app — offline-ready demo (local only).</p>
+          <div class="kpi-row" style="grid-template-columns:repeat(3,1fr)">
+            <div class="kpi"><b>${active.length}</b><span>Assigned</span></div>
+            <div class="kpi"><b>${state.deliveries.filter(d=>d.status==='completed').length}</b><span>Done</span></div>
+            <div class="kpi"><b>${state.deliveries.filter(d=>d.status==='disputed').length}</b><span>Flagged</span></div>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-start-next" ${!active.length ? 'disabled' : ''}>Start next delivery</button>
+          <button type="button" class="btn btn-secondary" id="btn-logout-driver">Switch device / re-login</button>
+        </section>
+        <section class="card">
+          <h2 style="font-size:15px;margin-bottom:10px;">My deliveries</h2>
+          <div class="list">${rows}</div>
+        </section>`;
+    }
+
+    function renderDriverLogin() {
+      return `
+        <section class="card">
+          <h2>Driver check-in</h2>
+          <p class="sub">Phone + OTP (demo: any 6 digits). Selfie/ID mocked.</p>
+          <div class="field"><label>Mobile</label><input value="+639171234567" readonly /></div>
+          <div class="field"><label>OTP</label><input id="f-otp" inputmode="numeric" maxlength="6" placeholder="6 digits" /></div>
+          <div class="banner banner-info">Demo identity: Juan dela Cruz · License N01-12-345678</div>
+          <button type="button" class="btn btn-primary" id="btn-otp">Verify & login</button>
+        </section>`;
+    }
+
+    function renderDriverDetail() {
+      const d = delivery(state.selectedId);
+      const st = station(d.stationId);
+      return `
+        <button type="button" class="back" data-back-driver>← Driver home</button>
+        <section class="card">
+          <div class="row-top">
+            <h2>Delivery #${d.id.slice(-3)}</h2>
+            <span class="${badgeClass(d.status)}">${statusLabel(d.status)}</span>
+          </div>
+          <p class="sub">${st.name} · ${st.address}</p>
+          <div class="stack meta">
+            <div>Product: <strong>${d.product}</strong></div>
+            <div>Ordered: <strong>${d.ordered.toLocaleString()} L</strong></div>
+            <div>Truck: <strong>${d.truck}</strong></div>
+            <div>Seal at depot: <strong class="mono">${d.sealBefore}</strong></div>
+          </div>
+          <div class="stack">
+            <div class="check">✅ Check-in verified</div>
+            <div class="check">${['dispatched','en_route','at_station','offloading','completed'].includes(d.status) ? '✅' : '○'} Seal scanned at depot</div>
+            <div class="check">${['en_route','at_station','offloading','completed'].includes(d.status) ? '✅' : '○'} GPS active</div>
+          </div>
+          ${d.status === 'pending' || d.status === 'dispatched' ? `
+            <button type="button" class="btn btn-primary" id="btn-depart">Scan seal & depart depot</button>
+          ` : ''}
+          ${d.status === 'en_route' ? `
+            <button type="button" class="btn btn-primary" id="btn-goto-enroute">Open en route</button>
+          ` : ''}
+          ${d.status === 'at_station' ? `
+            <button type="button" class="btn btn-orange" id="btn-goto-station">At station — continue</button>
+          ` : ''}
+          ${d.status === 'offloading' ? `
+            <button type="button" class="btn btn-orange" id="btn-goto-photos">Continue photo chain</button>
+          ` : ''}
+        </section>`;
+    }
+
+    function renderEnRoute() {
+      const d = delivery(state.selectedId);
+      const st = station(d.stationId);
+      return `
+        <button type="button" class="back" data-back-driver-detail>← Delivery</button>
+        <section class="card">
+          <h2>En route</h2>
+          <p class="sub">GPS every 30s (mocked). Station sees live ETA.</p>
+          <div class="map-fake"><div class="map-label">Map view → ${st.name}<br/>12.5 km · ~18 mins</div></div>
+          <div class="banner ${state.geofenceReady ? 'banner-ok' : 'banner-warn'}">
+            ${state.geofenceReady ? 'Geofence valid — within 50m' : 'Approaching station — tap to simulate geofence'}
+          </div>
+          ${!state.geofenceReady ? `<button type="button" class="btn btn-secondary" id="btn-geo">Simulate arrive in geofence</button>` : ''}
+          <button type="button" class="btn btn-primary" id="btn-arrived" ${state.geofenceReady ? '' : 'disabled'}>I have arrived</button>
+        </section>`;
+    }
+
+    function renderAtStation() {
+      const d = delivery(state.selectedId);
+      return `
+        <button type="button" class="back" data-back-driver-detail>← Delivery</button>
+        <section class="card">
+          <h2>At station</h2>
+          <p class="sub">Scan station QR + seal. Serials must match.</p>
+          <div class="map-fake" style="height:120px"><div class="map-label">QR scanner (mock)</div></div>
+          <button type="button" class="btn btn-secondary" id="btn-scan-station">Scan station QR</button>
+          <div class="field" style="margin-top:12px">
+            <label>Seal serial after</label>
+            <input id="f-seal-after" value="${d.sealBefore}" />
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-check-seal">Verify seal match</button>
+          <div id="seal-result"></div>
+          <button type="button" class="btn btn-orange hidden" id="btn-offload">Proceed to offload</button>
+        </section>`;
+    }
+
+    function renderPhotos() {
+      const labels = ['Seal intact', 'Seal broken', 'Truck compartment', 'Receiving tank'];
+      const dots = labels.map((_, i) => {
+        const cls = state.photos[i] ? 'done' : (i === state.photoStep ? 'on' : '');
+        return `<div class="step-dot ${cls}"></div>`;
+      }).join('');
+      const slots = labels.map((label, i) => `
+        <button type="button" class="photo-slot ${state.photos[i] ? 'shot' : ''}" data-photo="${i}">
+          ${state.photos[i] ? `✅ Photo ${i + 1}` : `Photo ${i + 1}: ${label}`}<br/><span style="font-weight:500">Tap to capture</span>
+        </button>`).join('');
+      const all = state.photos.every(Boolean);
+      return `
+        <button type="button" class="back" data-back-driver-detail>← Delivery</button>
+        <section class="card">
+          <h2>Offloading proof</h2>
+          <p class="sub">4 required photos with GPS + timestamp (mocked).</p>
+          <div class="steps">${dots}</div>
+          <div class="photo-grid">${slots}</div>
+          <div class="field">
+            <label>Flow meter reading (L)</label>
+            <input id="f-meter" type="number" value="${delivery(state.selectedId).ordered - 40}" />
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-finish-offload" ${all ? '' : 'disabled'}>Complete offloading</button>
+        </section>`;
+    }
+
+    function renderDriverComplete() {
+      const d = delivery(state.selectedId);
+      const pct = d.delivered != null ? ((d.delivered - d.ordered) / d.ordered) * 100 : 0;
+      const band = varianceBand(pct);
+      return `
+        <section class="card">
+          <h2>Delivery complete</h2>
+          <p class="sub">Waiting for station dipstick confirmation.</p>
+          <div class="stack meta">
+            <div>Ordered: <strong>${d.ordered.toLocaleString()} L</strong></div>
+            <div>Meter: <strong>${(d.delivered || 0).toLocaleString()} L</strong></div>
+          </div>
+          <div class="variance v-${band}">${pct.toFixed(2)}% (meter)</div>
+          <div class="banner banner-info">Station manager must enter dipstick to finalize variance gate.</div>
+          <button type="button" class="btn btn-primary" data-back-driver>Back to dashboard</button>
+        </section>`;
+    }
+
+    function renderStation() {
+      if (state.view === 'receive') return renderReceive();
+      if (state.view === 'book') return renderBook();
+      const incoming = state.deliveries.filter(d => ['en_route', 'at_station', 'offloading', 'dispatched', 'pending'].includes(d.status) || (d.status === 'completed' && d.dipstick == null));
+      const needReceive = state.deliveries.filter(d => d.delivered != null && d.dipstick == null && d.status !== 'disputed');
+      const list = [...new Map([...incoming, ...needReceive, ...state.deliveries.filter(d => d.stationId === 'st-unioil-dagupan')].map(d => [d.id, d])).values()];
+      const rows = list.map(d => {
+        const st = station(d.stationId);
+        const quoteBit = d.quoteTotal != null ? ` · Quote ${peso(d.quoteTotal)}` : '';
+        return `
+          <button type="button" class="row" data-receive="${d.id}">
+            <div class="row-top">
+              <span class="mono">${d.id}</span>
+              <span class="${badgeClass(d.status)}">${statusLabel(d.status)}</span>
+            </div>
+            <div><strong>${st.name}</strong> · ${d.product}</div>
+            <div class="meta">Ordered ${d.ordered.toLocaleString()} L · ${d.source === 'station_book' ? 'Station book' : 'Depot'}${quoteBit}</div>
+          </button>`;
+      }).join('');
+      return `
+        ${renderPricingTodayCard('btn-open-book')}
+        <section class="card">
+          <h2>Receive delivery</h2>
+          <p class="sub">Station side — book fuel, then confirm drop with dipstick.</p>
+          <div class="banner banner-info">Owners book in-app · depot assigns truck after quote accepted</div>
+          <div class="list">${rows}</div>
+        </section>
+        ${renderSecurityCard()}`;
+    }
+
+    function renderBook() {
+      const stationOpts = STATIONS.map(s =>
+        `<option value="${s.id}" ${s.id === state.bookStationId ? 'selected' : ''}>${s.name} (${s.kmFromDepot} km)</option>`
+      ).join('');
+      const productOpts = PRODUCTS.map(p =>
+        `<option value="${p}" ${p === state.bookProduct ? 'selected' : ''}>${p} — ₱${PRICING_TODAY[p].toFixed(2)}/L</option>`
+      ).join('');
+      const q = buildQuote(state.bookStationId, state.bookProduct, Number(state.bookLiters) || 0);
+      return `
+        <button type="button" class="back" data-back-station>← Station home</button>
+        <section class="card">
+          <h2>Book delivery</h2>
+          <p class="sub">Live quote = today’s rack price × liters + freight.</p>
+          <div class="field"><label>Your station</label><select id="b-station">${stationOpts}</select></div>
+          <div class="field"><label>Product</label><select id="b-product">${productOpts}</select></div>
+          <div class="field"><label>Volume (L)</label><input id="b-liters" type="number" min="1000" step="500" value="${state.bookLiters}" /></div>
+          <div class="quote-box" id="quote-box">
+            <div class="quote-line"><span>Price today (${q.product})</span><strong>₱${q.pricePerL.toFixed(2)}/L</strong></div>
+            <div class="quote-line"><span>Fuel (${q.liters.toLocaleString()} L)</span><strong>${peso(q.fuelCost)}</strong></div>
+            <div class="quote-line"><span>Freight (${q.km} km + volume)</span><strong>${peso(q.freight)}</strong></div>
+            <div class="quote-total"><span>Quotation total</span><span>${peso(q.total)}</span></div>
+          </div>
+          <div class="banner banner-info">Accepting sends a <strong>pending</strong> booking to depot for truck/driver assign.</div>
+          <button type="button" class="btn btn-primary" id="btn-submit-book">Accept quote & book</button>
+        </section>`;
+    }
+
+    function refreshQuoteBox() {
+      const stationId = document.getElementById('b-station')?.value || state.bookStationId;
+      const product = document.getElementById('b-product')?.value || state.bookProduct;
+      const liters = Number(document.getElementById('b-liters')?.value) || 0;
+      state.bookStationId = stationId;
+      state.bookProduct = product;
+      state.bookLiters = liters;
+      const q = buildQuote(stationId, product, liters);
+      const box = document.getElementById('quote-box');
+      if (!box) return;
+      box.innerHTML = `
+        <div class="quote-line"><span>Price today (${q.product})</span><strong>₱${q.pricePerL.toFixed(2)}/L</strong></div>
+        <div class="quote-line"><span>Fuel (${q.liters.toLocaleString()} L)</span><strong>${peso(q.fuelCost)}</strong></div>
+        <div class="quote-line"><span>Freight (${q.km} km + volume)</span><strong>${peso(q.freight)}</strong></div>
+        <div class="quote-total"><span>Quotation total</span><span>${peso(q.total)}</span></div>`;
+    }
+
+    function renderReceive() {
+      const d = delivery(state.selectedId);
+      const st = station(d.stationId);
+      const drv = driver(d.driverId);
+      const pct = variancePct(d);
+      const band = varianceBand(pct);
+      return `
+        <button type="button" class="back" data-back-station>← Station home</button>
+        <section class="card">
+          <h2>Confirm receipt</h2>
+          <p class="sub">${st.name} · ${d.id}</p>
+          <div class="stack meta">
+            <div>Driver: <strong>${drv ? drv.name : 'Awaiting depot assign'}</strong></div>
+            <div>Truck: <strong>${d.truck || 'TBD'}</strong></div>
+            <div>Product: <strong>${d.product}</strong></div>
+            <div>Ordered: <strong>${d.ordered.toLocaleString()} L</strong></div>
+            ${d.pricePerL != null ? `<div>Rack today: <strong>₱${Number(d.pricePerL).toFixed(2)}/L</strong></div>` : ''}
+            ${d.freight != null ? `<div>Freight: <strong>${peso(d.freight)}</strong></div>` : ''}
+            ${d.quoteTotal != null ? `<div>Quote total: <strong>${peso(d.quoteTotal)}</strong></div>` : ''}
+            <div>Meter: <strong>${d.delivered != null ? d.delivered.toLocaleString() + ' L' : '— waiting driver'}</strong></div>
+            <div>Seal: <strong class="mono">${d.sealAfter || d.sealBefore}</strong></div>
+          </div>
+          <div class="field">
+            <label>Dipstick reading (L)</label>
+            <input id="f-dip" type="number" value="${d.delivered != null ? d.delivered - 20 : d.ordered - 50}" ${d.delivered == null ? 'disabled' : ''} />
+          </div>
+          ${d.delivered == null ? `<div class="banner banner-warn">Driver must finish offloading first (switch to Driver role).</div>` : ''}
+          <button type="button" class="btn btn-primary" id="btn-confirm-receive" ${d.delivered == null ? 'disabled' : ''}>Confirm receipt</button>
+          ${pct != null ? `
+            <div class="variance v-${band}" style="margin-top:14px">${pct.toFixed(2)}%</div>
+            <div class="banner banner-${band === 'ok' ? 'ok' : band === 'warn' ? 'warn' : 'bad'}">
+              Ordered vs dipstick → ${varianceAction(band)}
+            </div>
+          ` : ''}
+        </section>`;
+    }
+
+    function wire() {
+      document.getElementById('btn-create')?.addEventListener('click', () => go('create'));
+      document.getElementById('btn-open-book')?.addEventListener('click', () => {
+        state.view = 'book';
+        save();
+        render();
+      });
+      document.querySelector('[data-back]')?.addEventListener('click', () => go('home'));
+      document.querySelector('[data-back-driver]')?.addEventListener('click', () => { state.view = 'home'; state.selectedId = null; save(); render(); });
+      document.querySelector('[data-back-driver-detail]')?.addEventListener('click', () => go('detail', state.selectedId));
+      document.querySelector('[data-back-station]')?.addEventListener('click', () => { state.view = 'home'; save(); render(); });
+
+      document.getElementById('b-station')?.addEventListener('change', refreshQuoteBox);
+      document.getElementById('b-product')?.addEventListener('change', refreshQuoteBox);
+      document.getElementById('b-liters')?.addEventListener('input', refreshQuoteBox);
+
+      document.getElementById('btn-submit-book')?.addEventListener('click', () => {
+        const stationId = document.getElementById('b-station').value;
+        const product = document.getElementById('b-product').value;
+        const liters = Number(document.getElementById('b-liters').value) || 0;
+        if (liters < 1000) {
+          alert('Minimum demo book is 1,000 L');
+          return;
+        }
+        const q = buildQuote(stationId, product, liters);
+        const n = state.deliveries.length + 1;
+        const id = `DEL-20260809-${String(n).padStart(3, '0')}`;
+        state.deliveries.unshift({
+          id,
+          stationId,
+          product,
+          ordered: liters,
+          delivered: null,
+          dipstick: null,
+          driverId: null,
+          truck: 'TBD',
+          sealBefore: `SN-2026-${Math.floor(10000 + Math.random() * 89999)}`,
+          sealAfter: null,
+          status: 'pending',
+          notes: 'Station book — awaiting depot assign',
+          source: 'station_book',
+          pricePerL: q.pricePerL,
+          freight: q.freight,
+          quoteTotal: q.total,
+        });
+        state.view = 'home';
+        save();
+        render();
+        alert(`Booked ${id}\nQuote ${peso(q.total)} (fuel + freight)\nDepot will assign truck.`);
+      });
+
+      document.querySelectorAll('[data-open]').forEach(el => {
+        el.addEventListener('click', () => {
+          go('detail', el.dataset.open);
+        });
+      });
+      document.querySelectorAll('[data-receive]').forEach(el => {
+        el.addEventListener('click', () => {
+          state.selectedId = el.dataset.receive;
+          state.view = 'receive';
+          save();
+          render();
+        });
+      });
+
+      document.getElementById('btn-save-order')?.addEventListener('click', () => {
+        const drv = driver(document.getElementById('f-driver').value);
+        const product = document.getElementById('f-product').value;
+        const liters = Number(document.getElementById('f-vol').value) || 10000;
+        const stationId = document.getElementById('f-station').value;
+        const q = buildQuote(stationId, product, liters);
+        const n = state.deliveries.length + 1;
+        const id = `DEL-20260809-${String(n).padStart(3, '0')}`;
+        state.deliveries.unshift({
+          id,
+          stationId,
+          product,
+          ordered: liters,
+          delivered: null,
+          dipstick: null,
+          driverId: drv.id,
+          truck: drv.truck,
+          sealBefore: `SN-2026-${Math.floor(10000 + Math.random() * 89999)}`,
+          sealAfter: null,
+          status: 'dispatched',
+          notes: '',
+          source: 'depot',
+          pricePerL: q.pricePerL,
+          freight: q.freight,
+          quoteTotal: q.total,
+        });
+        state.view = 'home';
+        save();
+        render();
+      });
+
+      document.getElementById('btn-dispatch')?.addEventListener('click', () => {
+        updateDelivery(state.selectedId, { status: 'dispatched' });
+      });
+
+      document.getElementById('btn-otp')?.addEventListener('click', () => {
+        const otp = document.getElementById('f-otp').value.trim();
+        if (otp.length < 6) {
+          alert('Enter any 6 digits for demo OTP');
+          return;
+        }
+        state.otpOk = true;
+        save();
+        render();
+      });
+
+      document.getElementById('btn-logout-driver')?.addEventListener('click', () => {
+        state.otpOk = false;
+        save();
+        render();
+      });
+
+      document.getElementById('btn-start-next')?.addEventListener('click', () => {
+        const next = state.deliveries.find(d => ['pending', 'dispatched', 'en_route', 'at_station', 'offloading'].includes(d.status));
+        if (next) go('detail', next.id);
+      });
+
+      document.getElementById('btn-depart')?.addEventListener('click', () => {
+        updateDelivery(state.selectedId, { status: 'en_route' });
+        state.view = 'enroute';
+        state.geofenceReady = false;
+        save();
+        render();
+      });
+
+      document.getElementById('btn-goto-enroute')?.addEventListener('click', () => {
+        state.view = 'enroute';
+        save();
+        render();
+      });
+
+      document.getElementById('btn-geo')?.addEventListener('click', () => {
+        state.geofenceReady = true;
+        save();
+        render();
+      });
+
+      document.getElementById('btn-arrived')?.addEventListener('click', () => {
+        updateDelivery(state.selectedId, { status: 'at_station' });
+        state.view = 'atstation';
+        state.sealMatch = null;
+        save();
+        render();
+      });
+
+      document.getElementById('btn-goto-station')?.addEventListener('click', () => {
+        state.view = 'atstation';
+        save();
+        render();
+      });
+
+      document.getElementById('btn-scan-station')?.addEventListener('click', () => {
+        alert('Station QR matched: Unioil Dagupan manager on duty (mock)');
+      });
+
+      document.getElementById('btn-check-seal')?.addEventListener('click', () => {
+        const d = delivery(state.selectedId);
+        const after = document.getElementById('f-seal-after').value.trim();
+        const ok = after === d.sealBefore;
+        state.sealMatch = ok;
+        const box = document.getElementById('seal-result');
+        box.innerHTML = ok
+          ? `<div class="banner banner-ok">✅ Seal match — ${after}</div>`
+          : `<div class="banner banner-bad">✗ Seal mismatch. Do not proceed. Call dispatcher.</div>`;
+        const btn = document.getElementById('btn-offload');
+        if (ok) {
+          btn.classList.remove('hidden');
+          updateDelivery(state.selectedId, { sealAfter: after });
+        } else {
+          btn.classList.add('hidden');
+        }
+        save();
+      });
+
+      document.getElementById('btn-offload')?.addEventListener('click', () => {
+        updateDelivery(state.selectedId, { status: 'offloading' });
+        state.view = 'photos';
+        state.photoStep = 0;
+        state.photos = [false, false, false, false];
+        save();
+        render();
+      });
+
+      document.getElementById('btn-goto-photos')?.addEventListener('click', () => {
+        state.view = 'photos';
+        save();
+        render();
+      });
+
+      document.querySelectorAll('[data-photo]').forEach(el => {
+        el.addEventListener('click', () => {
+          const i = Number(el.dataset.photo);
+          state.photos[i] = true;
+          state.photoStep = Math.min(3, i + 1);
+          save();
+          render();
+        });
+      });
+
+      document.getElementById('btn-finish-offload')?.addEventListener('click', () => {
+        const meter = Number(document.getElementById('f-meter').value);
+        updateDelivery(state.selectedId, {
+          delivered: meter,
+          status: 'offloading',
+        });
+        state.view = 'complete';
+        save();
+        render();
+      });
+
+      document.getElementById('btn-confirm-receive')?.addEventListener('click', () => {
+        const d = delivery(state.selectedId);
+        const dip = Number(document.getElementById('f-dip').value);
+        const pct = ((dip - d.ordered) / d.ordered) * 100;
+        const band = varianceBand(pct);
+        updateDelivery(state.selectedId, {
+          dipstick: dip,
+          status: band === 'bad' ? 'disputed' : 'completed',
+          notes: varianceAction(band),
+        });
+      });
+    }
+
+    document.querySelectorAll('.role-btn').forEach(btn => {
+      btn.addEventListener('click', () => setRole(btn.dataset.role));
+    });
+
+    render();
+  </script>
+</body>
+</html>
