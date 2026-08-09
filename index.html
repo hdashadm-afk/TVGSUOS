@@ -239,6 +239,102 @@
     margin: 0;
   }
   .top3-next span { color: var(--slate); font-weight: 500; }
+  /* Weekly AGI Score — option B (2026-08-09). Snapshot week-start
+     counts + Sunday score on Founder OS. */
+  .agi-week-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 14px 12px;
+    background: var(--white);
+    margin: 0 0 16px;
+  }
+  .agi-week-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 8px;
+  }
+  .agi-week-score {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .agi-week-grade {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .agi-week-grade.strong { color: #0B7A3E; }
+  .agi-week-grade.working { color: #9A6B00; }
+  .agi-week-grade.broken { color: var(--danger); }
+  .agi-week-meta {
+    font-size: 12px;
+    color: var(--slate);
+    margin: 0 0 10px;
+  }
+  .agi-week-rows {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .agi-week-rows li {
+    font-size: 13px;
+    color: var(--ink);
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .agi-week-rows li span.pts {
+    color: var(--slate);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .agi-week-checks {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0 0 10px;
+  }
+  .agi-week-checks label {
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .agi-week-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .agi-week-actions button {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .agi-week-actions button.primary {
+    background: var(--ink);
+    color: var(--brand-yellow);
+    border-color: var(--ink);
+  }
+  .agi-week-note {
+    font-size: 11px;
+    color: var(--slate);
+    margin: 8px 0 0;
+  }
+
   .top3-empty {
     font-size: 14px;
     font-weight: 600;
@@ -1250,6 +1346,12 @@
            Needs Your Attention; only the top 3 actionable items. -->
       <p class="cockpit-label" style="margin-top:0;">Top 3 Today</p>
       <div id="top3-today"><p class="top3-empty">Loading…</p></div>
+
+      <!-- Weekly AGI Score — 2026-08-09 option B. Week-start snapshot
+           of Critical / Decisions / High tasks + checkboxes for Ver /
+           Baseline / stale advice. Live running score; Save locks Sunday. -->
+      <p class="cockpit-label">Weekly AGI Score</p>
+      <div id="agi-week-score" class="agi-week-card"><p class="top3-empty">Loading…</p></div>
 
       <!-- Needs Your Attention — decision-first tiles (next action on
            the face; details collapsed). Critical / blocked lead;
@@ -3538,6 +3640,281 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       return `${notionRes.items.length} – ${shown.join(', ')}${more}`;
     }
 
+    // Weekly AGI Score (option B, 2026-08-09) — week-start snapshot of
+    // Critical / Decisions / High tasks + founder checkboxes for Ask Ver /
+    // Baseline / no-stale. Live running /100; Save locks the week's score.
+    // Persists to localStorage + improvement_signals (signal_type agi_week).
+    const AGI_SCORE_MAX = {
+      askVer: 20,
+      baseline: 15,
+      alerts: 20,
+      decisions: 15,
+      tasks: 15,
+      noStale: 15,
+    };
+
+    function getManilaDateStr(d = new Date()) {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Manila', year: 'numeric', month: '2-digit', day: '2-digit',
+      }).format(d);
+    }
+
+    function getManilaWeekMeta() {
+      const dateStr = getManilaDateStr();
+      const [y, m, day] = dateStr.split('-').map(Number);
+      const utc = new Date(Date.UTC(y, m - 1, day));
+      const dayNum = utc.getUTCDay() || 7;
+      const monday = new Date(utc);
+      monday.setUTCDate(utc.getUTCDate() - (dayNum - 1));
+      const thursday = new Date(utc);
+      thursday.setUTCDate(utc.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(thursday.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil((((thursday - yearStart) / 86400000) + 1) / 7);
+      const weekId = `${thursday.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+      const weekStart = monday.toISOString().slice(0, 10);
+      return { weekId, weekStart, dateStr };
+    }
+
+    function agiLocalKey(weekId) {
+      return `tvgsuos_agi_week_${weekId}`;
+    }
+
+    function defaultAgiState(weekId) {
+      return {
+        weekId,
+        start: null,
+        checks: { askVer: false, baseline: false, noStale: false },
+        savedScore: null,
+        signalId: null,
+      };
+    }
+
+    function readAgiLocal(weekId) {
+      try {
+        const raw = localStorage.getItem(agiLocalKey(weekId));
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return { ...defaultAgiState(weekId), ...parsed, checks: { ...defaultAgiState(weekId).checks, ...(parsed.checks || {}) } };
+      } catch {
+        return null;
+      }
+    }
+
+    function writeAgiLocal(state) {
+      localStorage.setItem(agiLocalKey(state.weekId), JSON.stringify(state));
+    }
+
+    async function loadAgiWeekState(weekId) {
+      let state = readAgiLocal(weekId) || defaultAgiState(weekId);
+      try {
+        const { data, error } = await sb
+          .from('improvement_signals')
+          .select('id, signal_summary, status')
+          .eq('signal_type', 'agi_week')
+          .eq('project_scope', 'TVGSUOS')
+          .eq('feature_area', weekId)
+          .limit(1);
+        if (!error && data && data[0]?.signal_summary) {
+          try {
+            const remote = JSON.parse(data[0].signal_summary);
+            state = {
+              ...state,
+              ...remote,
+              weekId,
+              signalId: data[0].id,
+              checks: { ...state.checks, ...(remote.checks || {}) },
+              start: remote.start || state.start,
+              savedScore: remote.savedScore || state.savedScore,
+            };
+            writeAgiLocal(state);
+          } catch { /* keep local */ }
+        }
+      } catch { /* offline / RLS — local only */ }
+      return state;
+    }
+
+    async function persistAgiWeekState(state) {
+      writeAgiLocal(state);
+      const payload = {
+        weekId: state.weekId,
+        start: state.start,
+        checks: state.checks,
+        savedScore: state.savedScore,
+      };
+      const summary = JSON.stringify(payload);
+      try {
+        if (state.signalId) {
+          await sb.from('improvement_signals').update({
+            signal_summary: summary,
+            status: state.savedScore ? 'closed' : 'open',
+          }).eq('id', state.signalId);
+        } else {
+          const { data } = await sb.from('improvement_signals').insert({
+            project_scope: 'TVGSUOS',
+            feature_area: state.weekId,
+            signal_type: 'agi_week',
+            signal_summary: summary,
+            bottleneck_flag: false,
+            status: state.savedScore ? 'closed' : 'open',
+            attention_score: state.savedScore?.score ?? 0,
+          }).select('id').limit(1);
+          if (data && data[0]?.id) {
+            state.signalId = data[0].id;
+            writeAgiLocal(state);
+          }
+        }
+      } catch (err) {
+        console.warn('[agi-week] persist failed (local kept):', err);
+      }
+      return state;
+    }
+
+    async function detectBaselineThisWeek(weekStart) {
+      try {
+        const { data, error } = await sb
+          .from('daily_baseline_checks')
+          .select('check_date')
+          .gte('check_date', weekStart)
+          .order('check_date', { ascending: false })
+          .limit(1);
+        if (error || !data?.length) return false;
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function computeAgiScore(state, now) {
+      const start = state.start || now;
+      const alertsDelta = (start.alerts ?? 0) - (now.alerts ?? 0);
+      const decisionsDelta = (start.decisions ?? 0) - (now.decisions ?? 0);
+      const tasksDelta = (start.tasks ?? 0) - (now.tasks ?? 0);
+      const parts = {
+        askVer: state.checks.askVer ? AGI_SCORE_MAX.askVer : 0,
+        baseline: state.checks.baseline ? AGI_SCORE_MAX.baseline : 0,
+        // Pass if end ≤ start (including both zero).
+        alerts: (now.alerts ?? 0) <= (start.alerts ?? 0) ? AGI_SCORE_MAX.alerts : 0,
+        decisions: decisionsDelta >= 2 ? AGI_SCORE_MAX.decisions
+          : decisionsDelta >= 1 ? Math.round(AGI_SCORE_MAX.decisions * 0.5) : 0,
+        tasks: tasksDelta >= 3 ? AGI_SCORE_MAX.tasks
+          : tasksDelta >= 1 ? Math.round(AGI_SCORE_MAX.tasks * (tasksDelta / 3)) : 0,
+        noStale: state.checks.noStale ? AGI_SCORE_MAX.noStale : 0,
+      };
+      const score = Object.values(parts).reduce((a, b) => a + b, 0);
+      const grade = score >= 80 ? 'Strong' : score >= 60 ? 'Working' : 'Broken';
+      const gradeClass = score >= 80 ? 'strong' : score >= 60 ? 'working' : 'broken';
+      return { score, grade, gradeClass, parts, deltas: { alerts: alertsDelta, decisions: decisionsDelta, tasks: tasksDelta }, start, now };
+    }
+
+    let agiWeekState = null;
+    let agiWeekNow = null;
+
+    async function renderAgiWeeklyScore(nowCounts) {
+      const el = document.getElementById('agi-week-score');
+      if (!el) return;
+      const { weekId, weekStart, dateStr } = getManilaWeekMeta();
+      agiWeekNow = {
+        alerts: nowCounts.alerts ?? 0,
+        decisions: nowCounts.decisions ?? 0,
+        tasks: nowCounts.tasks ?? 0,
+        at: dateStr,
+      };
+      agiWeekState = await loadAgiWeekState(weekId);
+      if (!agiWeekState.start) {
+        agiWeekState.start = { ...agiWeekNow };
+        agiWeekState.startCapturedAt = dateStr;
+        await persistAgiWeekState(agiWeekState);
+      }
+      // Auto-tick baseline if a check exists this week (founder can untick).
+      if (!agiWeekState.checks.baseline && await detectBaselineThisWeek(weekStart)) {
+        agiWeekState.checks.baseline = true;
+        writeAgiLocal(agiWeekState);
+      }
+
+      const locked = !!agiWeekState.savedScore;
+      const computed = locked
+        ? {
+            score: agiWeekState.savedScore.score,
+            grade: agiWeekState.savedScore.grade,
+            gradeClass: agiWeekState.savedScore.score >= 80 ? 'strong' : agiWeekState.savedScore.score >= 60 ? 'working' : 'broken',
+            parts: agiWeekState.savedScore.parts,
+            deltas: agiWeekState.savedScore.deltas,
+            start: agiWeekState.savedScore.start || agiWeekState.start,
+            now: agiWeekState.savedScore.end || agiWeekNow,
+          }
+        : computeAgiScore(agiWeekState, agiWeekNow);
+
+      el.innerHTML = `
+        <div class="agi-week-head">
+          <div>
+            <p class="agi-week-score">${computed.score}<span style="font-size:14px;font-weight:600;color:var(--slate);">/100</span></p>
+          </div>
+          <p class="agi-week-grade ${computed.gradeClass}">${escapeHtml(computed.grade)}${locked ? ' · saved' : ' · live'}</p>
+        </div>
+        <p class="agi-week-meta">${escapeHtml(weekId)} · start C${computed.start.alerts}/D${computed.start.decisions}/T${computed.start.tasks} → now C${agiWeekNow.alerts}/D${agiWeekNow.decisions}/T${agiWeekNow.tasks}</p>
+        <ul class="agi-week-rows">
+          <li>Ask Ver grounded (3 actions) <span class="pts">${computed.parts.askVer}/${AGI_SCORE_MAX.askVer}</span></li>
+          <li>Baseline this week <span class="pts">${computed.parts.baseline}/${AGI_SCORE_MAX.baseline}</span></li>
+          <li>Critical Alerts (end ≤ start) <span class="pts">${computed.parts.alerts}/${AGI_SCORE_MAX.alerts}</span></li>
+          <li>Open Decisions (−2+) <span class="pts">${computed.parts.decisions}/${AGI_SCORE_MAX.decisions}</span></li>
+          <li>High tasks (−3+) <span class="pts">${computed.parts.tasks}/${AGI_SCORE_MAX.tasks}</span></li>
+          <li>No stale Ver advice <span class="pts">${computed.parts.noStale}/${AGI_SCORE_MAX.noStale}</span></li>
+        </ul>
+        <div class="agi-week-checks">
+          <label><input type="checkbox" id="agi-check-askver" ${agiWeekState.checks.askVer ? 'checked' : ''} ${locked ? 'disabled' : ''}/> Ask Ver passed this week (3 grounded actions)</label>
+          <label><input type="checkbox" id="agi-check-baseline" ${agiWeekState.checks.baseline ? 'checked' : ''} ${locked ? 'disabled' : ''}/> Baseline regenerated this week</label>
+          <label><input type="checkbox" id="agi-check-nostale" ${agiWeekState.checks.noStale ? 'checked' : ''} ${locked ? 'disabled' : ''}/> No stale wrong advice from Ver</label>
+        </div>
+        <div class="agi-week-actions">
+          ${locked
+            ? `<button type="button" id="agi-unlock-btn">Unlock / re-score</button>`
+            : `<button type="button" class="primary" id="agi-save-btn">Save Sunday score</button>
+               <button type="button" id="agi-reset-start-btn">Reset week-start to now</button>`}
+        </div>
+        <p class="agi-week-note">80–100 Strong · 60–79 Working · &lt;60 fix grounding before Phase 2. Counts auto; three checks are yours.</p>
+      `;
+
+      const refreshFromChecks = async () => {
+        if (locked) return;
+        agiWeekState.checks.askVer = !!document.getElementById('agi-check-askver')?.checked;
+        agiWeekState.checks.baseline = !!document.getElementById('agi-check-baseline')?.checked;
+        agiWeekState.checks.noStale = !!document.getElementById('agi-check-nostale')?.checked;
+        writeAgiLocal(agiWeekState);
+        await renderAgiWeeklyScore(agiWeekNow);
+      };
+      document.getElementById('agi-check-askver')?.addEventListener('change', refreshFromChecks);
+      document.getElementById('agi-check-baseline')?.addEventListener('change', refreshFromChecks);
+      document.getElementById('agi-check-nostale')?.addEventListener('change', refreshFromChecks);
+
+      document.getElementById('agi-save-btn')?.addEventListener('click', async () => {
+        const c = computeAgiScore(agiWeekState, agiWeekNow);
+        agiWeekState.savedScore = {
+          score: c.score,
+          grade: c.grade,
+          parts: c.parts,
+          deltas: c.deltas,
+          start: c.start,
+          end: { ...agiWeekNow },
+          at: getManilaDateStr(),
+        };
+        await persistAgiWeekState(agiWeekState);
+        await renderAgiWeeklyScore(agiWeekNow);
+      });
+      document.getElementById('agi-reset-start-btn')?.addEventListener('click', async () => {
+        if (!confirm('Reset this week’s start line to today’s counts?')) return;
+        agiWeekState.start = { ...agiWeekNow };
+        agiWeekState.startCapturedAt = getManilaDateStr();
+        agiWeekState.savedScore = null;
+        await persistAgiWeekState(agiWeekState);
+        await renderAgiWeeklyScore(agiWeekNow);
+      });
+      document.getElementById('agi-unlock-btn')?.addEventListener('click', async () => {
+        agiWeekState.savedScore = null;
+        await persistAgiWeekState(agiWeekState);
+        await renderAgiWeeklyScore(agiWeekNow);
+      });
+    }
+
     async function loadAttentionTiles() {
       const el = document.getElementById('attention-tiles');
       const canWaitEl = document.getElementById('can-wait-tiles');
@@ -3690,9 +4067,21 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); run(); }
           });
         });
+
+        // Weekly AGI Score — same live counts as Top 3 / blocked tiles.
+        renderAgiWeeklyScore({
+          alerts: alertsTotal,
+          decisions: decisionsTotal,
+          tasks: taskRes.count ?? 0,
+        }).catch(err => {
+          const agiEl = document.getElementById('agi-week-score');
+          if (agiEl) agiEl.innerHTML = `<p class="cockpit-not-connected">Couldn't load AGI score — ${escapeHtml(err.message)}</p>`;
+        });
       } catch (err) {
         el.innerHTML = `<p class="cockpit-not-connected">Couldn't load — ${escapeHtml(err.message)}</p>`;
         if (top3El) top3El.innerHTML = `<p class="cockpit-not-connected">Couldn't load Top 3</p>`;
+        const agiEl = document.getElementById('agi-week-score');
+        if (agiEl) agiEl.innerHTML = `<p class="cockpit-not-connected">Couldn't load AGI score</p>`;
       }
     }
 
