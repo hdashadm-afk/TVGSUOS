@@ -33,6 +33,20 @@ Station foundations that do **not** break the boundary (allowed as schema/storag
 
 ---
 
+## Risk management → approval → run until done (mandatory)
+
+Before any non-trivial Station work (schema, auth, data migration, module attach, deploy, delete/rename):
+
+1. **Risk management** — list risks (data loss, auth break, Helium downtime, cost, RLS, photo/storage, scope creep into Rescue/ODO/RV).
+2. **Mitigation + plan** — for each risk: mitigation, owner, and whether it blocks start. Ship a short Step / Where / How plan.
+3. **Clearance** — do not start build until risks are cleared or explicitly accepted by the founder.
+4. **All approvals required** — founder must approve the full plan (scope, mitigations, success check) in one go — not piecemeal mid-flight.
+5. **Run until done** — once the founder says approve / execute / run until done, finish the approved plan end-to-end without pausing for re-approval on steps already covered. Only stop for a **new** risk that was not in the approved plan, or an explicit founder interrupt.
+
+Closing brief still required when the run completes (Item / Status / Note).
+
+---
+
 ## Map source
 
 Full tree: `docs/ECOSYSTEM_REPO_TREE.md`.  
