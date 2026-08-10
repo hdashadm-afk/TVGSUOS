@@ -15,7 +15,8 @@ Read, in order, before doing anything else:
 1. This file.
 2. `FOUNDER_OS.md` — the running, dated implementation log. This is the fastest way to know the actual current state; treat it as more current than your own assumptions.
 3. `docs/MASTER_DIRECTION.md` — the baseline (mission, ecosystem, governance areas, ventures, working rules).
-4. `docs/GOVERNANCE_MODEL.md` and `docs/PORTFOLIO_MAP.md` as needed for the specific task.
+4. `docs/ECOSYSTEM_REPO_TREE.md` — locked 3-pillar map (RideVerified · ODO · Dipstify); `docs/PHASE_A_STATION_BOUNDARY.md` when doing Station work; `docs/DIPSTIFY_SCALE_PLAN.md` for scale gates.
+5. `docs/GOVERNANCE_MODEL.md` and `docs/PORTFOLIO_MAP.md` as needed for the specific task.
 
 Do not start building against remembered context from a prior conversation that isn't reflected in these files. If it isn't written down here, treat it as not decided.
 

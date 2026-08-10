@@ -21,6 +21,9 @@ const REPO_NAME = 'TVGSUOS';
 // TVGSUOS's own governing docs — kept short and specific rather than
 // pulling every doc in the repo, so grounding stays relevant.
 const GROUNDING_DOCS = [
+  'docs/ECOSYSTEM_REPO_TREE.md',
+  'docs/PHASE_A_STATION_BOUNDARY.md',
+  'docs/DIPSTIFY_SCALE_PLAN.md',
   'docs/MASTER_DIRECTION.md',
   'docs/GOVERNANCE_MODEL.md',
   'docs/PORTFOLIO_MAP.md',
@@ -31,18 +34,16 @@ const GROUNDING_DOCS = [
 // Local mirror of Command Center focus (edit with FOUNDER_OS_COCKPIT in index.html).
 // Notion SoT when MCP/API available: Founder OS Command Center + Strategic Charter.
 const MASTERPLAN_CONTEXT = `
-## Current masterplan focus (Aug 2026)
-Active: StationRescue (SR), Dipstify, Consolidated Platform.
-Venture map (founder 2026-08-07): Gas Ops = Dipstify workstream; RV MVP under ODO umbrella; Helium pricing = Dipstify commercial (₱7k + ₱1k/station, start Aug, collect every month-end).
-Field Kit pricing decision locked (hardware add-on); public/site revisit scheduled Sep 1.
-Do NOT treat stale sprint wording (“Gas Ops finish whole app this week”) as top priority — Gas Ops itself is Dipstify.
+## Current masterplan focus (Aug 2026 — tree locked 2026-08-10)
+Three pillars under FOS/Ver:
+1. RideVerified — ownership app (+ riderslamp.org) — LATER; code hmcmarketing/ride-verified-ph. NOT a marketplace. NOT under ODO.
+2. ODO — Property + Vehicle MARKETPLACE — later. ≠ RideVerified.
+3. Dipstify — Station (Phase A NOW) · StationRescue · Delivery · Franchise.
 
-Phases:
-1. SR trust & governance (pilot) — September pilot path.
-2. Dipstify ops/data + station needs engine — October early market.
-3. Vertical marketplace on SR trust + Dipstify data.
-
-SR status (dashboard SoT): Auth migration live; profiles schema-cache smoke deferred; waitlist OK.
+Phase A (Claude): Dipstify/Station only — Owner’s Lens + Admin/Ops/Staff/PnL. See docs/PHASE_A_STATION_BOUNDARY.md.
+Gas Ops = Dipstify/Station OpsVerified workstream. Helium pricing = Dipstify commercial (₱7k + ₱1k/station, start Aug, collect every month-end).
+Delivery MVP parked for supplier. Franchise = map only. Scale: 2 shiftlogs + ≥50 photos/station/day; build next gate only (docs/DIPSTIFY_SCALE_PLAN.md).
+Do NOT nest RV under ODO. Do NOT treat “Gas Ops finish whole app this week” as top priority.
 `;
 
 async function fetchDoc(path, headers) {
@@ -152,18 +153,18 @@ module.exports = async function handler(req, res) {
         model: 'claude-sonnet-5',
         max_tokens: 600,
         output_config: { effort: 'low' },
-        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for StationRescue (SR), Dipstify (Lens / Helium pilot), and the Consolidated Platform. You sit ABOVE Lens (Dipstify/KOS) and Vera (ODO) — do not do their domain work; synthesize what they surface into founder actions.
+        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for three pillars: RideVerified (ownership, later), ODO (marketplace, later), and Dipstify (Station Phase A now · StationRescue · Delivery · Franchise). You sit ABOVE Lens (Dipstify/Station) and Vera (ODO marketplace) — do not do their domain work; synthesize what they surface into founder actions. RideVerified ≠ ODO.
 
 Answer format — STRICT:
 1. Reply with exactly **3 numbered actions**, nothing else before them.
 2. Each line: \`N. [Action] — [one-line why / where to tap]\`
 3. Prioritize in this order ONLY:
    Step 1: Critical security / trust / governance risks (baseline governance_risk_note, Security status, bottleneck signals).
-   Step 2: SR work for the September pilot (test interest on station-rescue.vercel.app, auth/verification modals, governance flows).
-   Step 3: Dipstify early market / Helium pilot data absorption (Field Kit revisit Sep 1; Helium ₱7k+₱1k/station EOM collect from Aug; Gas Ops as Dipstify workstream). Prefer actions that use Lens/Helium live signals when Task Inventory or baseline mentions them.
-   Step 4: ODO umbrella work (RV MVP under ODO) only when it does not displace Steps 1–3.
-   Step 5: Only then other ecosystem tasks still active in the masterplan (e.g. KOS→Dipstify rename if pending execution).
-4. Never promote stale sprint wording (Gas Ops finish-this-week) or free-floating “RV parked” into the top 3; use the venture map above.
+   Step 2: Dipstify / Station Phase A (Owner’s Lens + Admin/Ops/Staff/PnL; Helium prove). Prefer Lens/Helium live signals when Task Inventory or baseline mentions them.
+   Step 3: StationRescue pilot / Delivery supplier-gated next steps only if they do not displace Station Phase A unless the founder redirected.
+   Step 4: ODO marketplace or RideVerified ownership only when they do not displace Steps 1–3 — never nest RV under ODO.
+   Step 5: Only then other ecosystem tasks still active in the masterplan.
+4. Never promote stale sprint wording (Gas Ops finish-this-week) or “RV under ODO” into the top 3.
 5. No long report, no essay, no preamble, no closing pep talk. Max ~120 words total.
 6. If nothing is open, say so in one line, then still give 3 light next moves grounded in Steps 1–3.
 7. Prefer the Daily Baseline Check section when present — it is Ver's own loop output for the day.

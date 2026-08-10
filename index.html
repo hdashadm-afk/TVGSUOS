@@ -1301,12 +1301,13 @@
         </div>
         <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
           <button id="sign-out-btn">Sign out</button>
-          <div class="mode-switcher mode-switcher-compact" id="ecosystem-toggle" role="group" aria-label="Founder / KOS / ODO view">
-            <button type="button" class="ecosystem-toggle-btn" data-ecosystem="founder">Founder</button>
-            <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="kos">KOS</button>
-            <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo" style="display:none;">ODO</button>
-            <a class="mode-switcher-link" href="https://katiwalaai.app" target="_blank" rel="noopener" title="Open KOS — katiwalaai.app">↗</a>
-            <a class="mode-switcher-link" href="https://ownerdirect.online" target="_blank" rel="noopener" style="display:none;" title="Open ODO — ownerdirect.online">↗</a>
+          <div class="mode-switcher mode-switcher-compact" id="ecosystem-toggle" role="group" aria-label="Founder / Dipstify / ODO view">
+            <button type="button" class="ecosystem-toggle-btn mode-active" data-ecosystem="founder">Founder</button>
+            <button type="button" class="ecosystem-toggle-btn" data-ecosystem="kos">Dipstify</button>
+            <button type="button" class="ecosystem-toggle-btn" data-ecosystem="odo">ODO</button>
+            <a class="mode-switcher-link" href="https://katiwalaai.app" target="_blank" rel="noopener" title="Open Dipstify Station — katiwalaai.app">↗ Station</a>
+            <a class="mode-switcher-link" href="https://ownerdirect.online" target="_blank" rel="noopener" title="Open ODO marketplace — ownerdirect.online">↗ ODO</a>
+            <a class="mode-switcher-link" href="https://github.com/hdashadm-afk/hmcmarketing" target="_blank" rel="noopener" title="RideVerified ownership — later">↗ RV</a>
           </div>
         </div>
       </div>
@@ -1322,6 +1323,7 @@
             <button type="button" class="venture-filter-btn" data-venture="Dipstify">Dipstify</button>
             <button type="button" class="venture-filter-btn" data-venture="StationRescue">StationRescue</button>
             <button type="button" class="venture-filter-btn" data-venture="ODO">ODO</button>
+            <button type="button" class="venture-filter-btn" data-venture="RideVerified">RideVerified</button>
             <button type="button" class="venture-filter-btn" data-venture="Risks">Risks</button>
           </div>
         </div>
@@ -1563,16 +1565,22 @@
         <div class="section-body expanded">
         <div class="cockpit-row2">
           <div class="cockpit-panel" id="sr-status-card">
-            <h3 id="sr-status-label">SR status</h3>
+            <h3 id="sr-status-label">Dipstify · StationRescue</h3>
             <p id="sr-status-text" style="font-size:14px; margin:0 0 8px; line-height:1.45;"></p>
             <p style="margin:0; font-size:12px;"><a id="sr-status-link" href="https://station-rescue.vercel.app/" target="_blank" rel="noopener">Open station-rescue.vercel.app →</a></p>
-            <p class="kpi-sub" style="margin-top:8px;">Edit text in <code>FOUNDER_OS_COCKPIT.srStatus</code> (index.html).</p>
+            <p class="kpi-sub" style="margin-top:8px;">Dipstify pillar · SERA later</p>
           </div>
           <div class="cockpit-panel" id="delivery-status-card">
-            <h3>Dipstify Delivery</h3>
+            <h3>Dipstify · Delivery</h3>
             <p style="font-size:14px; margin:0 0 8px; line-height:1.45;">MVP demo (no DB) — station book + today’s price + freight quote + security protocols. Parked for supplier requirements.</p>
             <p style="margin:0; font-size:12px;"><a href="/delivery-mvp.html" target="_blank" rel="noopener">Open Delivery MVP →</a></p>
-            <p class="kpi-sub" style="margin-top:8px;">Separate app under Founder OS · inline with Dipstify + SR</p>
+            <p class="kpi-sub" style="margin-top:8px;">Siblings: Station · StationRescue · Franchise</p>
+          </div>
+          <div class="cockpit-panel" id="station-phase-card">
+            <h3>Dipstify · Station (Phase A)</h3>
+            <p style="font-size:14px; margin:0 0 8px; line-height:1.45;">Owner’s Lens + AdminVerified · OpsVerified · StaffVerified · PnLVerified. Build focus until Station is done enough.</p>
+            <p style="margin:0; font-size:12px;"><a href="https://katiwalaai.app" target="_blank" rel="noopener">Open Owner’s Lens →</a></p>
+            <p class="kpi-sub" style="margin-top:8px;">RideVerified + ODO marketplace = later pillars</p>
           </div>
           <div class="cockpit-panel">
             <h3>Critical Alerts</h3>
@@ -1620,8 +1628,8 @@
             <form id="yc-snapshot-form">
               <label for="yc-snapshot-slug">Product</label>
               <select id="yc-snapshot-slug" required>
-                <option value="kos">Katiwala AI</option>
-                <option value="odo">OwnerDirect</option>
+                <option value="kos">Dipstify</option>
+                <option value="odo">ODO marketplace</option>
               </select>
               <label for="yc-snapshot-stage-input">Stage</label>
               <input type="text" id="yc-snapshot-stage-input" placeholder="e.g. Pre-revenue, seeking YC" required>
@@ -1649,17 +1657,26 @@
         <div class="venture-updates">
           <div class="venture-card" id="kos-update-card">
             <div class="venture-card-header">
-              <h3>KOS / Katiwala AI</h3>
-              <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open katiwalaai.app →</a>
+              <h3>Dipstify / Station</h3>
+              <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open Station →</a>
             </div>
             <div id="kos-update-body"></div>
           </div>
           <div class="venture-card" id="odo-update-card">
             <div class="venture-card-header">
-              <h3>ODO / OwnerDirect</h3>
-              <a href="https://ownerdirect.online" target="_blank" rel="noopener">Open ownerdirect.online →</a>
+              <h3>ODO marketplace</h3>
+              <a href="https://ownerdirect.online" target="_blank" rel="noopener">Open ODO →</a>
             </div>
             <div id="odo-update-body"></div>
+          </div>
+          <div class="venture-card" id="rv-update-card">
+            <div class="venture-card-header">
+              <h3>RideVerified (ownership)</h3>
+              <a href="https://github.com/hdashadm-afk/hmcmarketing" target="_blank" rel="noopener">Repo →</a>
+            </div>
+            <div id="rv-update-body">
+              <p class="kpi-sub" style="margin:0; line-height:1.45;">Ownership app — garage / identity / trust. <strong>Not</strong> a marketplace (≠ ODO). Domain: riderslamp.org. Phase: later — Station first.</p>
+            </div>
           </div>
         </div>
         </div>
@@ -1687,7 +1704,7 @@
         <div class="cockpit-row3">
           <div class="cockpit-panel">
             <h3>Decision Queue</h3>
-            <p class="kpi-sub" style="margin:-4px 0 10px;">Live items only — aligned to SR + Dipstify + Consolidated Platform focus. Stale items move to Archived below (not deleted).</p>
+            <p class="kpi-sub" style="margin:-4px 0 10px;">Live items — Dipstify Station Phase A first. Stale items move to Archived (not deleted).</p>
             <ul class="attention-list" id="decision-queue-list"></ul>
             <p class="attention-empty" id="decision-queue-empty" style="display:none;">No decisions waiting.</p>
           </div>
@@ -1758,7 +1775,7 @@
         <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">Top-of-funnel visibility across ventures — the public waitlist (KOS) currently only has its own standalone admin page, no dashboard; ODO's weekly lead snapshot, same idea.</p>
 
-        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Katiwala AI waitlist <span id="waitlist-total-badge"></span></h3>
+        <h3 style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 12px;">Dipstify waitlist <span id="waitlist-total-badge"></span></h3>
         <div class="table-wrap">
           <table id="waitlist-table">
             <thead>
@@ -1920,7 +1937,7 @@
             <form id="weekly-innovation-summary-form">
               <label for="wis-scope">Venture</label>
               <select id="wis-scope" required>
-                <option value="KOS">KOS</option>
+                <option value="KOS">Dipstify</option>
                 <option value="ODO">ODO</option>
               </select>
               <div id="wis-suggestions" style="margin:4px 0 14px;"></div>
@@ -1960,7 +1977,7 @@
             <form id="weekly-market-update-form">
               <label for="wmu-scope">Venture</label>
               <select id="wmu-scope" required>
-                <option value="kos">KOS</option>
+                <option value="kos">Dipstify</option>
                 <option value="odo">ODO</option>
               </select>
               <label for="wmu-status">Status</label>
@@ -2000,9 +2017,11 @@
         <div class="section-body">
         <p style="font-size:14px; color:var(--slate); margin:-8px 0 16px;">The governance rules this whole app runs on — not a database view, the actual rules from docs/GOVERNANCE_MODEL.md, surfaced here instead of staying buried in the repo.</p>
         <div class="hierarchy" style="margin-bottom:16px;">
-          <div style="margin-bottom:10px;"><span class="name">Ver</span> <span class="role">— founder priorities, cross-venture synthesis, daily baseline review, security posture, data privacy compliance, business continuity, escalation, policy enforcement.</span></div>
-          <div style="margin-bottom:10px;"><span class="name">Lens</span> <span class="role">— KOS memory, gas station owner decision support, CEO's Space signals, HR/payroll intelligence, gas station operational loops.</span></div>
-          <div><span class="name">Vera</span> <span class="role">— OWDO memory, trust loops, verification workflows, buyer/seller/provider progression, marketplace reliability signals.</span></div>
+          <div style="margin-bottom:10px;"><span class="name">Ver</span> <span class="role">— founder priorities, cross-venture synthesis, daily baseline, security / privacy / continuity, escalation.</span></div>
+          <div style="margin-bottom:10px;"><span class="name">Lens</span> <span class="role">— Dipstify / Station (Owner’s Lens, Helium, Admin/Ops/Staff/PnL signals).</span></div>
+          <div style="margin-bottom:10px;"><span class="name">SERA</span> <span class="role">— StationRescue only (later runtime).</span></div>
+          <div style="margin-bottom:10px;"><span class="name">Vera</span> <span class="role">— ODO marketplace (Property + Vehicle) — not RideVerified ownership.</span></div>
+          <div><span class="name">RideVerified</span> <span class="role">— ownership app pillar (later); reports to Ver separately from ODO.</span></div>
         </div>
         <p style="font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 8px;">Decision rights &amp; escalation</p>
         <ul style="margin:0; padding-left:20px; font-size:14px; color:var(--ink); line-height:1.8;">
@@ -2061,20 +2080,28 @@
         <div class="section-body">
         <ul class="venture-list">
           <li>
-            <span>KOS / Dipstify <span class="venture-note">— Owner's Lens, HR &amp; Payroll, Simple P&amp;L, Ops</span></span>
+            <span>Dipstify / Station <span class="venture-note">— Owner’s Lens · Admin · Ops · Staff · PnL (Phase A now)</span></span>
             <a href="https://katiwalaai.app" target="_blank" rel="noopener">Open →</a>
           </li>
           <li>
-            <span>Station Rescue <span class="venture-note">— trust / pilot path</span></span>
+            <span>Dipstify / StationRescue <span class="venture-note">— services / parts / contractors</span></span>
             <a href="https://station-rescue.vercel.app/" target="_blank" rel="noopener">Open →</a>
           </li>
           <li>
-            <span>Dipstify Delivery <span class="venture-note">— MVP demo · book + quote · supplier reqs pending</span></span>
+            <span>Dipstify / Delivery <span class="venture-note">— MVP demo · supplier reqs pending</span></span>
             <a href="/delivery-mvp.html" target="_blank" rel="noopener">Open →</a>
           </li>
           <li>
-            <span>OWDO / ODO <span class="venture-note">— property &amp; vehicle trust marketplace</span></span>
+            <span>Dipstify / Franchise <span class="venture-note">— on map · not scoped yet</span></span>
+            <span class="venture-note">docs only</span>
+          </li>
+          <li>
+            <span>ODO <span class="venture-note">— Property + Vehicle marketplace (≠ RideVerified)</span></span>
             <a href="https://ownerdirect.online" target="_blank" rel="noopener">Open →</a>
+          </li>
+          <li>
+            <span>RideVerified <span class="venture-note">— ownership app · riderslamp.org · later</span></span>
+            <a href="https://github.com/hdashadm-afk/hmcmarketing" target="_blank" rel="noopener">Repo →</a>
           </li>
         </ul>
         <!-- This footer note used to sit outside .section-body, so it
@@ -2084,25 +2111,14 @@
              the section-body so the whole block, note included, hides
              behind the same toggle. -->
         <footer>
-Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dashboard — is native here, not a copy of Katiwala AI's. What's still elsewhere: the Daily Baseline Check's own scheduled routine (the process that actually generates each day's check) still runs via Katiwala AI's app; this app only reads its output (the governance risk log, in Security). See <code>FOUNDER_OS.md</code> and <code>docs/MASTER_DIRECTION.md</code> in this repo for exactly what's built, what's open, and why.
+Three pillars under Ver: RideVerified (ownership, later) · ODO (marketplace, later) · Dipstify (Station Phase A now · StationRescue · Delivery · Franchise). Map: <code>docs/ECOSYSTEM_REPO_TREE.md</code>. Daily Baseline Check routine still runs via Station Control; this app reads its output.
         </footer>
         </div>
       </div>
 
-      <!-- Today's Calendar, moved to the very bottom of the page,
-           2026-07-19 — founder screenshot + "Let's have the calendar
-           at the bottom est." It's a permanent "Not connected"
-           placeholder (no calendar integration exists in TVGSUOS at
-           all — see the note itself), so it doesn't belong in the Act
-           On row's prime real estate alongside things that are
-           actually actionable today. Kept .cockpit-panel styling
-           (border/padding/background are self-contained, not
-           dependent on being a grid item) so it still reads as the
-           same kind of card, just standalone instead of gridded. -->
-      <p class="cockpit-label">Today's Calendar</p>
-      <div class="cockpit-panel">
-        <p class="cockpit-not-connected">Not connected — no calendar integration in TVGSUOS. katiwala-owner-os-'s Google OAuth is Calendar-scoped but tied to that app, not this one.</p>
-      </div>
+      <!-- Today's Calendar removed 2026-08-10 — permanent "Not connected"
+           placeholder with no integration path; founder asked to clear
+           stale/unwired UI. Google Calendar stays on Station Control if needed. -->
     </div>
   </div>
 
@@ -2173,7 +2189,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           <div style="display:flex; gap:8px; margin-top:8px;">
             <select id="ti-ecosystem" style="flex:1;">
               <option value="FOUNDER">Founder</option>
-              <option value="KOS">KOS</option>
+              <option value="KOS">Dipstify</option>
               <option value="ODO">ODO</option>
             </select>
             <select id="ti-priority" style="flex:1;">
@@ -2316,16 +2332,17 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // When Notion MCP is available, prefer live Command Center text; until then keep this
     // object current by hand. Ver (api/ask-ver.js) and the Decision Queue both respect it.
     const FOUNDER_OS_COCKPIT = {
-      updatedAt: '2026-08-07',
-      activeFocus: ['StationRescue', 'Dipstify', 'Consolidated Platform'],
-      // Taxonomy (founder 2026-08-07): Gas Ops = Dipstify workstream; RV MVP under ODO umbrella;
-      // Helium pricing = Dipstify commercial (₱7k + ₱1k/station, Aug start, collect EOM).
+      updatedAt: '2026-08-10',
+      activeFocus: ['Dipstify Station (Phase A)', 'StationRescue', 'Dipstify Delivery (parked)'],
+      // Taxonomy (locked 2026-08-10): three pillars — RideVerified ownership ≠ ODO marketplace ≠ Dipstify fuel.
       ventureMap: {
-        gasOps: 'Dipstify',
-        rvMvp: 'ODO umbrella',
-        heliumPricing: 'Dipstify',
+        gasOps: 'Dipstify / Station / OpsVerified',
+        rideVerified: 'RideVerified ownership (later) — NOT under ODO',
+        odoProperty: 'ODO marketplace / Property',
+        odoVehicle: 'ODO marketplace / Vehicle',
+        heliumPricing: 'Dipstify commercial',
       },
-      parked: ['some KOS/RV secondary work (not RV-under-ODO core)'],
+      parked: ['RideVerified ownership deep work', 'ODO marketplace depth', 'Franchise product', 'Delivery full app (supplier)'],
       heliumBilling: {
         basePhp: 7000,
         perStationPhp: 1000,
@@ -2333,36 +2350,34 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         collect: 'every end of month',
       },
       phases: {
-        1: 'SR trust & governance (pilot)',
-        2: 'Dipstify ops/data + station needs engine',
-        3: 'Vertical marketplace on SR trust + Dipstify data',
+        1: 'Dipstify / Station Phase A (Owner’s Lens + modules)',
+        2: 'StationRescue + Delivery when unlocked',
+        3: 'ODO marketplace + RideVerified ownership when cash/GTM needs them',
       },
-      // Single source of truth for the SR status card — change text here, not in layout.
       srStatus: {
-        label: 'SR status',
+        label: 'Dipstify · StationRescue',
         text: 'Auth migration live; signup smoke blocked on profiles schema cache — deferred. Waitlist OK.',
         href: 'https://station-rescue.vercel.app/',
         hrefLabel: 'Open station-rescue.vercel.app →',
       },
-      // Title patterns → keep in live Decision Queue (masterplan-active).
       decisionKeep: [
         /field\s*kit/i,
         /station\s*rescue.*phase\s*2|sr\s*phase\s*2|vendor\/tech marketplace|vendor.*marketplace/i,
         /kos\s*[→\-–].*dipstify|kos.*rename|dipstify.*rename/i,
         /helium.*(pricing|billing|collect)|₱\s*7\s*k|7k.*station/i,
         /gas\s*ops/i,
+        /station\s*phase\s*a|owner.?s?\s*lens/i,
       ],
-      // Title patterns → archive out of live queue (stale / decided / not current focus).
       decisionArchive: [
         /gas\s*ops.*(finish|whole\s*app|this\s*week)/i,
         /odo\s*umbrella/i,
+        /rv\s*(mvp)?\s*under\s*odo/i,
       ],
-      // Recorded historical / mapped decisions (not deleted — shown under Archived when matched).
       decisionHistory: [
-        { label: 'Gas Ops: Finish the whole app this week', reason: 'Stale sprint wording — Gas Ops itself is Dipstify workstream' },
-        { label: 'RV: MVP', reason: 'Under ODO umbrella (not a free-floating parked venture)' },
+        { label: 'Gas Ops: Finish the whole app this week', reason: 'Stale sprint wording — Gas Ops = Dipstify / OpsVerified' },
+        { label: 'RV: MVP under ODO', reason: 'Superseded 2026-08-10 — RideVerified = ownership pillar; ODO = marketplace only' },
         { label: 'Helium Fuels: Confirm KOS pricing tier for pilot client', reason: 'Superseded — Dipstify Helium: ₱7k + ₱1k/station, Aug start, collect EOM' },
-        { label: 'ODO umbrella decision', reason: 'RV MVP sits under ODO umbrella' },
+        { label: 'ODO umbrella decision', reason: 'Superseded — three pillars: RideVerified · ODO · Dipstify' },
       ],
     };
 
@@ -2682,13 +2697,13 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // loadFinance() below, which isn't part of the ecosystem-toggle
     // scope — only add an `ecosystem` tag here, never remove a row.
     const PRODUCT_ROLLUP_ROWS = [
-      { label: 'TVGSUOS', sourceSlug: 'tvgsuos', ecosystem: null },
-      { label: "Kos CEO Space", sourceSlug: 'kos', ecosystem: 'kos' },
-      { label: 'Kos StaffVerified', sourceSlug: 'staff_verified', ecosystem: 'kos' },
-      { label: 'Kos PnLVerified', sourceSlug: 'kos', ecosystem: 'kos' },
-      { label: 'Kos StationVerified', sourceSlug: 'gas_ops', ecosystem: 'kos' },
-      { label: 'Odo Property/TV', sourceSlug: 'tv', ecosystem: 'odo' },
-      { label: 'Odo Vehicle/RV', sourceSlug: 'rv', ecosystem: 'odo' },
+      { label: 'Founder OS (TVGSUOS)', sourceSlug: 'tvgsuos', ecosystem: null },
+      { label: 'Dipstify / Station (Owner’s Lens)', sourceSlug: 'kos', ecosystem: 'kos' },
+      { label: 'Dipstify / StaffVerified', sourceSlug: 'staff_verified', ecosystem: 'kos' },
+      { label: 'Dipstify / PnLVerified', sourceSlug: 'kos', ecosystem: 'kos' },
+      { label: 'Dipstify / OpsVerified', sourceSlug: 'gas_ops', ecosystem: 'kos' },
+      { label: 'ODO Property (marketplace)', sourceSlug: 'tv', ecosystem: 'odo' },
+      { label: 'ODO Vehicle (marketplace)', sourceSlug: 'rv', ecosystem: 'odo' },
     ];
 
     async function loadProductRollup() {
@@ -3616,6 +3631,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
       Dipstify: 'Dipstify',
       StationRescue: 'StationRescue',
       ODO: 'ODO',
+      RideVerified: 'RideVerified',
       Risks: 'Risks / BASELINE_CHECK',
     };
 
@@ -4242,29 +4258,22 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     function renderKosMetricsNote() {
       return `
         <div class="kpi-card kpi-off" style="grid-column: 1 / -1; opacity: 0.9;">
-          <p class="kpi-name">KOS metrics (this view)</p>
+          <p class="kpi-name">Dipstify Station detail</p>
           <p class="kpi-value kpi-value-off" style="font-size:13px; font-weight:600; white-space:normal;">
-            Unwired KOS ops cards hidden here. See KOS dashboard for gas volume, margin, and staff/ops detail.
+            Ops volume / margin / staff detail live on Owner’s Lens — not duplicated here.
           </p>
-          <p class="kpi-sub"><a href="https://katiwalaai.app" target="_blank" rel="noopener">Open katiwalaai.app →</a></p>
+          <p class="kpi-sub"><a href="https://katiwalaai.app" target="_blank" rel="noopener">Open Owner’s Lens →</a></p>
         </div>
       `;
     }
 
-    // Ecosystem toggle (KOS-only / ODO-only lens). Purely a view-
-    // layer filter — swaps which real rows/counts loadKpiGrid,
-    // loadProjectHealth, loadCriticalAlerts, and loadProductRollup
-    // query and render; never touches underlying data. Default KOS
-    // per founder's instruction.
+    // Ecosystem toggle — view filter. data-ecosystem "kos" = Dipstify Station lens (legacy slug).
     const ECOSYSTEM_SLUGS = {
       kos: ['kos', 'staff_verified', 'gas_ops'],
       odo: ['tv', 'rv'],
     };
-    // Default KOS, not Founder — 2026-07-19, founder request to hide
-    // ODO and focus on gas ops. Founder mode is still fully selectable
-    // and still whole-org (incl. ODO data) if clicked; this only
-    // changes what loads first.
-    let currentEcosystem = 'kos';
+    // Default Founder (whole org) — 2026-08-10 UI pass; Dipstify/ODO lenses still one tap away.
+    let currentEcosystem = 'founder';
     // Notion venture filter (#notion-venture-filter) — independent of
     // currentEcosystem above. 'All' = no filter, matching the combined
     // app+Notion counts already wired.
@@ -4344,22 +4353,22 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
           renderKpi('Critical alerts', criticalCount.count ?? 0, kpiStatusClass(criticalCount.count ?? 0, 1, 3), 'Bottleneck-flagged signals'),
           renderKpi('Projects at risk', atRiskCount, kpiStatusClass(atRiskCount, 1, 3), `${trackedCount}/${modeSlugs.length} modules have status data`),
           renderKpi('Compliance due (7d)', complianceDue, kpiStatusClass(complianceDue, 1, 3), 'From compliance_items'),
-          renderKpi('KOS runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data', kosStatus && kosStatus.runway_months != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels (wired)'),
-          renderKpi('KOS burn rate', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data', kosStatus && kosStatus.burn_rate != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels, monthly (wired)'),
-          renderKpi('ODO-TV stage', (tvRes.data && tvRes.data.stage) || 'No data', 'kpi-good', 'Property track'),
-          renderKpi('ODO-RV stage', (rvRes.data && rvRes.data.stage) || 'No data', 'kpi-good', 'Vehicle track'),
-          renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'SR / SERA + governance risk log'),
+          renderKpi('Dipstify runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data', kosStatus && kosStatus.runway_months != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels (wired)'),
+          renderKpi('Dipstify burn', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data', kosStatus && kosStatus.burn_rate != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels, monthly (wired)'),
+          renderKpi('ODO Property stage', (tvRes.data && tvRes.data.stage) || 'No data', 'kpi-good', 'Marketplace — Property'),
+          renderKpi('ODO Vehicle stage', (rvRes.data && rvRes.data.stage) || 'No data', 'kpi-good', 'Marketplace — Vehicle (≠ RideVerified)'),
+          renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'Governance risk log'),
           renderKosMetricsNote(),
         ];
       } else if (currentEcosystem === 'kos') {
         cards = [
-          renderKpi('Open decisions (KOS)', openDecisions.count ?? 0, kpiStatusClass(openDecisions.count ?? 0, 1, 4), 'Strategy — awaiting founder call'),
-          renderKpi('Critical alerts (KOS)', criticalCount.count ?? 0, kpiStatusClass(criticalCount.count ?? 0, 1, 3), 'Bottleneck-flagged signals'),
-          renderKpi('KOS projects at risk', atRiskCount, kpiStatusClass(atRiskCount, 1, 2), `${trackedCount}/${modeSlugs.length} KOS modules have status data`),
-          renderKpi('KOS compliance due (7d)', complianceDue, kpiStatusClass(complianceDue, 1, 3), 'From compliance_items'),
-          renderKpi('KOS runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data', kosStatus && kosStatus.runway_months != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels (wired)'),
-          renderKpi('KOS burn rate', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data', kosStatus && kosStatus.burn_rate != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels, monthly (wired)'),
-          renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'SR / SERA + governance risk log'),
+          renderKpi('Open decisions (Dipstify)', openDecisions.count ?? 0, kpiStatusClass(openDecisions.count ?? 0, 1, 4), 'Strategy — awaiting founder call'),
+          renderKpi('Critical alerts (Dipstify)', criticalCount.count ?? 0, kpiStatusClass(criticalCount.count ?? 0, 1, 3), 'Bottleneck-flagged signals'),
+          renderKpi('Station modules at risk', atRiskCount, kpiStatusClass(atRiskCount, 1, 2), `${trackedCount}/${modeSlugs.length} modules have status data`),
+          renderKpi('Compliance due (7d)', complianceDue, kpiStatusClass(complianceDue, 1, 3), 'From compliance_items'),
+          renderKpi('Dipstify runway', kosStatus && kosStatus.runway_months != null ? `${kosStatus.runway_months} mo` : 'No data', kosStatus && kosStatus.runway_months != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels (wired)'),
+          renderKpi('Dipstify burn', kosStatus && kosStatus.burn_rate != null ? `₱${Number(kosStatus.burn_rate).toLocaleString()}` : 'No data', kosStatus && kosStatus.burn_rate != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels, monthly (wired)'),
+          renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'Governance risk log'),
           renderKosMetricsNote(),
         ];
       } else {
@@ -4368,11 +4377,11 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
         cards = [
           renderKpi('Open decisions (ODO)', openDecisions.count ?? 0, kpiStatusClass(openDecisions.count ?? 0, 1, 4), 'Strategy — awaiting founder call'),
           renderKpi('Critical alerts (ODO)', criticalCount.count ?? 0, kpiStatusClass(criticalCount.count ?? 0, 1, 3), 'Bottleneck-flagged signals'),
-          renderKpi('ODO projects at risk', atRiskCount, kpiStatusClass(atRiskCount, 1, 2), `${trackedCount}/${modeSlugs.length} ODO modules have status data`),
+          renderKpi('ODO tracks at risk', atRiskCount, kpiStatusClass(atRiskCount, 1, 2), `${trackedCount}/${modeSlugs.length} marketplace tracks have status`),
           renderKpi('ODO compliance due (7d)', complianceDue, kpiStatusClass(complianceDue, 1, 3), 'From compliance_items'),
-          renderKpi('ODO-TV stage', (tvRes.data && tvRes.data.stage) || 'No data', 'kpi-good', 'Property track'),
-          renderKpi('ODO-RV stage', (rvRes.data && rvRes.data.stage) || 'No data', 'kpi-good', 'Vehicle track'),
-          renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'SR / SERA + governance risk log'),
+          renderKpi('ODO Property stage', (tvRes.data && tvRes.data.stage) || 'No data', 'kpi-good', 'Marketplace — Property'),
+          renderKpi('ODO Vehicle stage', (rvRes.data && rvRes.data.stage) || 'No data', 'kpi-good', 'Marketplace — Vehicle (≠ RideVerified)'),
+          renderKpi('Security status', noteRow ? `Flagged ${new Date(noteRow.check_date).toLocaleDateString()}` : 'No flags', noteRow ? 'kpi-warn' : 'kpi-good', 'Governance risk log'),
         ];
       }
       el.innerHTML = cards.join('');
@@ -4415,9 +4424,9 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // gas_ops), ODO-TV (property), ODO-RV (vehicle). Real stage/
     // build_readiness data, same source Product/Finance already use.
     const PROJECT_HEALTH_ROWS = [
-      { label: 'KOS Gas', slug: 'gas_ops', ecosystem: 'kos' },
-      { label: 'ODO-TV', slug: 'tv', ecosystem: 'odo' },
-      { label: 'ODO-RV', slug: 'rv', ecosystem: 'odo' },
+      { label: 'Dipstify Ops', slug: 'gas_ops', ecosystem: 'kos' },
+      { label: 'ODO Property', slug: 'tv', ecosystem: 'odo' },
+      { label: 'ODO Vehicle', slug: 'rv', ecosystem: 'odo' },
     ];
     async function loadProjectHealth() {
       const el = document.getElementById('project-health-list');
@@ -4450,7 +4459,7 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     // same shared Supabase project this whole page already reads —
     // unlike ODO's Venture Update card below, this needs no separate
     // api/odo-status.js round trip.
-    const YC_SNAPSHOT_DISPLAY_NAME = { kos: 'Katiwala AI', odo: 'OwnerDirect' };
+    const YC_SNAPSHOT_DISPLAY_NAME = { kos: 'Dipstify', odo: 'ODO marketplace' };
 
     // Cache of { slug: { projectId, stage, metric } } — populated by
     // loadYcSnapshot, read by the edit form below so
@@ -4551,10 +4560,13 @@ Founder's Space itself — Ver's Desk, the floating Ask Ver assistant, this dash
     async function loadVentureUpdates() {
       const kosCard = document.getElementById('kos-update-card');
       const odoCard = document.getElementById('odo-update-card');
+      const rvCard = document.getElementById('rv-update-card');
       const showKos = currentEcosystem === 'founder' || currentEcosystem === 'kos';
       const showOdo = currentEcosystem === 'founder' || currentEcosystem === 'odo';
+      const showRv = currentEcosystem === 'founder';
       kosCard.style.display = showKos ? '' : 'none';
       odoCard.style.display = showOdo ? '' : 'none';
+      if (rvCard) rvCard.style.display = showRv ? '' : 'none';
 
       const tasks = [];
 
