@@ -81,3 +81,6 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
 2. Claude: Dipstify / Station until founder unlocks next.
 3. Parked: Delivery (supplier), Franchise (scope), RideVerified, ODO marketplace depth, Ops DB merge (own session).
 4. Unlock next pillar only when cash / GTM needs it.
+5. **ODO prep (docs only, 2026-08-11):** `docs/ODO_PREP.md` — no build until founder says `odo unlocked — run until done`.
+6. **RideVerified prep (docs only, 2026-08-11):** `docs/RIDEVERIFIED_PREP.md` — no build until founder says `rideverified unlocked — run until done`.
+7. **Phase E approve pack:** `docs/PHASE_E_APPROVE_PACK.md` — design only; phrase `phase e design approved`.
