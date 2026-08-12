@@ -1,0 +1,12 @@
+---
+description: When working on ODO — obey Property+Vehicles masterplan lock
+alwaysApply: true
+---
+
+# ODO work from TVGSUOS
+
+When editing or advising on **ODO / OwnerDirect** (`Desktop/ODO` or ownerdirect.online):
+
+- Follow `ODO/.cursor/rules/odo-masterplan.mdc` — Property **and** Vehicles; mandatory `/` triage every visit; no cookie-skip; no deleting a vertical by “interpretation.”
+- If unsure vs masterplan: ask once. Do not freestyle product removals.
+- Keep answers short. No token-burning verification loops when the rule is already locked.
