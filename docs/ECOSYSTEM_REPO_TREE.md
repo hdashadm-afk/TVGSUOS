@@ -70,8 +70,10 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
 ## Supabase (today — not 1M)
 
 - Org Pro; founder recent charge ~$79.
-- Known projects: Station shared (`jbhfd…` — Lens + FOS + AdminVerified), Ops separate (`wtwgsy…`), ODO (`qhjhsd…`).
-- Target (decided, not done): Ops merges into Station shared. Map does not change billing by itself.
+- Known projects (5 live): Station shared (`jbhfd…` — Lens + FOS + AdminVerified), Ops separate (`wtwgsy…`), Staff (`ttytdu…`), ODO (`qhjhsd…`), StationRescue (`phqncq…`).
+- **Goal = 4 DBs:** merge Ops → Station shared. Staff (+ PnL when built) stays separate. ODO + SR stay separate.
+- PnL/Acctg seats: may be same Admin as HR **or** a separate position — product supports combine or split. Admin Pack (Staff + PnL) proposed ₱9,999 entry — see `docs/DIPSTIFY_STATION_PLAN.md`.
+- Ops merge: design-only until founder approves `docs/OPS_STATION_DB_MERGE_RISK_PACK.md`. Map does not change billing by itself.
 
 ---
 
