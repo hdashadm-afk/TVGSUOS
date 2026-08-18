@@ -1,0 +1,25 @@
+---
+description: Dev framework — clarify intent vs masterplan before polishing or shipping
+alwaysApply: true
+---
+
+# Clarify → confirm → ship (every project)
+
+Do not polish or ship immediate changes without understanding the ask and checking the project's locked masterplan / product rules.
+
+## Required sequence
+
+1. **Clarify** — Restate the change in one line. Name which locked rule it must obey.
+2. **Confirm** — If anything could conflict with masterplan, ask **one** short question. Do not freestyle.
+3. **Ship** — Only after intent is clear. Prefer small, consistent diffs over clever reinterpretation.
+
+## Hard stops
+
+- No “helpful” product removals, renames, or scope cuts by interpretation.
+- No cookie/UX shortcuts that hide a mandatory front door or dual identity the masterplan requires.
+- Fast polish that fights the masterplan is a failure — revert to the lock, don’t defend the polish.
+- Commit / push only when the founder asks (or explicitly says ship / live).
+
+## When a project has its own masterplan rule
+
+That project rule wins on product identity. This framework still governs *how* you change things.

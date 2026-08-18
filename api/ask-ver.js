@@ -3,11 +3,12 @@
 // api/answer-ver-query.js implements (that one waits for a scheduled
 // Routine or a manual "Answer now" click on a pending row). This is
 // the synchronous version — ask, get an answer in the same request —
-// Grounded in TVGSUOS governance docs plus live loop inputs:
-// today's daily_baseline_checks row, open decisions, open/bottleneck
-// signals, and open founder_tasks (Lens/Helium catch when logged).
-// Answer is saved into ver_queries afterward (same table as the
-// async answer-ver-query path in katiwala-owner-os-).
+// grounded in TVGSUOS's own governance docs plus live open items
+// (Strategy's open decisions, Intelligence's open/bottleneck
+// signals), so the answer reflects what's actually happening right
+// now, not just static documentation. The answer is still saved into
+// ver_queries afterward, same table katiwala-owner-os- already uses,
+// so there's a persistent history either way it's answered.
 //
 // Requires ANTHROPIC_API_KEY and SUPABASE_SERVICE_ROLE_KEY. Not
 // configured until the founder adds them — returns a clear "not
@@ -21,9 +22,6 @@ const REPO_NAME = 'TVGSUOS';
 // TVGSUOS's own governing docs — kept short and specific rather than
 // pulling every doc in the repo, so grounding stays relevant.
 const GROUNDING_DOCS = [
-  'docs/ECOSYSTEM_REPO_TREE.md',
-  'docs/PHASE_A_STATION_BOUNDARY.md',
-  'docs/DIPSTIFY_SCALE_PLAN.md',
   'docs/MASTER_DIRECTION.md',
   'docs/GOVERNANCE_MODEL.md',
   'docs/PORTFOLIO_MAP.md',
@@ -34,16 +32,21 @@ const GROUNDING_DOCS = [
 // Local mirror of Command Center focus (edit with FOUNDER_OS_COCKPIT in index.html).
 // Notion SoT when MCP/API available: Founder OS Command Center + Strategic Charter.
 const MASTERPLAN_CONTEXT = `
-## Current masterplan focus (Aug 2026 — tree locked 2026-08-10)
-Three pillars under FOS/Ver:
-1. RideVerified — ownership app (+ riderslamp.org) — LATER; code hmcmarketing/ride-verified-ph. NOT a marketplace. NOT under ODO.
-2. ODO — Property + Vehicle MARKETPLACE — later. ≠ RideVerified.
-3. Dipstify — Station (Phase A NOW) · StationRescue · Delivery · Franchise.
+## Current masterplan focus (18 Aug 2026)
+Active: StationRescue (SR), Dipstify, ODO-Vehicles.
+Chairman + 3 CEOs = a briefing loop inside FOS/Ver. Not a new org chart. Ver, Lens, Vera stay.
+Venture map: Gas Ops = Dipstify workstream; Helium pricing = Dipstify commercial (₱7k + ₱1k/station, start Aug, collect every month-end). RV is not the market CEO (franchise = later program, not a dashboard).
+Field Kit pricing decision locked (hardware add-on); public/site revisit scheduled Sep 1.
+Do NOT treat stale sprint wording (“Gas Ops finish whole app this week”) as top priority — Gas Ops itself is Dipstify.
+Do NOT score the SR CEO on Dipstify conversion.
+₱50K auto-approve is a proposal, not a lock.
 
-Phase A (Claude): Dipstify/Station only — Owner’s Lens + Admin/Ops/Staff/PnL. See docs/PHASE_A_STATION_BOUNDARY.md.
-Gas Ops = Dipstify/Station OpsVerified workstream. Helium pricing = Dipstify commercial (₱7k + ₱1k/station, start Aug, collect every month-end).
-Delivery MVP parked for supplier. Franchise = map only. Scale: 2 shiftlogs + ≥50 photos/station/day; build next gate only (docs/DIPSTIFY_SCALE_PLAN.md).
-Do NOT nest RV under ODO. Do NOT treat “Gas Ops finish whole app this week” as top priority.
+Phases:
+1. SR CEO — marketplace (owners, techs, suppliers) + owner-only knowledge. Helium first. Coalition not a trojan horse. No “Powered by Dipstify.”
+2. Dipstify CEO — ops sibling. Helium ₱7k + ₱1k/station EOM. Owner funnel from Rescue = later, owners only.
+3. ODO-Vehicles CEO — listings published, HPG certify, unlocks, LTO checklist. Property still exists. No % of vehicle price. Not RideVerified marketplace.
+
+SR status (dashboard SoT): Auth migration live; profiles schema-cache smoke deferred; waitlist OK.
 `;
 
 async function fetchDoc(path, headers) {
@@ -81,51 +84,15 @@ module.exports = async function handler(req, res) {
   if (process.env.GITHUB_TOKEN) ghHeaders.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
 
   try {
-    const manilaDate = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Manila', year: 'numeric', month: '2-digit', day: '2-digit',
-    }).format(new Date());
-
-    const [docs, decisionsRes, signalsRes, baselineRes, tasksRes] = await Promise.all([
+    const [docs, decisionsRes, signalsRes] = await Promise.all([
       Promise.all(GROUNDING_DOCS.map(path => fetchDoc(path, ghHeaders))),
       fetch(`${SUPABASE_URL}/rest/v1/decisions?status=eq.open&select=title,context,status,created_at&order=created_at.desc&limit=10`, { headers: sbHeaders }),
       fetch(`${SUPABASE_URL}/rest/v1/improvement_signals?status=eq.open&select=project_scope,feature_area,signal_summary,bottleneck_flag,status&order=attention_score.desc&limit=10`, { headers: sbHeaders }),
-      // Same grounding as legacy answer-ver-query.js — Ver's own loop output
-      // for today (Manila), falling back to latest row if today is empty.
-      fetch(`${SUPABASE_URL}/rest/v1/daily_baseline_checks?check_date=eq.${manilaDate}&select=*&limit=1`, { headers: sbHeaders }),
-      fetch(`${SUPABASE_URL}/rest/v1/founder_tasks?status=eq.not_done&select=ecosystem,title,priority,phase,notes,created_at&order=priority.asc&limit=15`, { headers: sbHeaders }),
     ]);
-
-    let baselineRow = null;
-    if (baselineRes.ok) {
-      const todayRows = await baselineRes.json();
-      if (Array.isArray(todayRows) && todayRows.length) baselineRow = todayRows[0];
-    }
-    if (!baselineRow) {
-      const latestRes = await fetch(
-        `${SUPABASE_URL}/rest/v1/daily_baseline_checks?select=*&order=check_date.desc&limit=1`,
-        { headers: sbHeaders },
-      );
-      if (latestRes.ok) {
-        const latest = await latestRes.json();
-        if (Array.isArray(latest) && latest.length) baselineRow = latest[0];
-      }
-    }
 
     const docsContext = GROUNDING_DOCS.map((path, i) => docs[i] ? `\n\n## ${path}\n${docs[i]}` : `\n\n## ${path}\n(couldn't fetch)`).join('');
 
     let liveContext = '';
-    if (baselineRow) {
-      liveContext += `\n\n## Daily Baseline Check (${baselineRow.check_date || 'latest'})\n`
-        + `- app_status: ${baselineRow.app_status || '—'}\n`
-        + `- notion_status: ${baselineRow.notion_status || '—'}\n`
-        + `- vera_status: ${baselineRow.vera_status || '—'}\n`
-        + `- last_direction: ${baselineRow.last_direction || '—'}\n`
-        + `- priorities: ${baselineRow.priorities || '—'}\n`
-        + `- governance_risk_note: ${baselineRow.governance_risk_note || '—'}\n`
-        + `- discussion_question: ${baselineRow.discussion_question || '—'}\n`;
-    } else {
-      liveContext += `\n\n## Daily Baseline Check\nNo baseline row found — prioritize regenerating Baseline in Ver's drawer if asked what to do first.\n`;
-    }
     if (decisionsRes.ok) {
       const decisions = await decisionsRes.json();
       if (decisions.length) liveContext += `\n\n## Open Strategy decisions right now\n${decisions.map(d => `- ${d.title}${d.context ? ` — ${d.context}` : ''}`).join('\n')}`;
@@ -133,13 +100,6 @@ module.exports = async function handler(req, res) {
     if (signalsRes.ok) {
       const signals = await signalsRes.json();
       if (signals.length) liveContext += `\n\n## Open Intelligence signals right now\n${signals.map(s => `- [${s.project_scope || 'unscoped'}] ${s.signal_summary}${s.bottleneck_flag ? ' (BOTTLENECK)' : ''}`).join('\n')}`;
-    }
-    if (tasksRes.ok) {
-      const tasks = await tasksRes.json();
-      if (tasks.length) {
-        liveContext += `\n\n## Open Task Inventory (includes Lens/Helium catch when logged)\n`
-          + tasks.map(t => `- [${t.ecosystem}/${t.priority}] ${t.title}${t.notes ? ` — ${t.notes}` : ''}`).join('\n');
-      }
     }
 
     const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
@@ -153,23 +113,23 @@ module.exports = async function handler(req, res) {
         model: 'claude-sonnet-5',
         max_tokens: 600,
         output_config: { effort: 'low' },
-        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for three pillars: RideVerified (ownership, later), ODO (marketplace, later), and Dipstify (Station Phase A now · StationRescue · Delivery · Franchise). You sit ABOVE Lens (Dipstify/Station) and Vera (ODO marketplace) — do not do their domain work; synthesize what they surface into founder actions. RideVerified ≠ ODO.
+        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for StationRescue (SR), Dipstify, and ODO-Vehicles. Chairman + 3 CEOs is a briefing loop you run, not the companies. The founder is asking what to do first today.
 
 Answer format — STRICT:
 1. Reply with exactly **3 numbered actions**, nothing else before them.
 2. Each line: \`N. [Action] — [one-line why / where to tap]\`
 3. Prioritize in this order ONLY:
-   Step 1: Critical security / trust / governance risks (baseline governance_risk_note, Security status, bottleneck signals).
-   Step 2: Dipstify / Station Phase A (Owner’s Lens + Admin/Ops/Staff/PnL; Helium prove). Prefer Lens/Helium live signals when Task Inventory or baseline mentions them.
-   Step 3: StationRescue pilot / Delivery supplier-gated next steps only if they do not displace Station Phase A unless the founder redirected.
-   Step 4: ODO marketplace or RideVerified ownership only when they do not displace Steps 1–3 — never nest RV under ODO.
-   Step 5: Only then other ecosystem tasks still active in the masterplan.
-4. Never promote stale sprint wording (Gas Ops finish-this-week) or “RV under ODO” into the top 3.
-5. No long report, no essay, no preamble, no closing pep talk. Max ~120 words total.
-6. If nothing is open, say so in one line, then still give 3 light next moves grounded in Steps 1–3.
-7. Prefer the Daily Baseline Check section when present — it is Ver's own loop output for the day.
+   Step 1: Critical security / trust / governance risks (Security status, bottleneck signals).
+   Step 2: SR Phase 1 CEO work (marketplace + owner-only knowledge on station-rescue.vercel.app). Never score SR on Dipstify conversion.
+   Step 3: Dipstify Phase 2 CEO work (Helium stations on ops; Field Kit revisit Sep 1; Helium ₱7k+₱1k/station EOM collect from Aug; Gas Ops as Dipstify workstream).
+   Step 4: ODO-Vehicles Phase 3 CEO (listings, HPG, unlocks, LTO) only when it does not displace Steps 1–3. Property still exists. RV is not the market CEO.
+   Step 5: Only then other ecosystem tasks still active in the masterplan (e.g. KOS→Dipstify rename if pending execution).
+4. Never promote stale sprint wording (Gas Ops finish-this-week), Dipstify-conversion-as-SR-KPI, or a RideVerified marketplace CEO into the top 3.
+5. Voice when briefing: “Status is X. Action needed: Y. Owner: Z.” Never “I think.”
+6. No long report, no essay, no preamble, no closing pep talk. Max ~120 words total.
+7. If nothing is open, say so in one line, then still give 3 light next moves grounded in Steps 1–3.
 
-Ground every action in the live baseline, open items, masterplan focus, and docs below. If data doesn't cover the ask, say so in one short line after the 3 actions — do not invent counts.
+Ground every action in the live open items, masterplan focus, and docs below. If data doesn't cover the ask, say so in one short line after the 3 actions — do not invent counts.
 ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
         tools: [{
           name: 'log_follow_up_task',
@@ -177,7 +137,7 @@ ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
           input_schema: {
             type: 'object',
             properties: {
-              ecosystem: { type: 'string', enum: ['FOUNDER', 'KOS', 'ODO'], description: 'FOUNDER for TVGSUOS/infra-level items, KOS (Dipstify/Lens/Helium) or ODO for venture-specific ones.' },
+              ecosystem: { type: 'string', enum: ['FOUNDER', 'KOS', 'ODO'], description: 'FOUNDER for TVGSUOS/infra-level items, KOS or ODO for venture-specific ones.' },
               title: { type: 'string', description: 'Short, specific task title.' },
               priority: { type: 'string', enum: ['high', 'medium', 'low'] },
               phase: { type: 'string', enum: ['mvp', 'phase2', 'phase3'] },
