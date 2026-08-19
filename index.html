@@ -423,6 +423,87 @@
       line-height: 1.45;
     }
 
+    /* One command layer — 2026-08-19. Tabs hide duplicate CEO/org/flow
+       stacks; Pulse still uses live Top 3 + wired KOS finance. */
+    .cmd-tabs {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      white-space: nowrap;
+      margin: 0 0 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .cmd-tab {
+      border: 1px solid transparent;
+      border-bottom: 0;
+      background: transparent;
+      color: var(--slate);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+    }
+    .cmd-tab.active {
+      border-color: var(--border);
+      color: var(--ink);
+      background: var(--surface);
+    }
+    .cmd-panel { display: none; }
+    .cmd-panel.active { display: block; }
+    .challenge-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 0 0 8px;
+      background: var(--white);
+    }
+    .challenge-item .ch-head {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .challenge-item .ch-head input {
+      flex: 1;
+      border: 0;
+      font-weight: 700;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--ink);
+      background: transparent;
+    }
+    .challenge-item textarea {
+      width: 100%;
+      border: 0;
+      font-size: 13px;
+      color: var(--slate);
+      font-family: inherit;
+      resize: vertical;
+      margin: 6px 0;
+    }
+    .challenge-rm {
+      background: transparent;
+      border: 0;
+      color: var(--slate);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+    .add-challenge {
+      width: 100%;
+      border: 1px dashed var(--border);
+      background: var(--white);
+      color: var(--slate);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 4px;
+    }
+
     .org-tree {
       margin: 0 0 14px;
       padding: 0;
@@ -1972,36 +2053,63 @@
         <div class="verse-body" id="verse-body"></div>
       </details>
 
-      <!-- Top 3 Today — 2026-08-05. First screen answers: what matters
-           now, what to do next. Built from the same live counts as
-           Needs Your Attention; only the top 3 actionable items. -->
-      <p class="cockpit-label" style="margin-top:0;">Top 3 Today</p>
-      <div id="top3-today">
-        <p class="top3-empty">Loading…</p>
+      <!-- One command layer (2026-08-19). Pulse = live Top 3 + chairman
+           + wired KOS finance. Other tabs are the same CEO/org/flow/
+           decision data — not a second dashboard. -->
+      <nav class="cmd-tabs" role="tablist" aria-label="Founder command">
+        <button type="button" class="cmd-tab active" data-cmd="pulse" role="tab" aria-selected="true">Pulse</button>
+        <button type="button" class="cmd-tab" data-cmd="ceos" role="tab" aria-selected="false">CEOs</button>
+        <button type="button" class="cmd-tab" data-cmd="decisions" role="tab" aria-selected="false">Decisions</button>
+        <button type="button" class="cmd-tab" data-cmd="challenges" role="tab" aria-selected="false">Challenges</button>
+        <button type="button" class="cmd-tab" data-cmd="org" role="tab" aria-selected="false">Org</button>
+        <button type="button" class="cmd-tab" data-cmd="flow" role="tab" aria-selected="false">Flow</button>
+      </nav>
+
+      <div class="cmd-panel active" id="cmd-pulse" role="tabpanel">
+        <p class="cockpit-label" style="margin-top:0;">Top 3 Today</p>
+        <div id="top3-today">
+          <p class="top3-empty">Loading…</p>
+        </div>
+        <p class="cockpit-label">Chairman brief</p>
+        <p class="ceo-dash-note">Weekly loop: 3 CEO dashboards → Ver one-pager → you decide. Ver, Lens, and Vera stay. One command — not a second org.</p>
+        <div id="chairman-strip"></div>
+        <p class="cockpit-label">Helium / KOS cash (wired)</p>
+        <p class="ceo-dash-note">From <code>project_status</code> on Helium Fuels. No typed demo cash. Empty = not entered in KOS yet.</p>
+        <div class="kpi-grid" id="pulse-finance"></div>
+        <label class="cockpit-label" for="pulse-note">Today’s note (this device)</label>
+        <textarea id="pulse-note" rows="3" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:8px; font-family:inherit; font-size:13px; margin-bottom:8px;" placeholder="What you decided this morning…"></textarea>
+        <button type="button" id="pulse-note-save" style="background:var(--ink); color:#fff; border:0; padding:8px 16px; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">Save note</button>
       </div>
 
-      <!-- Chairman briefing loop — 2026-08-18. Reads 3 CEO dashboards
-           into one Status / Action / Owner page. This is a FOS/Ver
-           brief, not a replacement of companies or assistants. -->
-      <p class="cockpit-label">Chairman brief</p>
-      <p class="ceo-dash-note">Weekly loop: 3 CEO dashboards → Ver one-pager → you decide. Org chart and workflows are in the next section. Ver, Lens, and Vera stay.</p>
-      <div id="chairman-strip"></div>
+      <div class="cmd-panel" id="cmd-ceos" role="tabpanel">
+        <p class="ceo-dash-note">Phase 1 SR → Phase 2 Dipstify → Phase 3 ODO-Vehicles. Count KPIs are <strong>manual until wired</strong> — no fake live numbers. SR CEO is not scored on Dipstify conversion. ODO Property still exists; this CEO is the Vehicles lane.</p>
+        <div class="venture-updates" id="ceo-dashboard-grid"></div>
+      </div>
 
-      <section>
-        <button type="button" class="section-toggle expanded" data-topic="ceo-dashboards">
-          <p class="cockpit-label" style="margin:0;">CEO dashboards</p><span class="chevron">▶</span>
-        </button>
-        <div class="section-body expanded">
-          <p class="ceo-dash-note">Phase 1 SR → Phase 2 Dipstify → Phase 3 ODO-Vehicles. Count KPIs are <strong>manual until wired</strong> — no fake live numbers. SR CEO is not scored on Dipstify conversion. ODO Property still exists; this CEO is the Vehicles lane.</p>
-          <div class="venture-updates" id="ceo-dashboard-grid"></div>
+      <div class="cmd-panel" id="cmd-decisions" role="tabpanel">
+        <div class="cockpit-row3">
+          <div class="cockpit-panel">
+            <h3>Decision Queue</h3>
+            <p class="kpi-sub" style="margin:-4px 0 10px;">Live items only — aligned to SR + Dipstify + Consolidated
+              Platform focus. Stale items move to Archived (not deleted). Helium KOS ₱7k+₱1k pricing is archived.</p>
+            <ul class="attention-list" id="decision-queue-list"></ul>
+            <p class="attention-empty" id="decision-queue-empty" style="display:none;">No decisions waiting.</p>
+          </div>
+          <div class="cockpit-panel">
+            <h3>Archived decisions</h3>
+            <ul class="attention-list" id="decision-archive-list"></ul>
+            <p class="attention-empty" id="decision-archive-empty" style="display:none;">No archived decisions.</p>
+          </div>
         </div>
-      </section>
+      </div>
 
-      <section>
-        <button type="button" class="section-toggle expanded" data-topic="org-workflow">
-          <p class="cockpit-label" style="margin:0;">Org &amp; workflow</p><span class="chevron">▶</span>
-        </button>
-        <div class="section-body expanded">
+      <div class="cmd-panel" id="cmd-challenges" role="tabpanel">
+        <p class="ceo-dash-note">Blockers the chairman stamps. Stored on this device until a challenges table exists. Not a second Decision Queue.</p>
+        <div id="challenges-list"></div>
+        <button type="button" class="add-challenge" id="add-challenge">+ Add challenge</button>
+      </div>
+
+      <div class="cmd-panel" id="cmd-org" role="tabpanel">
           <p class="ceo-dash-note">HMC is legal only. Three AI CEOs are dashboards, not companies. AI flags; a person stamps at the gates. Do not merge Rescue and Dipstify. No RV CEO.</p>
           <p class="cockpit-label">Who reports</p>
           <ul class="org-tree">
@@ -2012,7 +2120,7 @@
                     <li>Ver — briefing only. Status / Action / Owner. No hire, no spend. <span class="org-kind kind-ai">AI</span>
                       <ul>
                         <li>SR CEO — Phase 1 Rescue. Marketplace + owner knowledge. Not Dipstify conversion. <span class="org-kind kind-ai">AI</span></li>
-                        <li>Dipstify CEO — Phase 2 ops. Sibling. ₱7k + ₱1k EOM. <span class="org-kind kind-ai">AI</span></li>
+                        <li>Dipstify CEO — Phase 2 ops. Sibling. Basic ₱9,999 · Staff+PnL ₱9,999. <span class="org-kind kind-ai">AI</span></li>
                         <li>ODO-Vehicles CEO — Phase 3 market. Property still exists. <span class="org-kind kind-ai">AI</span></li>
                       </ul>
                     </li>
@@ -2028,6 +2136,9 @@
               </ul>
             </li>
           </ul>
+      </div>
+
+      <div class="cmd-panel" id="cmd-flow" role="tabpanel">
           <p class="cockpit-label">How work moves</p>
           <div class="flow-block">
             <h4>A. Chairman — weekly</h4>
@@ -2064,7 +2175,7 @@
               <span class="flow-arrow">→</span>
               <span class="flow-step">Dipstify<span class="flow-stamp">Owners only</span></span>
               <span class="flow-arrow">→</span>
-              <span class="flow-step">₱7k + ₱1k EOM<span class="flow-stamp">Sheet</span></span>
+              <span class="flow-step">₱9,999 Basic · ₱9,999 Staff+PnL<span class="flow-stamp">Sheet</span></span>
               <span class="flow-arrow">→</span>
               <span class="flow-step">CFO collects<span class="flow-stamp">Human</span></span>
             </div>
@@ -2087,8 +2198,7 @@
               <span class="flow-step">Buyer pays seller<span class="flow-stamp">No % cut</span></span>
             </div>
           </div>
-        </div>
-      </section>
+      </div>
 
       <!-- Needs Your Attention — decision-first tiles (next action on
            the face; details collapsed). Critical / blocked lead;
@@ -2422,43 +2532,8 @@
         </div>
       </section>
 
-      <!-- Row 3: founder action zone. Today's Calendar and Founder
-           Notes/Quick Capture both moved out 2026-07-19 — founder
-           screenshot + "Let's have the calendar at the bottom" /
-           "The founders note to go inside ai tools and Voc." Today's
-           Calendar is a permanent "Not connected" placeholder (no
-           calendar integration exists in TVGSUOS at all), so it's
-           real estate this action row doesn't need to spend on
-           something with nothing to act on — relocated to the very
-           bottom of the page, past Governed Ventures. Founder Notes/
-           Quick Capture moved into AI Tools & Voice of Customer,
-           alongside Voice of Customer/Priority Tasks (see that
-           section) — same #quick-capture-form/textarea/button ids,
-           so loadQuickCapture-adjacent JS needs no changes. Decision
-           Queue is now the only panel left here; cockpit-row3's
-           auto-fit grid just stretches it full-width with one item,
-           no CSS change needed. -->
-      <section>
-        <button type="button" class="section-toggle expanded">
-          <p class="cockpit-label" style="margin:0;">Act On</p><span class="chevron">▶</span>
-        </button>
-        <div class="section-body expanded">
-          <div class="cockpit-row3">
-            <div class="cockpit-panel">
-              <h3>Decision Queue</h3>
-              <p class="kpi-sub" style="margin:-4px 0 10px;">Live items only — aligned to SR + Dipstify + Consolidated
-                Platform focus. Stale items move to Archived below (not deleted).</p>
-              <ul class="attention-list" id="decision-queue-list"></ul>
-              <p class="attention-empty" id="decision-queue-empty" style="display:none;">No decisions waiting.</p>
-            </div>
-            <div class="cockpit-panel">
-              <h3>Archived decisions</h3>
-              <ul class="attention-list" id="decision-archive-list"></ul>
-              <p class="attention-empty" id="decision-archive-empty" style="display:none;">No archived decisions.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <!-- Act On / Decision Queue lives in Command → Decisions (same
+           live lists, one id). Do not duplicate here. -->
 
       <section>
         <button type="button" class="section-toggle" data-topic="Strategy">
@@ -3219,7 +3294,7 @@
       updatedAt: '2026-08-18',
       activeFocus: ['StationRescue', 'Dipstify', 'ODO-Vehicles'],
       // Taxonomy (founder 2026-08-07): Gas Ops = Dipstify workstream; RV MVP under ODO umbrella;
-      // Helium pricing = Dipstify commercial (₱7k + ₱1k/station, Aug start, collect EOM).
+      // Helium pricing = Dipstify commercial (Basic ₱9,999 · Staff+PnL ₱9,999, collect EOM).
       // 2026-08-18: Phase 3 CEO lane is ODO-Vehicles (not RideVerified marketplace).
       ventureMap: {
         gasOps: 'Dipstify',
@@ -3229,19 +3304,19 @@
       },
       parked: ['some KOS/RV secondary work (not RV-under-ODO core)'],
       heliumBilling: {
-        basePhp: 7000,
-        perStationPhp: 1000,
-        starts: '2026-08',
+        basicPhp: 9999,
+        staffPnlPhp: 9999,
         collect: 'every end of month',
+        note: 'Locked 2026-08-19. ₱7k+₱1k/station sheet superseded.',
       },
       phases: {
         1: 'SR — marketplace (owners, techs, suppliers) + owner-only knowledge. Helium first.',
-        2: 'Dipstify — ops sibling. Helium ₱7k + ₱1k/station EOM. Not SR.',
+        2: 'Dipstify — ops sibling. Basic ₱9,999 · Staff+PnL ₱9,999. Not SR.',
         3: 'ODO-Vehicles — listings, HPG, unlocks, LTO. Property still exists. Not RideVerified marketplace.',
       },
       // Chairman + 3 CEO briefing loop (FOS/Ver). Not a replacement of companies.
       chairman: {
-        weekOf: '2026-08-18',
+        weekOf: '2026-08-19',
         overall: 'At risk',
         identity: 'Briefing loop inside FOS/Ver. Not a new org chart. Ver, Lens, and Vera stay.',
         cadenceNote: 'Mon–Fri cadence and ₱50K auto-approve are proposals, not locks. Escalate all spend until the founder says yes.',
@@ -3254,8 +3329,8 @@
           },
           {
             lane: 'Dipstify',
-            status: 'Phase 2 ops sibling; Helium sheet ₱7k + ₱1k/station, collect EOM',
-            action: 'Stations on ops; owner funnel from Rescue is later, owners only — not SR’s KPI',
+            status: 'Phase 2 ops sibling; Basic ₱9,999 · Staff+PnL ₱9,999, collect EOM; quiz funnel HOLD',
+            action: 'Stations on ops (3 numbers). Quiz stays parked until founder unpauses. Owner funnel from Rescue is later, owners only — not SR’s KPI',
             owner: 'Dipstify CEO brief → Founder',
           },
           {
@@ -3277,6 +3352,7 @@
           hrefLabel: 'Open station-rescue.vercel.app →',
           lock: 'Marketplace + owner-only knowledge. Helium first. Coalition not a trojan horse. No “Powered by Dipstify.” Not scored on Dipstify conversion.',
           kpis: [
+            { name: 'Auth / waitlist', value: 'Auth live · waitlist OK', sub: 'Signup smoke deferred — profiles schema cache', wired: false },
             { name: 'Helium owner posts', value: '—', sub: 'Pain-room / knowledge, owners only', wired: false },
             { name: 'Pain-room (owners only)', value: '—', sub: 'Knowledge center — owners, not techs/suppliers', wired: false },
             { name: 'Techs', value: '—', sub: 'Marketplace count', wired: false },
@@ -3296,7 +3372,8 @@
           lock: 'Ops sibling. Separate DB. Helium commercial is this sheet, not SR.',
           kpis: [
             { name: 'Helium stations on ops', value: '—', sub: 'Stations running Dipstify ops', wired: false },
-            { name: 'Commercial sheet', value: '₱7k + ₱1k/stn', sub: 'Aug start · collect EOM — price sheet, not a live invoice count', wired: false, sheet: true },
+            { name: 'Commercial sheet', value: '₱9,999 + ₱9,999', sub: 'Basic · Staff+PnL — collect EOM — price sheet, not a live invoice count', wired: false, sheet: true },
+            { name: 'Quiz funnel', value: 'HOLD', sub: 'Founder check later · dipstify.com/quiz · do not iterate until unpaused', wired: false, sheet: true },
             { name: 'Owner funnel from Rescue', value: 'Later', sub: 'Owners only — not SR’s score', wired: false, sheet: true },
           ],
         },
@@ -3329,7 +3406,7 @@
         /field\s*kit/i,
         /station\s*rescue.*phase\s*2|sr\s*phase\s*2|vendor\/tech marketplace|vendor.*marketplace/i,
         /kos\s*[→\-–].*dipstify|kos.*rename|dipstify.*rename/i,
-        /helium.*(pricing|billing|collect)|₱\s*7\s*k|7k.*station/i,
+        /helium.*(pricing|billing|collect)|₱\s*9,?999|basic.*staff.*pnl/i,
         /gas\s*ops/i,
       ],
       // Title patterns → archive out of live queue (stale / decided / not current focus).
@@ -3341,7 +3418,7 @@
       decisionHistory: [
         { label: 'Gas Ops: Finish the whole app this week', reason: 'Stale sprint wording — Gas Ops itself is Dipstify workstream' },
         { label: 'RV: MVP', reason: 'Under ODO umbrella (not a free-floating parked venture)' },
-        { label: 'Helium Fuels: Confirm KOS pricing tier for pilot client', reason: 'Superseded — Dipstify Helium: ₱7k + ₱1k/station, Aug start, collect EOM' },
+        { label: 'Helium Fuels: Confirm KOS pricing tier for pilot client', reason: 'Superseded — Dipstify: Basic ₱9,999 · Staff+PnL ₱9,999, collect EOM' },
         { label: 'ODO umbrella decision', reason: 'RV MVP sits under ODO umbrella' },
       ],
     };
@@ -3381,7 +3458,30 @@
     // Ver's Desk items in the drawer aren't a second copy of the same
     // data — clicking one expands and scrolls to the matching section
     // instead, so the drawer is a navigator, not a redundant summary.
+    function showCommandTab(id) {
+      document.querySelectorAll('.cmd-tab').forEach(t => {
+        const on = t.getAttribute('data-cmd') === id;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      document.querySelectorAll('.cmd-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'cmd-' + id);
+      });
+    }
+
     function jumpToTopic(topic) {
+      if (topic === 'ceo-dashboards') {
+        showCommandTab('ceos');
+        document.getElementById('ver-drawer').classList.remove('open');
+        document.getElementById('cmd-ceos').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      if (topic === 'org-workflow') {
+        showCommandTab('org');
+        document.getElementById('ver-drawer').classList.remove('open');
+        document.getElementById('cmd-org').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
       const btn = document.querySelector(`.section-toggle[data-topic="${CSS.escape(topic)}"]`);
       if (!btn) return;
       if (!btn.classList.contains('expanded')) btn.click();
@@ -3406,6 +3506,77 @@
     document.getElementById('ver-jump-org-workflow').addEventListener('click', () => {
       jumpToTopic('org-workflow');
     });
+
+    document.querySelectorAll('.cmd-tab').forEach(tab => {
+      tab.addEventListener('click', () => showCommandTab(tab.getAttribute('data-cmd')));
+    });
+
+    (function initPulseNote() {
+      const note = document.getElementById('pulse-note');
+      const save = document.getElementById('pulse-note-save');
+      if (!note || !save) return;
+      try {
+        const stored = localStorage.getItem('tvg_pulse_note');
+        if (stored) note.value = stored;
+      } catch (e) {}
+      save.addEventListener('click', () => {
+        localStorage.setItem('tvg_pulse_note', note.value);
+        save.textContent = 'Saved';
+        setTimeout(() => { save.textContent = 'Save note'; }, 1200);
+      });
+    })();
+
+    const DEFAULT_CHALLENGES = [
+      { title: 'Cross-tenant data leak', body: 'SE/ST/AM stations leaking into Helium owner report. Governance risk flagged 8/17/2026. Schema-level fix or report filtering.', tags: 'BOTTLENECK · CTO' },
+      { title: 'Signup smoke blocked', body: 'Profiles schema cache blocking SR signup. Deferred to CTO. Waitlist still OK.', tags: 'DEFERRED · CTO' },
+      { title: 'NPC registration pending', body: 'Blocks DOE / rider data / EVCS. DPO/counsel OUT. Need outsourced compliance lawyer.', tags: 'CRITICAL · OUT' },
+      { title: 'Dipstify MRR unmeasured', body: 'No live invoice count. Sheet is Basic ₱9,999 · Staff+PnL ₱9,999. Quiz funnel HOLD until founder unpauses.', tags: 'METRICS · CFO' },
+    ];
+
+    function loadChallenges() {
+      const list = document.getElementById('challenges-list');
+      if (!list) return;
+      let items = DEFAULT_CHALLENGES;
+      try {
+        const raw = localStorage.getItem('tvg_fos_challenges');
+        if (raw) items = JSON.parse(raw);
+      } catch (e) {}
+      list.innerHTML = '';
+      items.forEach(ch => list.appendChild(challengeEl(ch)));
+    }
+
+    function challengeEl(ch) {
+      const wrap = document.createElement('div');
+      wrap.className = 'challenge-item';
+      wrap.innerHTML = `<div class="ch-head"><input aria-label="Challenge title" /><button type="button" class="challenge-rm" aria-label="Remove">×</button></div><textarea rows="2"></textarea><p class="kpi-sub" contenteditable="true"></p>`;
+      wrap.querySelector('input').value = ch.title || 'New challenge';
+      wrap.querySelector('textarea').value = ch.body || '';
+      wrap.querySelector('.kpi-sub').textContent = ch.tags || 'OWNER';
+      wrap.querySelector('.challenge-rm').addEventListener('click', () => {
+        if (!confirm('Remove this challenge?')) return;
+        wrap.remove();
+        persistChallenges();
+      });
+      wrap.querySelector('input').addEventListener('change', persistChallenges);
+      wrap.querySelector('textarea').addEventListener('change', persistChallenges);
+      wrap.querySelector('.kpi-sub').addEventListener('blur', persistChallenges);
+      return wrap;
+    }
+
+    function persistChallenges() {
+      const items = [...document.querySelectorAll('#challenges-list .challenge-item')].map(el => ({
+        title: el.querySelector('input').value,
+        body: el.querySelector('textarea').value,
+        tags: el.querySelector('.kpi-sub').textContent,
+      }));
+      localStorage.setItem('tvg_fos_challenges', JSON.stringify(items));
+    }
+
+    document.getElementById('add-challenge').addEventListener('click', () => {
+      document.getElementById('challenges-list').appendChild(challengeEl({ title: 'New challenge', body: '', tags: 'OWNER' }));
+      persistChallenges();
+    });
+    loadChallenges();
 
     function showLoginSubview(which) {
       // which: 'login' | 'forgot' | 'set-password'
@@ -4782,6 +4953,7 @@
             document.getElementById('attention-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
           },
           'open-decisions': () => {
+            showCommandTab('decisions');
             document.getElementById('decision-queue-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
           },
         };
@@ -5044,6 +5216,22 @@
     // a literal match. compliance_items is read as a rollup count
     // only (detail/management stays Lens's per
     // docs/GOVERNANCE_MODEL.md's ownership table).
+    function renderPulseFinance(kosStatus) {
+      const el = document.getElementById('pulse-finance');
+      if (!el) return;
+      const cash = kosStatus && kosStatus.cash_pulse;
+      const burn = kosStatus && kosStatus.burn_rate;
+      const runway = kosStatus && kosStatus.runway_months;
+      const peso = (n) => n == null ? 'No data' : `₱${Number(n).toLocaleString('en-PH')}`;
+      const runTxt = runway != null ? `${runway} mo` : 'No data';
+      const runCls = runway == null ? 'kpi-off' : runway < 3 ? 'kpi-bad' : runway < 6 ? 'kpi-warn' : 'kpi-good';
+      el.innerHTML = [
+        renderKpi('Cash pulse', cash != null ? peso(cash) : 'No data', cash != null ? 'kpi-good' : 'kpi-off', 'Helium Fuels project_status (wired)'),
+        renderKpi('Monthly burn', burn != null ? peso(burn) : 'No data', burn != null ? 'kpi-bad' : 'kpi-off', 'Helium Fuels, monthly (wired)'),
+        renderKpi('Runway', runTxt, runCls, 'Same KOS row as Today KPI strip'),
+      ].join('');
+    }
+
     async function loadKpiGrid() {
       const el = document.getElementById('kpi-grid');
       const isFounder = currentEcosystem === 'founder';
@@ -5094,6 +5282,7 @@
       const complianceDue = (complianceRes.data || []).filter(c => c.status !== 'complete' && c.due_date && new Date(c.due_date) <= weekOut).length;
 
       const kosStatus = kosStatusRes.data ? (Array.isArray(kosStatusRes.data.project_status) ? kosStatusRes.data.project_status[0] : kosStatusRes.data.project_status) : null;
+      renderPulseFinance(kosStatus);
       const noteRow = (lastGovernanceNote.data || [])[0];
 
       let cards;

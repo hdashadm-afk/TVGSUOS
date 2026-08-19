@@ -1,6 +1,6 @@
 # Dipstify Station — Plan
 
-Last updated: 2026-08-12  
+Last updated: 2026-08-19  
 Status: Active plan (Phase A)  
 Owner: Edgardo Castro  
 
@@ -24,7 +24,9 @@ Daily ground truth for 1–2 station Smart Stations (Helium first): variance, op
 
 **Seat rule (locked this session):** PnL/Acctg **can** be the same person as HR Admin, **or** a separate position if the owner decides. Product must support combine **or** split.
 
-**Commercial (proposed, not yet SKU-live):** Admin Pack = StaffVerified + PnLVerified at **₱9,999** (entry). Station Core (Lens + Ops + AdminVerified) priced separately.
+**Commercial (locked 2026-08-19):** **Basic** (Station Core: Lens + Ops + Admin) **₱9,999**/mo. **Staff + PnL** (Admin Pack) **₱9,999**/mo. Seats may combine or split; pack price stays ₱9,999. Not the quiz-handoff ₱3,000. Not SR tech/supplier fees.
+
+**Cold quiz (founder approved 2026-08-19):** thin MVP on dipstify.com `/quiz` by **29 Sep** (soft). Ads **6–10 Oct**. **Virality parked** until `quiz virality unlocked`. **HOLD 19 Aug 13:31** — founder checking later; do not iterate `/quiz`/`/simulate` until unpaused. Live commit `290d389`. See `docs/DIPSTIFY_QUIZ_THIN_MVP.md`.
 
 ---
 
@@ -89,6 +91,6 @@ Postgres = structured; **object storage + CDN = photos**. Lens = exceptions/sign
 ## 8) Founder actions only
 
 - Env secrets for F1 (Ops edge + Vercel dipstify)  
-- Helium EOM billing (₱7k + ₱1k/station)  
+- Helium EOM collect on locked SKUs: Basic ₱9,999 · Staff+PnL ₱9,999  
 - Approve Phase E design / Ops merge risk pack  
 - Unlock phrases when ready (not Claude’s call)
