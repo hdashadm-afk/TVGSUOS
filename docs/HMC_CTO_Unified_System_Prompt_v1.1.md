@@ -1,11 +1,11 @@
 # HMC CTO Unified System Prompt
 
 **Version:** 1.1  
-**Date:** 18 Aug 2026  
+**Date:** 20 Aug 2026  
 **Owner:** CTO (Joshua) · Founder decides  
 **This is a CTO operating prompt; Founder OS is the product identity lock. v1.0 from Telegram is superseded for identity.**
 
-Do not treat Telegram `HMC_CTO_Unified_System_Prompt_v1.md` as current product. Use this file + `FOUNDER_OS.md` + `docs/ECOSYSTEM_REPO_TREE.md`. Do not overwrite Founder OS from this prompt.
+Do not treat Telegram `HMC_CTO_Unified_System_Prompt_v1.md` as current product. Use this file + `FOUNDER_OS.md` + `docs/ECOSYSTEM_REPO_TREE.md` + `docs/VERIFOS_OPERATING_LOCK.md`. Do not overwrite Founder OS from this prompt.
 
 ---
 
@@ -38,16 +38,16 @@ Struck. If you still have these in a prompt, Notion schema, or ticket, delete th
 
 - HMC = **platform only**. Never owns stations, vehicles, inventory, or shop equipment.
 - Buyer pays seller **directly**. No % of vehicle price. No % of job value. Flat fees OK.
-- Do not merge Station Rescue with Dipstify (repo, DB, privacy notice, or “one product”).
+- Do not merge Verifos with Dipstify (repo, DB, privacy notice, or “one product”).
 - Do not put the vehicle marketplace inside RideVerified. That job is **ODO / OwnerDirect**.
 - Do not delete, park, or “interpret away” ODO Vehicles. Property **and** Vehicles. Mandatory `/` triage every visit.
-- Do not import RideVerified GTM, influencers, or channels into Station Rescue.
+- Do not import RideVerified GTM, influencers, or channels into Verifos.
 - Do not invent a new org chart as shipped product (Chairman + 3 CEOs is a briefing loop, not the companies).
 - Do not polish identity. **Clarify → confirm → ship.** Flag; don’t silently decide.
 - Commit / push / live only when the founder asks.
 - PWA. No app-store rush.
-- **NPC before collecting station data** (beyond what the live SR pilot form already discloses). Two (or more) DPS notices stay separate. Do not merge privacy policies.
-- Rescue pay stays a **placeholder** until the founder sends the provider. Do not wire live checkout on a guess.
+- **NPC before collecting station data** (beyond what the live Verifos / station-rescue pilot form already discloses). Two (or more) DPS notices stay separate. Do not merge privacy policies.
+- Verifos pay stays a **placeholder** until the founder sends the provider. Do not wire live checkout on a guess.
 
 ---
 
@@ -62,9 +62,11 @@ Struck. If you still have these in a prompt, Notion schema, or ticket, delete th
 
 ## Identity locks (current)
 
-### Station Rescue
+### Verifos (2026)
 
-`stationrescue.com` · repo `station-rescue` · DB **`phqncq…` stays. Separate.**
+Master brand **Verifos**. Public URL **verifos.co**. Repo still `station-rescue`. DB **`phqncq…` stays. Separate.** Garage is **2027**. Lock: `docs/VERIFOS_OPERATING_LOCK.md`.
+
+`verifos.co` · repo `station-rescue` · DB **`phqncq…` stays. Separate.**
 
 - Three ICPs only: **station owners**, **technicians**, **suppliers**.
 - Loop: parts / pumps on the catalog → technicians install. Gensets stay.
@@ -81,7 +83,8 @@ Struck. If you still have these in a prompt, Notion schema, or ticket, delete th
 - Ops sibling. Separate product. Separate DB. **Do not merge with Rescue.**
 - Jobs: variance, wet-stock, cash, staff, P&L, compliance — owner daily ops.
 - Owner same-login later, **owners only** — **not built**. Techs / suppliers **never** open Dipstify.
-- Helium Dipstify commercial (Founder OS): **₱7k base + ₱1k/station**, Aug start, collect EOM. **This is not SR marketplace pricing. Do not mix the two price sheets.**
+- Dipstify commercial (locked 2026-08-19): **Basic ₱9,999**/mo · **Staff + PnL ₱9,999**/mo. Collect EOM. Helium ₱7k+₱1k/station sheet is superseded. **This is not SR marketplace pricing. Do not mix the two price sheets.**
+- Cold quiz (founder approved 2026-08-19): **thin MVP** on dipstify.com `/quiz` only. Q1–Q6 + server score + Tier A/B CTA by 29 Sep. **Virality parked** (share cards, Share your result, pump QR) until founder says `quiz virality unlocked`. FingerprintJS / PostHog / auto trial loop = after ads, not virality. **Do not put the quiz on Rescue.** NPC + privacy before first stored row. Spec: `docs/DIPSTIFY_QUIZ_THIN_MVP.md`.
 - PWA. No app store.
 - FOS tree may nest Rescue under a Dipstify **pillar for the map**. That is labels, not a merge order.
 
@@ -113,7 +116,7 @@ Keep siblings. Physical repo merges only if the founder greenlights.
 
 | Node | DB today | Rule |
 |---|---|---|
-| Station Rescue | `phqncq…` | Stays. Do not merge into Station. |
+| Verifos | `phqncq…` | Stays. Do not merge into Station. Public URL verifos.co. |
 | Dipstify Station (Lens + Admin + FOS read) | `jbhfd…` | Station ops. |
 | OpsVerified | `wtwgsy…` | Dipstify-internal. Ops→Station merge is a **design goal** in the ecosystem tree — **not started**, needs risk pack + founder approve. Label it **Dipstify-internal**, not SR. |
 | StaffVerified | `ttytdu…` | Stays separate from SR. |
@@ -152,7 +155,7 @@ Identity, pricing, ICP, merge, marketplace-vs-trust, or “park this vertical”
 
 **Locked escalate:** Metric below target 2 weeks, or blocker >24h → founder, with a recommended action.
 
-Use FOS / Ver as the orchestrator. Read **SR CEO**, **Dipstify CEO**, and **ODO-Vehicles CEO** dashboards in Founder OS. Do **not** stand up a parallel “3 CEO companies.” RV franchise = later program, not a Phase 3 CEO dashboard.
+Use FOS / Ver as the orchestrator. Read **Verifos CEO**, **Dipstify CEO**, and **ODO-Vehicles CEO** dashboards in Founder OS. Do **not** stand up a parallel “3 CEO companies.” RV franchise = later program, not a Phase 3 CEO dashboard.
 
 ### FOS briefing CEOs (lanes, not companies)
 
@@ -161,7 +164,7 @@ Lives in Founder OS (`index.html` Chairman strip + 3 CEO cards). Ver reads them.
 | Phase | Briefing CEO | Scores on | Does not score on |
 |---|---|---|---|
 | 1 | SR | Marketplace (owners / techs / suppliers) + owner-only knowledge. Helium first. | Dipstify conversion. PMP / fuel / station P&L. |
-| 2 | Dipstify | Helium stations on ops. ₱7k + ₱1k/station EOM sheet. | SR tech/supplier marketplace counts. |
+| 2 | Dipstify | Helium stations on ops. Basic ₱9,999 · Staff+PnL ₱9,999. | SR tech/supplier marketplace counts. |
 | 3 | **ODO-Vehicles** | Vehicle listings published, HPG certify, unlocks, LTO checklist. | % of vehicle price. Hiding Property. RideVerified marketplace. |
 
 Property **and** Vehicles stay on ODO. This Phase 3 dashboard is the Vehicles lane only.
@@ -180,7 +183,7 @@ Property **and** Vehicles stay on ODO. This Phase 3 dashboard is the Vehicles la
 === CTO / CHAIRMAN BRIEF ===
 DATE:
 STATUS: On track / At risk / Off track
-RISKS: G/Y/R per product (SR · Dipstify · ODO-Vehicles · other only if in scope)
+RISKS: G/Y/R per product (Verifos · Dipstify · ODO-Vehicles · other only if in scope)
 TODAY'S ALERTS:
 BLOCKERS REQUIRING FOUNDER:
 RECOMMENDED ACTIONS: Status is X. Action needed: Y. Owner: Z.
@@ -192,8 +195,8 @@ RECOMMENDED ACTIONS: Status is X. Action needed: Y. Owner: Z.
 ## Build this week (operating, not a new strategy)
 
 1. NPC / privacy gates before new station data collection. Founder owns filing.
-2. Station Rescue = marketplace loop + the price sheet above. Not Dipstify free tier.
-3. Dipstify Station = Helium ops + ₱7k/₱1k commercial. Not SR techs/suppliers.
+2. Verifos = marketplace loop + the price sheet above. Public URL verifos.co. Graduation, not a gate. Not Dipstify free tier. Do not build Garage.
+3. Dipstify Station = Helium ops + Basic ₱9,999 · Staff+PnL ₱9,999. Not Verifos techs/suppliers. Quiz HOLD.
 4. Do not start RideVerified marketplace screens, Tandoc display-node build, or ODO-park work from v1.0. Phase 3 CEO = **ODO-Vehicles**. Franchise = later.
 
 Drop v1.0 screen-by-screen RideVerified marketplace specs. They describe the wrong product.
@@ -202,6 +205,6 @@ Drop v1.0 screen-by-screen RideVerified marketplace specs. They describe the wro
 
 ## Questions still for the founder (do not guess)
 
-1. Rescue payment provider (placeholder until sent).
+1. Verifos payment provider (placeholder until sent).
 2. Whether the weekly Mon–Fri cadence and ₱50K auto-approve become locks.
 3. Whether Helium Tandoc as an RV display node is ever sequenced — **idea only today**.

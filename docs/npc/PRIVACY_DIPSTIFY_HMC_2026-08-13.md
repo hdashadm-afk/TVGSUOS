@@ -1,9 +1,9 @@
 # Privacy Policy — Dipstify Station
 
 **Operator:** Helium Marketing Corporation (HMC), Philippines  
-**Product:** Dipstify Station (Owner’s Lens, OpsVerified, AdminVerified, StaffVerified, PnLVerified)  
-**URLs:** https://dipstify.com/privacy.html · https://dipstify.com · https://ops.dipstify.com  
-**Last updated / effective:** 13 August 2026  
+**Product:** Dipstify Station (Owner’s Lens, OpsVerified, AdminVerified, StaffVerified, PnLVerified, cold quiz)  
+**URLs:** https://dipstify.com/privacy.html · https://dipstify.com · https://dipstify.com/quiz · https://ops.dipstify.com  
+**Last updated / effective:** 19 August 2026 (quiz addendum)  
 **Law:** Data Privacy Act of 2012 (RA 10173)
 
 For NPC: this is Data Processing System **Dipstify Station**. HMC is PIC for owner accounts, waitlist, billing, and support. HMC is PIP for station staff/ops/HR data entered by the station owner. One HMC registration covers this DPS and ODO (separate notice).
@@ -62,6 +62,13 @@ A Data Processing Agreement (DPA) should be signed for StaffVerified payroll / g
 - Cash and P&L figures you enter or import (may remain Excel/intake if not yet fully in-app)
 - May be handled by the same Admin person as HR or by a separate assignee — product supports either
 
+**Cold quiz (`/quiz`) — addendum 19 Aug 2026**
+- Anonymous until you click a CTA. We create a `session_id` (browser + URL).
+- Six self-assessment answers about dip habit, tracking method, runouts, closing stock, report speed, and daily minutes. We score Q1–Q5 on our server and store the answers, score, and detected path (self-serve vs human setup).
+- We do **not** ask for your name, phone, or email to take the quiz.
+- If you start a trial or book a 15-minute setup, we then process contact details you give (WhatsApp / onboarding) and may link them to that `session_id`.
+- Quiz answers are **not** stored on Station Rescue.
+
 We do not intentionally collect customer payment card PANs inside Dipstify Station apps (subscription billing, when live, should use a payment processor).
 
 ## 4. Why we collect it
@@ -69,7 +76,7 @@ We do not intentionally collect customer payment card PANs inside Dipstify Stati
 - **Contract** — provide Station software to the owning business
 - **Legitimate interests** — prevent fraud/ghost dipping, secure multi-station access, improve Lens answers, keep the service reliable
 - **Legal obligation** — where employment/tax/compliance records must be retained by the customer; we support retention on their behalf
-- **Consent** — optional AI features, Telegram assist, marketing waitlists
+- **Consent** — optional AI features, Telegram assist, marketing waitlists, **cold quiz** (you choose to answer; contact only if you CTA)
 
 ## 5. How we use it
 
@@ -79,6 +86,7 @@ We do not intentionally collect customer payment card PANs inside Dipstify Stati
 - Onboard new stations/staff; route human-assist requests
 - Improve AI guidance (Lens) using prompts and operational context you provide
 - Bill and support the customer account
+- Route cold-quiz visitors to self-serve trial or a human 15-minute setup; improve the quiz only from aggregated drop-off (not ads resale)
 
 ## 6. Who sees it
 
@@ -111,6 +119,7 @@ We do not sell station employee or fuel-ops data to advertisers.
 - Operational logs & photos — while the customer subscription is active and as needed for disputes; customers should set retention for evidence photos
 - HR / government numbers — per customer’s legal retention duties (often years for remittance records)
 - AI chats — retained as needed for safety/quality then deleted or aggregated
+- Quiz sessions — while evaluating a trial / setup request, then deleted or aggregated; unused anonymous sessions may be dropped after 90 days
 - On account termination — customer may request export/deletion; we delete or return processor data subject to legal holds
 
 ## 10. Your rights
@@ -127,4 +136,4 @@ Helium Marketing Corporation — Dipstify
 Privacy / data requests: privacy@hmcmarketing.tech  
 Data Protection Officer: dpo@hmcmarketing.tech  
 General: edc.helium@gmail.com  
-Products: Owner’s Lens · OpsVerified · AdminVerified · StaffVerified · PnLVerified
+Products: Owner’s Lens · OpsVerified · AdminVerified · StaffVerified · PnLVerified · cold quiz (`/quiz`)

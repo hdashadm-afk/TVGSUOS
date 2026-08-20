@@ -72,11 +72,11 @@ Register **within 20 days of launch / DPO appointment** if you are covered. Aim 
 
 ## DPS 2 — paste into NPCRS
 
-**Name:** Dipstify Station (Owner’s Lens, OpsVerified, AdminVerified, StaffVerified, PnLVerified)  
-**URLs:** https://dipstify.com · https://ops.dipstify.com  
-**Role:** PIC for owner/admin accounts, waitlist, billing, support. **PIP** for station staff, payroll, shift, tank, and photo data entered by the station owner (Helium Fuels is pilot).
+**Name:** Dipstify Station (Owner’s Lens, OpsVerified, AdminVerified, StaffVerified, PnLVerified, cold quiz)  
+**URLs:** https://dipstify.com · https://dipstify.com/quiz · https://ops.dipstify.com  
+**Role:** PIC for owner/admin accounts, waitlist, billing, support, **anonymous quiz sessions**. **PIP** for station staff, payroll, shift, tank, and photo data entered by the station owner (Helium Fuels is pilot).
 
-**Personal data:** owner emails/passwords/roles; PIN staff identity; shift logs; tank/variance; evidence photos; permits metadata; onboarding; Lens AI chats; HR/payroll numbers when Staff module is used.
+**Personal data:** owner emails/passwords/roles; PIN staff identity; shift logs; tank/variance; evidence photos; permits metadata; onboarding; Lens AI chats; HR/payroll numbers when Staff module is used; **quiz answers + session_id + tier** (no name until CTA).
 
 **Sensitive data:** SSS / PhilHealth / Pag-IBIG when payroll is used; PINs; government IDs if collected in onboarding.
 

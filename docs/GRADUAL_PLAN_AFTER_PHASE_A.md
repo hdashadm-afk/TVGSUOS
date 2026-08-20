@@ -6,7 +6,7 @@ Owner: Edgardo Castro
 
 Station Phase A prove path is **done**. No strategic crisis. This plan sequences the leftovers so nothing big-bangs Helium.
 
-Companion: `DIPSTIFY_STATION_PLAN.md` · `OPS_STATION_DB_MERGE_RISK_PACK.md` · `ECOSYSTEM_REPO_TREE.md`
+Companion: `DIPSTIFY_STATION_PLAN.md` · `OPS_STATION_DB_MERGE_RISK_PACK.md` · `ECOSYSTEM_REPO_TREE.md` · `STATION_RISK_REGISTRY.md` (funnel / login / landing questions, 2026-08-17)
 
 ---
 
@@ -31,7 +31,7 @@ Companion: `DIPSTIFY_STATION_PLAN.md` · `OPS_STATION_DB_MERGE_RISK_PACK.md` · 
 | 0.2 | Telegram bot token → human-assist | Requests reach Telegram |
 | 0.3 | GA staff email list → bulk create | Accounts exist; PIN 8888 + reset |
 | 0.4 | Fuel-ops forced PIN-change on login | Session with fuel-ops access |
-| 0.5 | Helium EOM collect (₱7k + ₱1k/station) | Cash in |
+| 0.5 | Helium EOM collect (Basic ₱9,999 · Staff+PnL ₱9,999) | Cash in |
 | 0.6 | Optional: Stocks kL / reorder | Separate ask |
 
 **Exit:** Helium daily use is boringly reliable; onboarding assist works.

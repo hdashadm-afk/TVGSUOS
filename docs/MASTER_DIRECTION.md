@@ -1,8 +1,38 @@
 # TVGSUOS — Master Direction
 
-Last updated: 2026-08-10
-Status: Active — baseline source of truth for this repo
+Last updated: 2026-08-20  
+Status: Active — baseline source of truth for this repo  
 Owner: Edgardo Castro
+
+**Current operating masterplan (20 Aug 2026) sits in §0.** Sections 2–10 below are the July 18 repo-creation baseline (FOS as Layer 1). They are not deleted. Where they fight §0, **§0 wins.**
+
+Tree: `docs/ECOSYSTEM_REPO_TREE.md`. Continuity log: `FOUNDER_OS.md`.
+
+---
+
+## 0) Current masterplan — 20 Aug 2026
+
+HMC is legal. Founder OS (this repo / Ver) orchestrates. Ventures execute. Do not merge products.
+
+| Now | Product | Public | Job |
+|---|---|---|---|
+| Phase 1 | **Verifos** (was Station Rescue / Vero) | **verifos.co** (deploy: station-rescue.vercel.app until DNS) | Pumps + verified tech. Three ICPs: owners, technicians, suppliers. Helium first. |
+| Phase 2 | **Dipstify Station** | dipstify.com | Owner daily ops / books. Sibling. Not Verifos free tier. |
+| Phase 3 | **ODO Vehicles** | ownerdirect.online | Vehicle marketplace. Property still exists. Mandatory `/` triage. |
+
+**Verifos locks**
+
+- Owners free. Tech ₱500/mo after first month free. Supplier ₱1,000/mo after L2. Assessment ₱500 (₱250 / ₱250). Txn ₱250. **No % of job value.** Pay placeholder.
+- **Graduation, not a gate:** accept the minimum. The standard is written once (`docs/VERIFOS_STANDARD.md`). Who follows it is rewarded (badge now; credits when named). Never fake Verified.
+- Phase A (now): Helium field jobs may save on symptom. Prompt serial, pre-service, work, post-test. Photos = Phase B. Garage / insurers / banks = 2027+.
+- Repo still `station-rescue`. DB `phqncq…` stays. Separate from Dipstify.
+- Do not score Verifos on Dipstify conversion.
+
+**Dipstify:** Basic ₱9,999 · Staff+PnL ₱9,999, collect EOM. Quiz HOLD until founder unpauses. Do not put the quiz on Verifos.
+
+**Assistants:** Ver (FOS) · Lens (Dipstify Station) · Vera (ODO). Chairman + 3 CEOs = briefing loop, not companies.
+
+**Full Verifos law:** `docs/VERIFOS_VERIFICATION_FRAMEWORK.md` · `docs/VERIFOS_OPERATING_LOCK.md` · `docs/VERIFOS_STANDARD.md`.
 
 ---
 
@@ -12,24 +42,19 @@ TVGSUOS (The Verified Group Single Unified OS) is the top governance and operati
 
 TVGSUOS governs. Ventures execute below it.
 
-**Canonical ecosystem map:** `docs/ECOSYSTEM_REPO_TREE.md`. **Scale:** `docs/DIPSTIFY_SCALE_PLAN.md`. **Phase A (Claude = Station only):** `docs/PHASE_A_STATION_BOUNDARY.md`.
-
 ---
 
 ## 2) Three-layer ecosystem
 
 **TVGSUOS *is* Founder's OS** — not a separate layer. An earlier four-layer model (Founder's OS as its own Layer 2, embedded in `katiwala-owner-os-`, "migrating here long-term") is superseded: Founder's Space is one of TVGSUOS's 9 governance areas (§3), built and live here, not a layer still to migrate.
 
-**Three governed pillars under FOS (locked 2026-08-10):** RideVerified (ownership) · ODO (marketplace) · Dipstify (fuel vertical).
-
 | Layer | System | Domain | Repo |
 |---|---|---|---|
 | 1 | TVGSUOS (incl. Founder's Space) | `theverifiedgroup.org` | `TVGSUOS` (this repo) |
-| 2 | Dipstify / Station (KOS / Owner’s Lens) | `katiwalaai.app` | `katiwala-owner-os-` (+ Station modules) |
-| 3a | ODO marketplace (Property + Vehicle) | `ownerdirect.online` | ODO / OwnerDirect |
-| 3b | RideVerified ownership app | riderslamp.org | [hmcmarketing](https://github.com/hdashadm-afk/hmcmarketing) `ride-verified-ph/` — **later**; ≠ ODO |
+| 2 | Katiwala AI / KOS | `katiwalaai.app` | `katiwala-owner-os-` |
+| 3 | ODO / OwnerDirect Online | `ownerdirect.online` | separate repo (not yet in this session's scope) |
 
-TVGSUOS sits at Layer 1. Pillars below are governed, not peers — they execute their own domains and report upward through the agent hierarchy (§4).
+TVGSUOS sits at Layer 1. Layers 2–3 are governed, not peers — they execute their own domains and report upward through the agent hierarchy (§4).
 
 ---
 
@@ -39,10 +64,10 @@ TVGSUOS sits at Layer 1. Pillars below are governed, not peers — they execute 
 - **Strategy** — direction-setting, positioning, portfolio sequencing across ventures.
 - **Finance** — cash position, runway, cross-venture financial visibility.
 - **Marketing** — brand, positioning, and go-to-market oversight across ventures.
-- **Product** — cross-venture product direction and consistency (not venture-specific feature work, which stays with Lens/Vera).
+- **Product** — cross-venture product direction and consistency (not venture-specific feature work, which stays with Kath/Vera).
 - **R&D** — exploratory/early-stage work not yet assigned to a governed venture.
 - **Security / Privacy / Compliance** — posture, data privacy, access control, audit readiness across the whole ecosystem.
-- **Intelligence** — signal synthesis from the ventures below (what Ver reads from Lens and Vera to form founder priorities).
+- **Intelligence** — signal synthesis from the ventures below (what Ver reads from Kath and Vera to form founder priorities).
 - **People / Admin / Governance** — founder-level org structure, admin operations, and the governance rules in this doc and `docs/GOVERNANCE_MODEL.md`.
 
 These areas are **connected but modular** — no area is hard-dependent on another unless explicitly required. The system stays usable in partial form and becomes more powerful as more areas are connected.
@@ -54,32 +79,24 @@ These areas are **connected but modular** — no area is hard-dependent on anoth
 ## 4) Agent hierarchy
 
 ```text
-TVGSUOS / Founder OS
+TVGSUOS
 └── Ver  (chief of staff / founder-level governance)
-    ├── Lens  (Dipstify / Station; legacy name Kath)
-    ├── SERA (StationRescue only — not built as Ver peer UI yet)
-    ├── Delivery signals (Dipstify Delivery — separate app; domain agent TBD)
-    └── Vera  (ODO marketplace)
+    ├── Kath  (KOS / Katiwala AI)
+    └── Vera  (OWDO / ODO)
 ```
 
 - **Ver** — chief of staff. Owns founder-level governance, security posture, data privacy compliance, business continuity, escalation, cross-venture alignment, and continuity of execution.
-- **Lens** — Dipstify/Station venture agent (UI: Ask Lens; Helium pilot data absorption). Legacy docs may still say **Kath**. Reports to Ver.
-- **Vera** — ODO marketplace agent. Reports to Ver. Ver ≠ Vera. RideVerified ownership is a separate pillar (later) — do not fold RV into ODO under Vera.
-- **SERA** — StationRescue AI only; not Lens; rename only if founder directs.
-- **Dipstify Delivery** — separate product under Dipstify (locked). Inline with Station + StationRescue (shared station/trust/variance language), not a third brand. Ver reads Delivery signals only — does not absorb Delivery DB or do depot/driver domain work.
+- **Kath** — KOS/Katiwala AI venture agent. Reports to Ver.
+- **Vera** — OWDO/ODO venture agent. Reports to Ver.
 
-Full responsibilities and the non-redundancy rule (Ver must not duplicate Lens/Vera domain reasoning, and vice versa) are in `docs/GOVERNANCE_MODEL.md`.
+Full responsibilities and the non-redundancy rule (Ver must not duplicate Kath/Vera domain reasoning, and vice versa) are in `docs/GOVERNANCE_MODEL.md`.
 
 ---
 
 ## 5) Governed ventures
 
-- **Dipstify / Station** — Owner’s Lens + AdminVerified + OpsVerified + StaffVerified + PnLVerified. Phase A focus (`docs/PHASE_A_STATION_BOUNDARY.md`).
-- **Dipstify / StationRescue** — trust / services / parts / contractors; SERA later. Separate repo.
-- **Dipstify / Delivery** — fuel delivery verification (depot → driver → station). MVP demo live on Founder OS; parked for supplier.
-- **Dipstify / Franchise** — on map only until scoped.
-- **ODO** — Property ODO + Vehicle ODO **marketplace**. Own repo and Supabase. ≠ RideVerified.
-- **RideVerified** — **ownership** app (garage / identity / trust). Code in `hmcmarketing`. riderslamp.org under this pillar. **Later.**
+- **KOS / Katiwala AI** — owner-space business system (CEO's Space, HR & Payroll, Simple P&L, Ops/industry modules). Lives in `hdashadm-afk/katiwala-owner-os-`.
+- **OWDO / ODO** — property/vehicle trust marketplace. Own repo and own Supabase project, separate from KOS.
 
 Venture-specific logic stays in each venture's own repo/domain. Cross-venture governance belongs here.
 
@@ -88,7 +105,7 @@ Venture-specific logic stays in each venture's own repo/domain. Cross-venture go
 ## 6) Working rules
 
 1. Treat repo Markdown files as canonical memory.
-2. Treat this doc, `docs/GOVERNANCE_MODEL.md`, `docs/PORTFOLIO_MAP.md`, `docs/ECOSYSTEM_REPO_TREE.md`, `docs/HANDOFF_PROTOCOL.md`, and each governed venture's own master docs as governing references.
+2. Treat this doc, `docs/GOVERNANCE_MODEL.md`, `docs/PORTFOLIO_MAP.md`, `docs/HANDOFF_PROTOCOL.md`, and each governed venture's own master docs as governing references.
 3. Do not drift from the agreed direction.
 4. Do not introduce new strategy unless the founder explicitly asks for it.
 5. Finalized direction takes priority over suggestions.

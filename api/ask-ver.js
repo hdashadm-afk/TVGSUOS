@@ -27,26 +27,32 @@ const GROUNDING_DOCS = [
   'docs/PORTFOLIO_MAP.md',
   'FOUNDER_OS.md',
   'docs/VER_BEHAVIOR.md',
+  'docs/VERIFOS_OPERATING_LOCK.md',
+  'docs/VERIFOS_STANDARD.md',
 ];
 
 // Local mirror of Command Center focus (edit with FOUNDER_OS_COCKPIT in index.html).
 // Notion SoT when MCP/API available: Founder OS Command Center + Strategic Charter.
 const MASTERPLAN_CONTEXT = `
-## Current masterplan focus (18 Aug 2026)
-Active: StationRescue (SR), Dipstify, ODO-Vehicles.
+## Current masterplan focus (20 Aug 2026) — MASTER_DIRECTION.md §0
+Active: Verifos, Dipstify, ODO-Vehicles. HMC legal. FOS/Ver orchestrates. Do not merge products.
+Master brand and public URL: Verifos / verifos.co. Deploy may still be station-rescue.vercel.app until DNS is attached.
+Graduation, not a gate: accept the minimum; standard is written; reward who follows it. Never fake Verified.
+Verifos Garage = 2027. Do not build a vehicle vault in this product. Vehicle marketplace stays ODO.
 Chairman + 3 CEOs = a briefing loop inside FOS/Ver. Not a new org chart. Ver, Lens, Vera stay.
-Venture map: Gas Ops = Dipstify workstream; Helium pricing = Dipstify commercial (₱7k + ₱1k/station, start Aug, collect every month-end). RV is not the market CEO (franchise = later program, not a dashboard).
+Venture map: Gas Ops = Dipstify workstream; Helium pricing = Dipstify commercial (Basic ₱9,999 · Staff+PnL ₱9,999, collect EOM). RV is not the market CEO (franchise = later program, not a dashboard).
 Field Kit pricing decision locked (hardware add-on); public/site revisit scheduled Sep 1.
 Do NOT treat stale sprint wording (“Gas Ops finish whole app this week”) as top priority — Gas Ops itself is Dipstify.
-Do NOT score the SR CEO on Dipstify conversion.
+Do NOT score Verifos on Dipstify conversion.
+Dipstify quiz HOLD until founder unpauses. Do not put the quiz on Verifos.
 ₱50K auto-approve is a proposal, not a lock.
 
 Phases:
-1. SR CEO — marketplace (owners, techs, suppliers) + owner-only knowledge. Helium first. Coalition not a trojan horse. No “Powered by Dipstify.”
-2. Dipstify CEO — ops sibling. Helium ₱7k + ₱1k/station EOM. Owner funnel from Rescue = later, owners only.
+1. Verifos CEO — marketplace (owners, techs, suppliers) + owner-only knowledge. Helium first. Coalition not a trojan horse. No “Powered by Dipstify.”
+2. Dipstify CEO — ops sibling. Basic ₱9,999 · Staff+PnL ₱9,999. Owner funnel from marketplace = later, owners only.
 3. ODO-Vehicles CEO — listings published, HPG certify, unlocks, LTO checklist. Property still exists. No % of vehicle price. Not RideVerified marketplace.
 
-SR status (dashboard SoT): Auth migration live; profiles schema-cache smoke deferred; waitlist OK.
+Verifos status (dashboard SoT): Auth migration live; profiles schema-cache smoke deferred; waitlist OK. DNS for verifos.co still founder work.
 `;
 
 async function fetchDoc(path, headers) {
@@ -113,18 +119,18 @@ module.exports = async function handler(req, res) {
         model: 'claude-sonnet-5',
         max_tokens: 600,
         output_config: { effort: 'low' },
-        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for StationRescue (SR), Dipstify, and ODO-Vehicles. Chairman + 3 CEOs is a briefing loop you run, not the companies. The founder is asking what to do first today.
+        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for Verifos (was Station Rescue), Dipstify, and ODO-Vehicles. Chairman + 3 CEOs is a briefing loop you run, not the companies. The founder is asking what to do first today.
 
 Answer format — STRICT:
 1. Reply with exactly **3 numbered actions**, nothing else before them.
 2. Each line: \`N. [Action] — [one-line why / where to tap]\`
 3. Prioritize in this order ONLY:
    Step 1: Critical security / trust / governance risks (Security status, bottleneck signals).
-   Step 2: SR Phase 1 CEO work (marketplace + owner-only knowledge on station-rescue.vercel.app). Never score SR on Dipstify conversion.
-   Step 3: Dipstify Phase 2 CEO work (Helium stations on ops; Field Kit revisit Sep 1; Helium ₱7k+₱1k/station EOM collect from Aug; Gas Ops as Dipstify workstream).
+   Step 2: Verifos Phase 1 CEO work (marketplace + owner-only knowledge; public URL verifos.co; deploy may still be station-rescue.vercel.app). Graduation not a gate. Never score Verifos on Dipstify conversion. Do not build Garage.
+   Step 3: Dipstify Phase 2 CEO work (Helium stations on ops; Field Kit revisit Sep 1; Basic ₱9,999 · Staff+PnL ₱9,999 EOM collect; Gas Ops as Dipstify workstream; quiz HOLD).
    Step 4: ODO-Vehicles Phase 3 CEO (listings, HPG, unlocks, LTO) only when it does not displace Steps 1–3. Property still exists. RV is not the market CEO.
    Step 5: Only then other ecosystem tasks still active in the masterplan (e.g. KOS→Dipstify rename if pending execution).
-4. Never promote stale sprint wording (Gas Ops finish-this-week), Dipstify-conversion-as-SR-KPI, or a RideVerified marketplace CEO into the top 3.
+4. Never promote stale sprint wording (Gas Ops finish-this-week), Dipstify-conversion-as-Verifos-KPI, or a RideVerified marketplace CEO into the top 3.
 5. Voice when briefing: “Status is X. Action needed: Y. Owner: Z.” Never “I think.”
 6. No long report, no essay, no preamble, no closing pep talk. Max ~120 words total.
 7. If nothing is open, say so in one line, then still give 3 light next moves grounded in Steps 1–3.

@@ -1,12 +1,12 @@
 # HMC / Founder OS — Org chart and workflows
 
-Locked: 18 Aug 2026  
+Locked: 20 Aug 2026  
 Owner: Edgar “Best” Dada  
 Status: Active — People/Admin org for Founder OS. Dashboards, not companies.
 
 HMC (Helium Marketing Corporation) is the **legal / platform**. It never owns stations, vehicles, or inventory.
 
-Three AI CEOs are **dashboards in Founder OS**, not companies. Do not merge Station Rescue and Dipstify. Do not add an RV CEO. RV franchise stays a later program in RV docs.
+Three AI CEOs are **dashboards in Founder OS**, not companies. Do not merge Verifos and Dipstify. Phase 1 live product = **Verifos** (verifos.co). Do not add an RV CEO. RV franchise stays a later program in RV docs.
 
 ---
 
@@ -18,7 +18,7 @@ HMC — legal / platform                         Legal
         decides · Helium cluster · station relationships
         ├── Ver / Chairman AI                  AI
         │     briefing loop only
-        │     ├── SR CEO                       AI · Phase 1
+        │     ├── Verifos CEO                  AI · Phase 1
         │     ├── Dipstify CEO                 AI · Phase 2
         │     └── ODO-Vehicles CEO             AI · Phase 3
         ├── Joshua — CTO                       Human · all three products
@@ -36,7 +36,7 @@ HMC — legal / platform                         Legal
 | Helium station floor | Human | In-house Helium staff |
 | WhatsApp match | Human | Best / Helium until the app does it |
 
-**Do not hire yet:** community manager · SR sales army · Dipstify CS · RV franchise manager.
+**Do not hire yet:** community manager · Verifos sales army · Dipstify CS · RV franchise manager.
 
 Ver does not hire or spend. Ver does not replace companies. Voice: *Status is X. Action needed: Y. Owner: Z.*
 
@@ -45,7 +45,7 @@ flowchart TB
   HMC["HMC — legal / platform\nNever owns stations, vehicles, inventory"]
   BEST["Edgar Best Dada — Chairman\nHuman"]
   VER["Ver / Chairman AI\nBriefing only"]
-  SR["SR CEO — Phase 1\nAI dashboard"]
+  SR["Verifos CEO — Phase 1\nAI dashboard"]
   DIP["Dipstify CEO — Phase 2\nAI dashboard"]
   ODO["ODO-Vehicles CEO — Phase 3\nAI dashboard"]
   JOSH["Joshua — CTO\nHuman · all 3 products"]
@@ -101,9 +101,9 @@ flowchart LR
 
 ---
 
-### B. Station Rescue — Phase 1
+### B. Verifos — Phase 1
 
-Helium first. Marketplace for owners, technicians, suppliers. Owner-only knowledge room. **Not scored on Dipstify conversion.**
+Helium first. Marketplace for owners, technicians, suppliers. Public URL **verifos.co**. Owner-only knowledge room. **Not scored on Dipstify conversion.** Graduation, not a gate (`docs/VERIFOS_STANDARD.md`).
 
 ```mermaid
 flowchart LR
@@ -126,12 +126,12 @@ Pay is a placeholder (not live checkout): ₱500 assessment split 250/250; ₱25
 
 ### C. Dipstify — Phase 2
 
-Sibling to SR. Owners only (later same-login). Helium commercial ₱7k + ₱1k EOM. **Not SR CEO’s conversion KPI.**
+Sibling to Verifos. Owners only (later same-login). Commercial: **Basic ₱9,999** · **Staff + PnL ₱9,999**. **Not Verifos CEO’s conversion KPI.** Quiz HOLD.
 
 ```mermaid
 flowchart LR
   L["Owner feels ops leak"] -->|Human| D["Dipstify\nowners only"]
-  D -->|AI product + Human commercial| C["Helium ₱7k + ₱1k EOM"]
+  D -->|AI product + Human commercial| C["Basic ₱9,999 · Staff+PnL ₱9,999"]
   C -->|Human| F["CFO collects"]
 ```
 
@@ -183,7 +183,7 @@ flowchart LR
 | B SR | Marketplace → field job | Human (L2 + WhatsApp) |
 | B SR | Field job → pay placeholder | Human (Helium floor) |
 | C Dipstify | Ops leak → Dipstify | Human |
-| C Dipstify | Dipstify → ₱7k+₱1k EOM | AI product · Human commercial |
+| C Dipstify | Dipstify → ₱9,999 Basic · ₱9,999 Staff+PnL | AI product · Human commercial |
 | C Dipstify | EOM → CFO collects | Human |
 | D ODO-Vehicles | List → admin publish | Human |
 | D ODO-Vehicles | Publish → poke | Human (verify ops) |

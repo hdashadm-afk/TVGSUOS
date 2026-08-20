@@ -4,8 +4,9 @@
 
 ## Source of truth
 
-1. **Notion (preferred):** Founder OS — Command Center, Strategic Charter, SR + Dipstify Strategic Update (Aug 2026).
-2. **Local mirror when Notion is offline:** `FOUNDER_OS_COCKPIT` in `index.html` + this file + `FOUNDER_OS.md`.
+1. **Local operating SoT:** `docs/MASTER_DIRECTION.md` §0 + `docs/VERIFOS_OPERATING_LOCK.md` + `docs/VERIFOS_STANDARD.md`.
+2. **Notion (portfolio brain):** Founder OS — Command Center, Strategic Charter. Align to §0; do not resume from May 2026 venture table.
+3. **Local cockpit when Notion is offline:** `FOUNDER_OS_COCKPIT` in `index.html` + this file + `FOUNDER_OS.md`.
 
 ## Inputs Ver uses from this dashboard
 
@@ -24,8 +25,8 @@
 ## Prioritization order (“what should I do first?”)
 
 1. **Critical security / trust / governance risks**
-2. **SR September pilot work (Phase 1 CEO)** — marketplace + owner-only knowledge on https://station-rescue.vercel.app/. **Do not score SR on Dipstify conversion.**
-3. **Dipstify October / early market (Phase 2 CEO)** — Helium stations on ops; Field Kit pricing revisit Sep 1; Helium billing (₱7k + ₱1k/station, Aug start, collect every month-end); Gas Ops is a Dipstify workstream. Owner funnel from Rescue = later, owners only.
+2. **Verifos September pilot (Phase 1 CEO)** — live as Verifos on https://verifos.co/. Do not build Verifos Garage. **Do not score Verifos on Dipstify conversion.**
+3. **Dipstify October / early market (Phase 2 CEO)** — Helium stations on ops (3 numbers / 2 min); Field Kit pricing revisit Sep 1; Helium billing **Basic ₱9,999 · Staff + PnL ₱9,999** (locked 2026-08-19); **quiz HOLD** until founder unpauses. **Virality parked** until `quiz virality unlocked`. Gas Ops is a Dipstify workstream. Owner funnel from Verifos = later, owners only. **Do not put the quiz on Verifos.**
 4. **ODO-Vehicles (Phase 3 CEO)** — vehicle listings published, HPG certify, unlocks, LTO checklist. Property still exists (mandatory `/` triage). No % of vehicle price. **RV is not the market CEO** — franchise is a later program, not this dashboard.
 5. **Other ecosystem** only if still active in the masterplan (e.g. KOS→Dipstify rename when execution is still pending)
 
@@ -37,7 +38,7 @@ Never “I think.” **“Status is X. Action needed: Y. Owner: Z.”**
 
 - Gas Ops: “finish the whole app this week” (stale sprint wording) — Gas Ops itself = Dipstify
 - Free-floating “RV MVP parked” framing — use **ODO umbrella**; Vehicles CEO is the Phase 3 dashboard
-- Old Helium “confirm KOS pricing tier” wording — superseded by ₱7k + ₱1k/station EOM collect
+- Old Helium “confirm KOS pricing tier” / ₱7k+₱1k EOM wording — superseded by Basic ₱9,999 · Staff+PnL ₱9,999
 - ODO umbrella as unresolved — umbrella placement is set; execute under it
 - Dipstify conversion as an SR KPI
 - ₱50K auto-approve as a lock — it is a **proposal**

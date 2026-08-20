@@ -1,41 +1,43 @@
 # TVGSUOS — Portfolio Map
 
-Last updated: 2026-08-10
+Last updated: 2026-08-20
 Status: Active
 Owner: Edgardo Castro
 
 The real portfolio as it actually exists today — repos, domains, data stores, stage, and reporting lines. Not aspirational; update this file when something's stage genuinely changes, don't let it silently go stale.
 
-**Canonical tree:** `docs/ECOSYSTEM_REPO_TREE.md`. **Scale gates:** `docs/DIPSTIFY_SCALE_PLAN.md`. **Phase A (Claude):** `docs/PHASE_A_STATION_BOUNDARY.md`.
+**Operating masterplan:** `docs/MASTER_DIRECTION.md` §0. Tree: `docs/ECOSYSTEM_REPO_TREE.md`.
 
 ---
 
-## 1) Layers and ventures
+## 0) 2026 operating products (20 Aug)
 
-**Founder's OS is not a separate layer — it's TVGSUOS itself.** Founder's Space (Ver, the Daily Baseline Check's output, the cross-venture dashboard) is one of TVGSUOS's 9 governance areas, live in this repo's `index.html`. The Daily Baseline Check's actual scheduled *routine* (the process that generates that output) still runs via `katiwala-owner-os-` — a routine-execution detail noted under TVGSUOS's row below, not a reason to model it as its own layer.
+| Product | Public | Repo | Data store | Stage | Reports to |
+|---|---|---|---|---|---|
+| Founder OS / Ver | `tvgsuosweb.vercel.app` | `TVGSUOS` | Reads KOS Supabase (`jbhfd…`); no dedicated DB | Live cockpit | Founder |
+| **Verifos** (was Station Rescue / Vero) | **verifos.co** (DNS pending; deploy `station-rescue.vercel.app`) | `station-rescue` | `phqncq…` — stays separate | Phase 1 live marketplace. Graduation not a gate. Garage = 2027 | Verifos CEO brief → Founder |
+| Dipstify Station | dipstify.com | `katiwala-owner-os-` | Station shared `jbhfd…` | Phase 2 ops sibling. Basic ₱9,999 · Staff+PnL ₱9,999 EOM. Quiz HOLD | Dipstify CEO brief → Founder |
+| ODO Vehicles (+ Property) | ownerdirect.online | ODO / OwnerDirect | `qhjhsd…` | Phase 3. Mandatory `/` triage. Not RideVerified marketplace | ODO-Vehicles CEO brief → Founder |
 
-**Three pillars under Founder OS (locked 2026-08-10):**
+Do not merge Verifos and Dipstify DBs. Do not score Verifos on Dipstify conversion.
 
-1. **RideVerified** — ownership app (≠ marketplace) — later  
-2. **ODO** — Property + Vehicle **marketplace** — later  
-3. **Dipstify** — Station (now) · StationRescue · Delivery · Franchise  
+---
+
+## 1) Layers and ventures (July 18 baseline — still true for FOS/KOS/ODO infra)
+
+**Three layers, not four.** Founder's OS is not a separate layer — it's TVGSUOS itself. Founder's Space (Ver, the Daily Baseline Check's output, the cross-venture dashboard) is one of TVGSUOS's 9 governance areas, live in this repo's `index.html`. The Daily Baseline Check's actual scheduled *routine* (the process that generates that output) still runs via `katiwala-owner-os-` — a routine-execution detail noted under TVGSUOS's row below, not a reason to model it as its own layer.
 
 | Layer | System | Repo | Domain | Data store | Stage | Reports to |
 |---|---|---|---|---|---|---|
 | 1 | TVGSUOS (incl. Founder's Space) | `TVGSUOS` (this repo) | `theverifiedgroup.org` (not wired yet) / `tvgsuosweb.vercel.app` (live today, GitHub-connected — deploys from `main` automatically) | Reads/writes the KOS Supabase project — no dedicated database. `api/odo-status.js` also reads ODO's own separate project (`qhjhsdsluxgyjevbhfmk`) via service-role key. Founder's Space's Daily Baseline Check *display* reads `daily_baseline_checks` from the same KOS project; the check's own scheduled routine still runs via `katiwala-owner-os-`. | Phase 4 — all 9 governance areas live | Founder direct |
-| 2a | Dipstify / Station / Owner’s Lens | `katiwala-owner-os-` | `katiwalaai.app` (target) / live Vercel | KOS Supabase (`jbhfdmujqrtqkhacfegl`) | MVP_BUILD — **Phase A focus** | Lens → Ver |
-| 2a-mod | Station modules | `adminverified`, `fuel-ops`, `staffverified-app`, `pnlverified` | per-module | Admin shares KOS project; Ops still separate (`wtwgsygwofyqmxgckmjc`); Staff/PnL own or external | Mixed — Station attach | Lens → Ver |
-| 2b | Dipstify / StationRescue | Station RESQ (separate) | `station-rescue.vercel.app` | Own / SR Supabase | Pilot path | SERA → Ver (runtime later) |
-| 2c | Dipstify / Delivery | `dipstify-delivery-mvp` + `delivery-mvp.html` here | `tvgsuosweb.vercel.app/delivery-mvp.html` | No DB yet | MVP demo — parked for supplier | Delivery signals → Ver |
-| 2d | Dipstify / Franchise | none yet | TBD | TBD | Docs-only on map | → Ver |
-| 3 | ODO marketplace | OwnerDirect / ODO repo | `ownerdirect.online` | Own Supabase (`qhjhsdsluxgyjevbhfmk`) | MVP_BUILD — Property + Vehicle marketplace | Vera → Ver |
-| 4 | RideVerified (ownership) | [hmcmarketing](https://github.com/hdashadm-afk/hmcmarketing) → `ride-verified-ph/` | riderslamp.org (domain) | Own (when live) | Later — **≠ ODO** | → Ver |
+| 2 | Katiwala AI / KOS | `katiwala-owner-os-` | `katiwalaai.app` (target) / `katiwala-owner-os.vercel.app` (live today) | KOS Supabase project (`jbhfdmujqrtqkhacfegl`) | MVP_BUILD | Kath → Ver |
+| 3 | ODO / OwnerDirect Online | separate repo (not in this session's scope) | `ownerdirect.online` | Own, separate Supabase project | MVP_BUILD (Phase 1: buyer-side trust flow) | Vera → Ver |
 
 ## 2) Shared services (not a layer on their own)
 
 | System | Repo | Data store | Stage | Reports to |
 |---|---|---|---|---|
-| StaffVerified (Station HR & Payroll module) | `staffverified-app` | Own, separate Supabase project | Built — Tier 1 live | Lens → Ver |
+| StaffVerified (KOS's HR & Payroll module) | `staffverified-app` | Own, separate Supabase project | Built — Tier 1 (employee records, time/attendance, payroll, PH statutory contributions, payslips) live | Kath → Ver |
 
 ---
 

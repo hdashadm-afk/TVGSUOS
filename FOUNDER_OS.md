@@ -4,6 +4,9 @@ Persistent, dated implementation log for this repo. Read this first in any new s
 
 ---
 
+- **2026-08-20 (masterplan):** `docs/MASTER_DIRECTION.md` §0 is now the operating SoT (Verifos / Dipstify / ODO). Portfolio, handoff, org §B, CTO weekly loop, Ask Ver grounding aligned. Notion Command Center insert. Not committed until founder says go.
+- **2026-08-20 (Verifos name + URL):** Customer-facing **Verifos**. Public URL **verifos.co**. Replaces Vero and Station Rescue in product copy. Repo/DB unchanged. Standard still phased (`docs/VERIFOS_STANDARD.md`).
+
 - **2026-08-19 (one command):** Folded the pasted 6-tab spec into live `index.html`. Deleted `fos-dashboard.html` (duplicate). Pulse = live Top 3 + chairman + wired KOS cash/burn/runway. Decisions tab = the same live queue (Act On copy removed). Challenges = this-device list. Org/Flow/CEOs unchanged locks. Quiz HOLD + ₱9,999 on Dipstify CEO. No fake health rings. Not live on Vercel until founder says ship.
 
 - **2026-08-19 (quiz page built):** `/quiz` 404 was because `katiwala-owner-os-` had no `quiz.html`. Thin quiz + `POST /api/quiz/submit` (score only, **no DB write**) + privacy addendum + home nav “Station check” are in that repo. **Not live until founder says ship / push.** Tier B CTA = mailto support@dipstify.com until WhatsApp number.

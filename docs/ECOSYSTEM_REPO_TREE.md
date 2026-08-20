@@ -1,6 +1,6 @@
 # FOS Ecosystem Repo Tree
 
-Last updated: 2026-08-10  
+Last updated: 2026-08-20  
 Status: Active — single map for Claude and Cursor  
 Owner: Edgardo Castro
 
@@ -24,7 +24,7 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
     │   ├── OpsVerified      (fuel-ops)
     │   ├── StaffVerified
     │   └── PnLVerified
-    ├── StationRescue    ← services, parts, contractors
+    ├── Verifos           ← 2026 live marketplace (pumps + verified tech). Public URL verifos.co. Repo still station-rescue
     ├── Delivery         ← Dipstify Delivery Module (MVP parked for supplier)
     └── Franchise        ← map only until scoped
 ```
@@ -37,10 +37,11 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
 2. **RideVerified ≠ ODO** — ownership app vs marketplace. Do not nest RV under ODO.
 3. **riderslamp.org** under RideVerified, not ODO.
 4. **ODO** = Property ODO + Vehicle ODO (marketplace verticals only).
-5. **Dipstify** = Station / StationRescue / Delivery / Franchise (siblings).
-6. **Station ≠ StationRescue** — Station = owner daily ops; Rescue = services/parts/contractors.
+5. **Dipstify** = Station / Verifos / Delivery / Franchise (siblings).
+6. **Station ≠ Verifos** — Station = owner daily ops; Verifos = services/parts/contractors.
+6a. **Verifos** = master brand (HMC legal). **2026 product = Verifos** = this marketplace node. **Verifos Garage = 2027** — do not build it here; vehicle marketplace stays ODO. Operating lock: `docs/VERIFOS_OPERATING_LOCK.md`.
 7. **No mega-monorepo move now** — map first; merges only if founder greenlights.
-8. **Phase A** — Claude works **Dipstify / Station** only until founder says Station is done enough. See `docs/PHASE_A_STATION_BOUNDARY.md`.
+8. **2026 live work** — Verifos Phase A (Helium field jobs, graduation not a gate) + Dipstify Station ops. Station fence: `docs/PHASE_A_STATION_BOUNDARY.md`. Do not merge the two. Garage / insurers = 2027+.
 9. Scale ambition and volume gates: `docs/DIPSTIFY_SCALE_PLAN.md`.
 
 ---
@@ -55,7 +56,7 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
 | OpsVerified | `fuel-ops` | Dipstify / Station / OpsVerified |
 | StaffVerified | `staffverified-app` | Dipstify / Station / StaffVerified |
 | PnLVerified | `pnlverified` | Dipstify / Station / PnLVerified |
-| StationRescue | Station RESQ (separate) | Dipstify / StationRescue |
+| Verifos | `station-rescue` · **verifos.co** (deploy: station-rescue.vercel.app) | Dipstify sibling / Verifos marketplace |
 | Delivery | `dipstify-delivery-mvp` + `TVGSUOS/delivery-mvp.html` | Dipstify / Delivery |
 | Franchise | none yet | Dipstify / Franchise (docs-only) |
 | RideVerified | [hmcmarketing](https://github.com/hdashadm-afk/hmcmarketing) → `ride-verified-ph/` | FOS / RideVerified — **later** |
@@ -70,19 +71,21 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
 ## Supabase (today — not 1M)
 
 - Org Pro; founder recent charge ~$79.
-- Known projects (5 live): Station shared (`jbhfd…` — Lens + FOS + AdminVerified), Ops separate (`wtwgsy…`), Staff (`ttytdu…`), ODO (`qhjhsd…`), StationRescue (`phqncq…`).
-- **Goal = 4 DBs:** merge Ops → Station shared. Staff (+ PnL when built) stays separate. ODO + SR stay separate.
-- PnL/Acctg seats: may be same Admin as HR **or** a separate position — product supports combine or split. Admin Pack (Staff + PnL) proposed ₱9,999 entry — see `docs/DIPSTIFY_STATION_PLAN.md`.
+- Known projects (5 live): Station shared (`jbhfd…` — Lens + FOS + AdminVerified), Ops separate (`wtwgsy…`), Staff (`ttytdu…`), ODO (`qhjhsd…`), Verifos (`phqncq…`, repo still station-rescue).
+- **Goal = 4 DBs:** merge Ops → Station shared. Staff (+ PnL when built) stays separate. ODO + Verifos stay separate.
+- PnL/Acctg seats: may be same Admin as HR **or** a separate position — product supports combine or split. **Locked 2026-08-19:** Basic ₱9,999 · Staff+PnL (Admin Pack) ₱9,999 — see `docs/DIPSTIFY_STATION_PLAN.md`.
 - Ops merge: design-only until founder approves `docs/OPS_STATION_DB_MERGE_RISK_PACK.md`. Map does not change billing by itself.
+- **Verifos + Dipstify combine:** design-only until founder picks a phrase in `docs/SR_DIPSTIFY_MERGE_RISK_PACK.md`. Default remains siblings, not one DB.
 
 ---
 
 ## Proceed sequence
 
 1. Keep this map + FOS UI / Notion aligned.
-2. Claude: Dipstify / Station until founder unlocks next.
-3. Parked: Delivery (supplier), Franchise (scope), RideVerified, ODO marketplace depth, Ops DB merge (own session).
-4. Unlock next pillar only when cash / GTM needs it.
-5. **ODO prep (docs only, 2026-08-11):** `docs/ODO_PREP.md` — no build until founder says `odo unlocked — run until done`.
-6. **RideVerified prep (docs only, 2026-08-11):** `docs/RIDEVERIFIED_PREP.md` — no build until founder says `rideverified unlocked — run until done`.
-7. **Phase E approve pack:** `docs/PHASE_E_APPROVE_PACK.md` — design only; phrase `phase e design approved`.
+2. **Verifos (20 Aug 2026):** registrar points **verifos.co** at the existing Vercel project. Do not build Verifos Garage.
+3. Claude: Verifos Phase A + Dipstify Station ops. Do not merge. Do not start Garage.
+4. Parked: Delivery (supplier), Franchise (scope), RideVerified, ODO marketplace depth, Ops DB merge (own session).
+5. Unlock next pillar only when cash / GTM needs it.
+6. **ODO prep (docs only, 2026-08-11):** `docs/ODO_PREP.md` — no build until founder says `odo unlocked — run until done`.
+7. **RideVerified prep (docs only, 2026-08-11):** `docs/RIDEVERIFIED_PREP.md` — no build until founder says `rideverified unlocked — run until done`.
+8. **Phase E approve pack:** `docs/PHASE_E_APPROVE_PACK.md` — design only; phrase `phase e design approved`.

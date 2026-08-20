@@ -89,8 +89,9 @@ Hard = launch cannot go public without it.
 | D9 | **E+1 RLS** (DB multi-client isolation) | **Hard before client #2** · not required if Oct 8 = Helium only | Phase E designed, not fully on |
 | D10 | Name billing processor in ToS when subscriptions charge | When billing goes live | TBD |
 | D11 | Update policy if Ops DB merge changes “3 Station-family DBs” | When merge ships | Not merged |
+| D12 | Privacy names **cold quiz** (`/quiz` answers + session_id). Live `privacy.html` matches `docs/npc/PRIVACY_DIPSTIFY_HMC_2026-08-13.md`. **No quiz DB row until this is live.** | **Hard before first stored quiz** | Notice drafted 19 Aug. Live page not yet. |
 
-**Dipstify go / no-go (Oct 8, Helium commercial):** H1–H4 + D1–D4 green.  
+**Dipstify go / no-go (Oct 8, Helium commercial):** H1–H4 + D1–D4 green. Quiz ads 6–10 Oct also need **D12**.  
 **Second station client:** D8 + D9 green — do not market multi-tenant until then.
 
 ---

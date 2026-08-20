@@ -1,6 +1,6 @@
 # TVGSUOS — Handoff Protocol
 
-Last updated: 2026-07-18
+Last updated: 2026-08-20
 Status: Active
 Owner: Edgardo Castro
 
@@ -14,9 +14,9 @@ Read, in order, before doing anything else:
 
 1. This file.
 2. `FOUNDER_OS.md` — the running, dated implementation log. This is the fastest way to know the actual current state; treat it as more current than your own assumptions.
-3. `docs/MASTER_DIRECTION.md` — the baseline (mission, ecosystem, governance areas, ventures, working rules).
-4. `docs/ECOSYSTEM_REPO_TREE.md` — locked 3-pillar map (RideVerified · ODO · Dipstify); `docs/PHASE_A_STATION_BOUNDARY.md` when doing Station work; `docs/DIPSTIFY_SCALE_PLAN.md` for scale gates.
-5. `docs/GOVERNANCE_MODEL.md` and `docs/PORTFOLIO_MAP.md` as needed for the specific task.
+3. `docs/MASTER_DIRECTION.md` — **§0 is the 20 Aug 2026 operating masterplan** (Verifos / Dipstify / ODO). Later sections are the July 18 baseline.
+4. `docs/VERIFOS_OPERATING_LOCK.md` + `docs/VERIFOS_STANDARD.md` when the task is Verifos (marketplace).
+5. `docs/GOVERNANCE_MODEL.md`, `docs/PORTFOLIO_MAP.md`, and `docs/ECOSYSTEM_REPO_TREE.md` as needed.
 
 Do not start building against remembered context from a prior conversation that isn't reflected in these files. If it isn't written down here, treat it as not decided.
 

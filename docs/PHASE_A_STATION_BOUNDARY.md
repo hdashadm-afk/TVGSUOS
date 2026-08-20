@@ -1,10 +1,10 @@
 # Phase A — Station boundary (Claude)
 
-Last updated: 2026-08-10  
-Status: Active  
+Last updated: 2026-08-20  
+Status: Active — Dipstify Station fence only  
 Owner: Edgardo Castro
 
-**Phase A = Dipstify / Station only.** Claude (and any Station-scoped Cursor work the founder assigns) stays inside this boundary until the founder says Station is done enough.
+**This file is the Dipstify Station fence** (owner books / Lens). It does **not** freeze Verifos. 2026 live marketplace = Verifos (`docs/MASTER_DIRECTION.md` §0). Work Verifos in its own repo. Do not merge.
 
 ---
 
@@ -29,7 +29,7 @@ Station foundations that do **not** break the boundary (allowed as schema/storag
 5. ODO Property / Vehicle marketplace depth
 6. FOS AGI Phase 2 (auto Lens→Ver pipe)
 7. OpsVerified Supabase merge into Station shared DB (own scoped session when greenlit)
-8. Mega-monorepo physical merges
+8. Mega-monorepo physical merges (incl. SR + Dipstify Station unless a phrase in `docs/SR_DIPSTIFY_MERGE_RISK_PACK.md` is used)
 
 ---
 
