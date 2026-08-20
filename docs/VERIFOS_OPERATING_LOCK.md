@@ -21,6 +21,7 @@ Masterplan: `docs/MASTER_DIRECTION.md` §0
 | Master brand | **Verifos** | Customer-facing |
 | 2026 product | **Verifos** | Pumps + verified tech. Same app. |
 | Public URL | **verifos.co** | Canonical |
+| Product inbox | **support@verifos.co** | Routes to shared ops Gmail (`hmcp119105@gmail.com`). Not Lens. Not `support@stationrescue.com`. |
 | Deploy URL | station-rescue.vercel.app | Until DNS is attached |
 | Badge | Verifos Verified | Earned when the standard is met — never a lockout |
 

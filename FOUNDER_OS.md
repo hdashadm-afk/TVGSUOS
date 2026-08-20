@@ -4,7 +4,8 @@ Persistent, dated implementation log for this repo. Read this first in any new s
 
 ---
 
-- **2026-08-20 (masterplan):** `docs/MASTER_DIRECTION.md` §0 is now the operating SoT (Verifos / Dipstify / ODO). Portfolio, handoff, org §B, CTO weekly loop, Ask Ver grounding aligned. Notion Command Center insert. Not committed until founder says go.
+- **2026-08-20 (Verifos mailbox):** Product inbox **`support@verifos.co`** (replaces `support@stationrescue.com`). Routes to shared ops Gmail per `docs/PRIVACY_LAUNCH_GATES.md`. Logged on Dipstify/Lens plan — Lens users still `support@dipstify.com`. Live in station-rescue `5ddac2d`.
+- **2026-08-20 (masterplan):** `docs/MASTER_DIRECTION.md` §0 is now the operating SoT (Verifos / Dipstify / ODO). Portfolio, handoff, org §B, CTO weekly loop, Ask Ver grounding aligned. Notion Command Center insert. Shipped `563dd2b`.
 - **2026-08-20 (Verifos name + URL):** Customer-facing **Verifos**. Public URL **verifos.co**. Replaces Vero and Station Rescue in product copy. Repo/DB unchanged. Standard still phased (`docs/VERIFOS_STANDARD.md`).
 
 - **2026-08-19 (one command):** Folded the pasted 6-tab spec into live `index.html`. Deleted `fos-dashboard.html` (duplicate). Pulse = live Top 3 + chairman + wired KOS cash/burn/runway. Decisions tab = the same live queue (Act On copy removed). Challenges = this-device list. Org/Flow/CEOs unchanged locks. Quiz HOLD + ₱9,999 on Dipstify CEO. No fake health rings. Not live on Vercel until founder says ship.

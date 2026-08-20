@@ -40,7 +40,9 @@ Daily ground truth for 1–2 station Smart Stations (Helium first): variance, op
 | StaffVerified | `staffverified-app` | Staff `ttytdu…` | Keep separate; Admin Pack |
 | PnLVerified | thin / Excel OK | none required | Lives with Staff DB when built; flexible seats |
 
-**Out of Station Phase A:** StationRescue depth, Delivery, Franchise, RideVerified, ODO marketplace, KOS→Dipstify GitHub rename.
+**Out of Station Phase A:** Verifos marketplace depth (sibling — own repo/DB), Delivery, Franchise, RideVerified, ODO marketplace, KOS→Dipstify GitHub rename.
+
+**Verifos (sibling, not Lens):** public URL **verifos.co**. Product inbox **`support@verifos.co`** → shared ops Gmail. Lens users stay **`support@dipstify.com`**. Do not merge mailboxes or products.
 
 ---
 

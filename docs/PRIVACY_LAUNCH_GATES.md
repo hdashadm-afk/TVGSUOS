@@ -34,7 +34,10 @@ HMC company site can come later. It does **not** block either launch. Both produ
 | `privacy@hmcmarketing.tech` | Public privacy | `hmcp119105@gmail.com` |
 | `hello@hmcmarketing.tech` | HMC inbound | `hmcp119105@gmail.com` |
 | `support@ownerdirect.online` | ODO users | `hmcp119105@gmail.com` |
-| `support@dipstify.com` | Dipstify users | `hmcp119105@gmail.com` |
+| `support@dipstify.com` | Dipstify / Lens users | `hmcp119105@gmail.com` |
+| `support@verifos.co` | **Verifos** users (marketplace) | `hmcp119105@gmail.com` |
+
+**Removed:** `support@stationrescue.com` — do not publish. Verifos inbox is **`support@verifos.co`** (locked 20 Aug 2026).
 
 **Rojelyn (from the shared Gmail) sends to `ed.castro@` if:** NPC/lawyer, payment dispute, scam / “wire to escrow”, ID/PIN/payroll leak, press/bank/partner asking for the founder.
 
@@ -48,7 +51,7 @@ Hard = launch cannot go public without it.
 |---|---|---|---|
 | H1 | Create `ed.castro@`, `operations@`, `privacy@` on `hmcmarketing.tech` | **Hard** | Not created |
 | H2 | Forward `ed.castro@` → `edc.helium@gmail.com` | **Hard** | Not set |
-| H3 | Shared ops Gmail `hmcp119105@gmail.com` created; route privacy/operations/hello + both support@ there; share login with Rojelyn (2FA on Ed’s phone) | **Hard** | Gmail created; routing not set |
+| H3 | Shared ops Gmail `hmcp119105@gmail.com` created; route privacy/operations/hello + all three `support@` (ODO, Dipstify, Verifos) there; share login with Rojelyn (2FA on Ed’s phone) | **Hard** | Gmail created; routing not set |
 | H4 | Send a test mail to `privacy@` and confirm it arrives | **Hard** | Not done |
 | H5 | Rojelyn one-pager: triage rules above (Telegram or Notion — she has no Desktop folder) | Soft | Not written |
 | H6 | **NPC: submit one HMC registration** (two DPS: ODO + Dipstify) — pack: `docs/NPC_APPLICATION_PACK.md` | **Hard = filed before 8 Sept.** Certificate in hand is soft (NPC review time). | Not filed |
