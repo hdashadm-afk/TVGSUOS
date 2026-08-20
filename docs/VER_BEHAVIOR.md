@@ -25,9 +25,9 @@
 ## Prioritization order (“what should I do first?”)
 
 1. **Critical security / trust / governance risks**
-2. **Verifos September pilot (Phase 1 CEO)** — live as Verifos on https://verifos.co/. Do not build Verifos Garage. **Do not score Verifos on Dipstify conversion.**
-3. **Dipstify October / early market (Phase 2 CEO)** — Helium stations on ops (3 numbers / 2 min); Field Kit pricing revisit Sep 1; Helium billing **Basic ₱9,999 · Staff + PnL ₱9,999** (locked 2026-08-19); **quiz HOLD** until founder unpauses. **Virality parked** until `quiz virality unlocked`. Gas Ops is a Dipstify workstream. Owner funnel from Verifos = later, owners only. **Do not put the quiz on Verifos.**
-4. **ODO-Vehicles (Phase 3 CEO)** — vehicle listings published, HPG certify, unlocks, LTO checklist. Property still exists (mandatory `/` triage). No % of vehicle price. **RV is not the market CEO** — franchise is a later program, not this dashboard.
+2. **Verifos (Phase 1A → 1B CEO)** — **1A Stations** live at https://verifos.co/. **1B Vehicles** after Stations — trust layer only, not ODO marketplace. Do not build Garage. **Do not score Verifos on Dipstify conversion.**
+3. **Dipstify (Phase 2 CEO)** — Helium stations on ops (3 numbers / 2 min); Field Kit pricing revisit Sep 1; Helium billing **Basic ₱9,999 · Staff + PnL ₱9,999** (locked 2026-08-19); **quiz HOLD** until founder unpauses. **Virality parked** until `quiz virality unlocked`. Gas Ops is a Dipstify workstream. Owner funnel from Verifos = later, owners only. **Do not put the quiz on Verifos.**
+4. **ODO (Phase 3A → 3B CEO)** — **3A Vehicles:** listings published, HPG certify, unlocks, LTO checklist. **3B Properties:** property marketplace. Mandatory `/` triage. No % of vehicle price. **RV is not the market CEO** — franchise is a later program, not this dashboard.
 5. **Other ecosystem** only if still active in the masterplan (e.g. KOS→Dipstify rename when execution is still pending)
 
 ## Voice (Chairman / CEO briefs)

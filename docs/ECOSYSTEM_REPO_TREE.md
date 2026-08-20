@@ -24,7 +24,8 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
     │   ├── OpsVerified      (fuel-ops)
     │   ├── StaffVerified
     │   └── PnLVerified
-    ├── Verifos           ← 2026 live marketplace (pumps + verified tech). Public URL verifos.co. Repo still station-rescue
+    ├── Verifos Stations    ← 2026 live — trust layer for stations (pumps + verified tech). verifos.co
+    ├── Verifos Vehicles    ← later — trust layer for vehicles. NOT marketplace (ODO-Vehicles is marketplace)
     ├── Delivery         ← Dipstify Delivery Module (MVP parked for supplier)
     └── Franchise        ← map only until scoped
 ```
@@ -39,9 +40,9 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
 4. **ODO** = Property ODO + Vehicle ODO (marketplace verticals only).
 5. **Dipstify** = Station / Verifos / Delivery / Franchise (siblings).
 6. **Station ≠ Verifos** — Station = owner daily ops; Verifos = services/parts/contractors.
-6a. **Verifos** = master brand (HMC legal). **2026 product = Verifos** = this marketplace node. **Verifos Garage = 2027** — do not build it here; vehicle marketplace stays ODO. Operating lock: `docs/VERIFOS_OPERATING_LOCK.md`.
+6a. **Verifos** = master brand (HMC legal). **Verifos Stations** = 2026 live trust layer at verifos.co (repo `station-rescue`). **Verifos Vehicles** = later trust layer — do not build; **ODO-Vehicles** stays the vehicle marketplace. Operating lock: `docs/VERIFOS_OPERATING_LOCK.md`.
 7. **No mega-monorepo move now** — map first; merges only if founder greenlights.
-8. **2026 live work** — Verifos Phase A (Helium field jobs, graduation not a gate) + Dipstify Station ops. Station fence: `docs/PHASE_A_STATION_BOUNDARY.md`. Do not merge the two. Garage / insurers = 2027+.
+8. **2026 live work** — **1A Verifos Stations** (Helium field jobs, graduation not a gate). **1B Verifos Vehicles** after 1A. **Phase 2** Dipstify Station ops. **3A/3B ODO** = marketplaces later. Station fence: `docs/PHASE_A_STATION_BOUNDARY.md`. Do not merge Verifos and Dipstify. Garage / insurers = 2027+.
 9. Scale ambition and volume gates: `docs/DIPSTIFY_SCALE_PLAN.md`.
 
 ---

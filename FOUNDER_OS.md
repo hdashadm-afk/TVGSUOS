@@ -4,7 +4,9 @@ Persistent, dated implementation log for this repo. Read this first in any new s
 
 ---
 
-- **2026-08-20 (Verifos mailbox):** Product inbox **`support@verifos.co`** (replaces `support@stationrescue.com`). Routes to shared ops Gmail per `docs/PRIVACY_LAUNCH_GATES.md`. Logged on Dipstify/Lens plan — Lens users still `support@dipstify.com`. Live in station-rescue `5ddac2d`.
+- **2026-08-20 (portfolio phase lock):** **1A** Verifos Stations → **1B** Verifos Vehicles → **2** Dipstify → **3A** ODO-Vehicles → **3B** ODO-Properties. Verifos = trust layer. ODO = marketplace. Cockpit still 3 CEOs; 1B and 3B roll under Verifos and ODO lanes until split.
+- **2026-08-20 (Verifos Stations / ODO split):** **Verifos** = trust/service layer (protect owners, guide techs). **Verifos Stations** = live product line. **Verifos Vehicles** = later — not ODO marketplace. **ODO Property + Vehicles** = marketplace unchanged.
+- **2026-08-20 (Verifos mailbox):** Product inbox **`support@verifos.co`**. Lens users still `support@dipstify.com`. Live station-rescue `5ddac2d`.
 - **2026-08-20 (masterplan):** `docs/MASTER_DIRECTION.md` §0 is now the operating SoT (Verifos / Dipstify / ODO). Portfolio, handoff, org §B, CTO weekly loop, Ask Ver grounding aligned. Notion Command Center insert. Shipped `563dd2b`.
 - **2026-08-20 (Verifos name + URL):** Customer-facing **Verifos**. Public URL **verifos.co**. Replaces Vero and Station Rescue in product copy. Repo/DB unchanged. Standard still phased (`docs/VERIFOS_STANDARD.md`).
 

@@ -2082,7 +2082,7 @@
       </div>
 
       <div class="cmd-panel" id="cmd-ceos" role="tabpanel">
-        <p class="ceo-dash-note">Phase 1 SR → Phase 2 Dipstify → Phase 3 ODO-Vehicles. Count KPIs are <strong>manual until wired</strong> — no fake live numbers. SR CEO is not scored on Dipstify conversion. ODO Property still exists; this CEO is the Vehicles lane.</p>
+        <p class="ceo-dash-note">1A Verifos Stations → 1B Verifos Vehicles → 2 Dipstify → 3A ODO-Vehicles → 3B ODO-Properties. Count KPIs are <strong>manual until wired</strong> — no fake live numbers. Verifos CEO is not scored on Dipstify conversion. ODO CEO covers 3A now; 3B Properties still exists.</p>
         <div class="venture-updates" id="ceo-dashboard-grid"></div>
       </div>
 
@@ -2119,9 +2119,9 @@
                   <ul>
                     <li>Ver — briefing only. Status / Action / Owner. No hire, no spend. <span class="org-kind kind-ai">AI</span>
                       <ul>
-                        <li>SR CEO — Phase 1 Rescue. Marketplace + owner knowledge. Not Dipstify conversion. <span class="org-kind kind-ai">AI</span></li>
+                        <li>Verifos CEO — 1A Stations, then 1B Vehicles. Trust layer. Not Dipstify conversion. <span class="org-kind kind-ai">AI</span></li>
                         <li>Dipstify CEO — Phase 2 ops. Sibling. Basic ₱9,999 · Staff+PnL ₱9,999. <span class="org-kind kind-ai">AI</span></li>
-                        <li>ODO-Vehicles CEO — Phase 3 market. Property still exists. <span class="org-kind kind-ai">AI</span></li>
+                        <li>ODO CEO — 3A Vehicles, 3B Properties. Marketplace. <span class="org-kind kind-ai">AI</span></li>
                       </ul>
                     </li>
                     <li>Joshua — CTO, all three products <span class="org-kind kind-human">Human</span></li>
@@ -2155,15 +2155,15 @@
             </div>
           </div>
           <div class="flow-block">
-            <h4>B. Rescue — Phase 1</h4>
+            <h4>B. Verifos — 1A Stations → 1B Vehicles</h4>
             <div class="flow-steps">
               <span class="flow-step">Owner pain<span class="flow-stamp">Human</span></span>
               <span class="flow-arrow">→</span>
-              <span class="flow-step">Knowledge room<span class="flow-stamp">Owners only</span></span>
+              <span class="flow-step">Trust record<span class="flow-stamp">Verifos</span></span>
               <span class="flow-arrow">→</span>
-              <span class="flow-step">Marketplace need<span class="flow-stamp">AI product</span></span>
+              <span class="flow-step">Verified tech<span class="flow-stamp">L2 + WhatsApp</span></span>
               <span class="flow-arrow">→</span>
-              <span class="flow-step">Field job<span class="flow-stamp">L2 + WhatsApp</span></span>
+              <span class="flow-step">Field job<span class="flow-stamp">Helium first</span></span>
               <span class="flow-arrow">→</span>
               <span class="flow-step">Pay placeholder<span class="flow-stamp">Helium floor</span></span>
             </div>
@@ -2181,7 +2181,7 @@
             </div>
           </div>
           <div class="flow-block">
-            <h4>D. ODO Vehicles — Phase 3</h4>
+            <h4>D. ODO — 3A Vehicles → 3B Properties</h4>
             <div class="flow-steps">
               <span class="flow-step">List<span class="flow-stamp">Seller</span></span>
               <span class="flow-arrow">→</span>
@@ -3311,9 +3311,11 @@
         note: 'Locked 2026-08-19. ₱7k+₱1k/station sheet superseded.',
       },
       phases: {
-        1: 'Verifos — marketplace (owners, techs, suppliers) + owner-only knowledge. Helium first. verifos.co.',
-        2: 'Dipstify — ops sibling. Basic ₱9,999 · Staff+PnL ₱9,999. Not SR.',
-        3: 'ODO-Vehicles — listings, HPG, unlocks, LTO. Property still exists. Not RideVerified marketplace.',
+        '1A': 'Verifos Stations — trust layer for stations. Helium first. verifos.co. Ship now.',
+        '1B': 'Verifos Vehicles — trust layer for vehicles. After 1A. Not ODO marketplace.',
+        2: 'Dipstify — ops sibling. Basic ₱9,999 · Staff+PnL ₱9,999. Not Verifos.',
+        '3A': 'ODO-Vehicles — marketplace. Listings, HPG, unlocks, LTO.',
+        '3B': 'ODO-Properties — marketplace. Mandatory / triage.',
       },
       // Chairman + 3 CEO briefing loop (FOS/Ver). Not a replacement of companies.
       chairman: {
@@ -3347,11 +3349,11 @@
         {
           id: 'sr',
           title: 'SR CEO',
-          phase: 'Phase 1',
-          product: 'Verifos',
+          phase: 'Phase 1A',
+          product: 'Verifos Stations',
           href: 'https://verifos.co/',
           hrefLabel: 'Open verifos.co →',
-          lock: 'Verifos 2026. Public URL verifos.co. Garage 2027. Helium first. No “Powered by Dipstify.” Not scored on Dipstify conversion.',
+          lock: 'Verifos 1A now · 1B Vehicles after Stations. Public URL verifos.co. Garage 2027. Helium first. No “Powered by Dipstify.” Not scored on Dipstify conversion.',
           kpis: [
             { name: 'Auth / waitlist', value: 'Auth live · waitlist OK', sub: 'Signup smoke deferred — profiles schema cache', wired: false },
             { name: 'Helium owner posts', value: '—', sub: 'Pain-room / knowledge, owners only', wired: false },
@@ -3381,11 +3383,11 @@
         {
           id: 'odo-vehicles',
           title: 'ODO-Vehicles CEO',
-          phase: 'Phase 3',
-          product: 'OwnerDirect — Vehicles',
+          phase: 'Phase 3A',
+          product: 'ODO-Vehicles',
           href: 'https://ownerdirect.online/',
           hrefLabel: 'Open ownerdirect.online →',
-          lock: 'Vehicles lane KPIs. Property still exists — mandatory / triage. No % of vehicle price. RV franchise = later program, not this dashboard.',
+          lock: '3A Vehicles lane KPIs. 3B Properties still exists — mandatory / triage. No % of vehicle price. RV franchise = later program, not this dashboard.',
           kpis: [
             { name: 'Vehicle listings published', value: '—', sub: 'Vehicles lane only', wired: false },
             { name: 'HPG certify', value: '—', sub: 'Certification progress', wired: false },

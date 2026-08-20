@@ -18,9 +18,10 @@ Masterplan: `docs/MASTER_DIRECTION.md` §0
 | Layer | Name | Now |
 |---|---|---|
 | Legal | HMC | Contracts, PIC |
-| Master brand | **Verifos** | Customer-facing |
-| 2026 product | **Verifos** | Pumps + verified tech. Same app. |
-| Public URL | **verifos.co** | Canonical |
+| Master brand | **Verifos** | Trust / service layer — protect owners, guide technicians |
+| **2026 product line** | **Verifos Stations** (Phase **1A**) | Stations: pumps, verified tech, suppliers. Same app at verifos.co. **Ship now.** |
+| **Next product line** | **Verifos Vehicles** (Phase **1B**) | Same trust layer for vehicles — **not** the vehicle marketplace. **After 1A.** Do not build now. |
+| Public URL | **verifos.co** | Canonical for Stations now |
 | Product inbox | **support@verifos.co** | Routes to shared ops Gmail (`hmcp119105@gmail.com`). Not Lens. Not `support@stationrescue.com`. |
 | Deploy URL | station-rescue.vercel.app | Until DNS is attached |
 | Badge | Verifos Verified | Earned when the standard is met — never a lockout |
@@ -54,7 +55,21 @@ Do not lock a tech out of a Helium job for a missing serial, photo, or cert.
 
 **2026 commercial (unchanged):** owners free + verified. Tech ₱500/mo after first month free. Supplier ₱1,000/mo after first month free, L2 to list. Assessment ₱500 (₱250 Verifos / ₱250 tech). Job txn ₱250. **No % of job value.** Pay placeholder. This sheet wins over Garage prices in the framework.
 
-**Verifos Ops this year** = the Rescue job/inventory record. **Not** Dipstify books. **Verifos Garage = 2027.**
+**Verifos Ops this year** = the job/inventory record on **Verifos Stations (1A)**. **Not** Dipstify books. **Verifos Vehicles (1B)** = after Stations. **ODO-Vehicles (3A)** and **ODO-Properties (3B)** = marketplaces — separate products.
+
+---
+
+## Ecosystem phase sequence (locked 20 Aug 2026)
+
+| Phase | Product | Role |
+|---|---|---|
+| **1A** | Verifos Stations | Trust layer — stations. **Now.** |
+| **1B** | Verifos Vehicles | Trust layer — vehicles. After 1A. |
+| **2** | Dipstify | Owner daily ops / books. Sibling. |
+| **3A** | ODO-Vehicles | Marketplace — vehicle transactions. |
+| **3B** | ODO-Properties | Marketplace — property transactions. |
+
+Masterplan: `docs/MASTER_DIRECTION.md` §0.
 
 ---
 
