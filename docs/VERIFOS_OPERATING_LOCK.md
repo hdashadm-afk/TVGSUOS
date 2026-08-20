@@ -1,9 +1,11 @@
 # Verifos — operating lock
 
-Locked: 20 Aug 2026  
+Locked: 21 Aug 2026  
 Owner: Edgar “Best” Dada · HMC  
 Framework: `docs/VERIFOS_VERIFICATION_FRAMEWORK.md`  
 Masterplan: `docs/MASTER_DIRECTION.md` §0
+
+**Customer brand:** **Verifos**. Station Rescue / SR / Vero retired in product copy. Engineering repo may still be `station-rescue`.
 
 **How we use the framework:** sections 1–5 and 11 are the job file for a Helium pump this year. TAM, Garage, insurance, and banks stay in the framework as later. They are not this week’s build.
 
@@ -21,9 +23,9 @@ Masterplan: `docs/MASTER_DIRECTION.md` §0
 | Master brand | **Verifos** | Trust / service layer — protect owners, guide technicians |
 | **2026 product line** | **Verifos Stations** (Phase **1A**) | Stations: pumps, verified tech, suppliers. Same app at verifos.co. **Ship now.** |
 | **Next product line** | **Verifos Vehicles** (Phase **1B**) | Same trust layer for vehicles — **not** the vehicle marketplace. **After 1A.** Do not build now. |
-| Public URL | **verifos.co** | Canonical for Stations now |
+| Public URL | **verifos.co** | Live (20 Aug 2026). Alias: station-rescue.vercel.app |
 | Product inbox | **support@verifos.co** | Routes to shared ops Gmail (`hmcp119105@gmail.com`). Not Lens. Not `support@stationrescue.com`. |
-| Deploy URL | station-rescue.vercel.app | Until DNS is attached |
+| Deploy / engineering | Vercel project `station-rescue` · repo `station-rescue` | Engineering names only — customer brand is Verifos |
 | Badge | Verifos Verified | Earned when the standard is met — never a lockout |
 
 Registered ≠ verified. Protection = evidence, not insurance. Minimum in → standard as the goal → badge/credits for who gets there.
@@ -73,7 +75,7 @@ Masterplan: `docs/MASTER_DIRECTION.md` §0.
 
 ---
 
-## Framework → live Rescue
+## Framework → live Verifos Stations
 
 | Framework | Live today | Gap this year |
 |---|---|---|
@@ -88,6 +90,7 @@ Masterplan: `docs/MASTER_DIRECTION.md` §0.
 | Post-service test | `post_test_note` on diagnose screen | — |
 | Trust explainer | `/trust` — 5 asset params + 4 protections + listing states | — |
 | Transaction record | Assessment + quote + txn fee flags | Full §5 file on one screen |
+| Public domain | **verifos.co** live | PC DNS cache may lag; phone confirmed |
 
 ---
 
@@ -95,15 +98,14 @@ Masterplan: `docs/MASTER_DIRECTION.md` §0.
 
 On `/provider/field` a job may start on symptom alone. The **standard** (see `docs/VERIFOS_STANDARD.md`) is still serial, before-note, who did it, work + part, post-test. Prompt those. Do not block. Badge path when they are present.
 
-That is Verifos Station. Not Garage. Not a new app.
+That is Verifos Station. Not Garage. Not a new app. Customer name is **Verifos** — not Station Rescue / SR.
 
 ---
 
-## Domain (you, at the registrar)
+## Domain
 
-1. Open the account that registered **verifos.co**.  
-2. Add the domain to the **station-rescue** Vercel project (same as station-rescue.vercel.app).  
-3. Put the A / CNAME records Vercel shows.  
-4. Tell me when the domain answers — I wire redirect from stationrescue.com and the privacy URL list.
+**Done (20 Aug 2026):** `verifos.co` + `www` on Vercel project `station-rescue`. Namecheap A `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com`. Live on phone.
+
+**Still founder:** Supabase Auth Site URL / Redirect URLs → `https://verifos.co` (and `https://verifos.co/**`). Optional: redirect stationrescue.com → verifos.co.
 
 Do not build Garage, buyer reports, or bank/insurance streams.

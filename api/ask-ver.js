@@ -34,9 +34,9 @@ const GROUNDING_DOCS = [
 // Local mirror of Command Center focus (edit with FOUNDER_OS_COCKPIT in index.html).
 // Notion SoT when MCP/API available: Founder OS Command Center + Strategic Charter.
 const MASTERPLAN_CONTEXT = `
-## Current masterplan focus (20 Aug 2026) — MASTER_DIRECTION.md §0
-Active: Verifos, Dipstify, ODO-Vehicles. HMC legal. FOS/Ver orchestrates. Do not merge products.
-Master brand and public URL: Verifos / verifos.co. Deploy may still be station-rescue.vercel.app until DNS is attached.
+## Current masterplan focus (21 Aug 2026) — MASTER_DIRECTION.md §0
+Active: Verifos, Dipstify, ODO. HMC legal. FOS/Ver orchestrates. Do not merge products.
+Master brand and public URL: **Verifos / verifos.co** (live). Engineering repo may still be station-rescue — customer name is Verifos, not Station Rescue / SR.
 Graduation, not a gate: accept the minimum; standard is written; reward who follows it. Never fake Verified.
 Verifos Garage = 2027. Do not build a vehicle vault in this product. Vehicle marketplace stays ODO.
 Chairman + 3 CEOs = a briefing loop inside FOS/Ver. Not a new org chart. Ver, Lens, Vera stay.
@@ -119,14 +119,14 @@ module.exports = async function handler(req, res) {
         model: 'claude-sonnet-5',
         max_tokens: 600,
         output_config: { effort: 'low' },
-        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for Verifos (was Station Rescue), Dipstify, and ODO-Vehicles. Chairman + 3 CEOs is a briefing loop you run, not the companies. The founder is asking what to do first today.
+        system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for Verifos, Dipstify, and ODO. Chairman + 3 CEOs is a briefing loop you run, not the companies. The founder is asking what to do first today.
 
 Answer format — STRICT:
 1. Reply with exactly **3 numbered actions**, nothing else before them.
 2. Each line: \`N. [Action] — [one-line why / where to tap]\`
 3. Prioritize in this order ONLY:
    Step 1: Critical security / trust / governance risks (Security status, bottleneck signals).
-   Step 2: Verifos Phase 1A CEO work (Stations trust layer; public URL verifos.co; deploy may still be station-rescue.vercel.app). 1B Vehicles after 1A — do not build now. Graduation not a gate. Never score Verifos on Dipstify conversion. Do not build Garage.
+   Step 2: Verifos Phase 1A CEO work (Stations trust layer; public URL verifos.co live). Pain first: tech + parts; registry compounds from jobs. 1B Vehicles after 1A — do not build now. Graduation not a gate. Never score Verifos on Dipstify conversion. Do not build Garage.
    Step 3: Dipstify Phase 2 CEO work (Helium stations on ops; Field Kit revisit Sep 1; Basic ₱9,999 · Staff+PnL ₱9,999 EOM collect; Gas Ops as Dipstify workstream; quiz HOLD).
    Step 4: ODO Phase 3A CEO (Vehicles marketplace: listings, HPG, unlocks, LTO) only when it does not displace Steps 1–3. 3B Properties still exists. RV is not the market CEO.
    Step 5: Only then other ecosystem tasks still active in the masterplan (e.g. KOS→Dipstify rename if pending execution).

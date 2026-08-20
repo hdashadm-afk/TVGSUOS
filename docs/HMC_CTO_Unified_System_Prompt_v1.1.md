@@ -1,9 +1,9 @@
 # HMC CTO Unified System Prompt
 
 **Version:** 1.1  
-**Date:** 20 Aug 2026  
+**Date:** 21 Aug 2026  
 **Owner:** CTO (Joshua) · Founder decides  
-**This is a CTO operating prompt; Founder OS is the product identity lock. v1.0 from Telegram is superseded for identity.**
+**This is a CTO operating prompt; Founder OS is the product identity lock. v1.0 from Telegram is superseded for identity. Customer brand = Verifos (not Station Rescue / SR).**
 
 Do not treat Telegram `HMC_CTO_Unified_System_Prompt_v1.md` as current product. Use this file + `FOUNDER_OS.md` + `docs/ECOSYSTEM_REPO_TREE.md` + `docs/VERIFOS_OPERATING_LOCK.md`. Do not overwrite Founder OS from this prompt.
 
@@ -163,9 +163,9 @@ Lives in Founder OS (`index.html` Chairman strip + 3 CEO cards). Ver reads them.
 
 | Phase | Briefing CEO | Scores on | Does not score on |
 |---|---|---|---|
-| 1 | SR | Marketplace (owners / techs / suppliers) + owner-only knowledge. Helium first. | Dipstify conversion. PMP / fuel / station P&L. |
-| 2 | Dipstify | Helium stations on ops. Basic ₱9,999 · Staff+PnL ₱9,999. | SR tech/supplier marketplace counts. |
-| 3 | **ODO-Vehicles** | Vehicle listings published, HPG certify, unlocks, LTO checklist. | % of vehicle price. Hiding Property. RideVerified marketplace. |
+| 1A | **Verifos** | Stations trust layer: tech + parts when pump is down; registry compounds. Helium first. verifos.co. | Dipstify conversion. PMP / fuel / station P&L. |
+| 2 | Dipstify | Helium stations on ops. Basic ₱9,999 · Staff+PnL ₱9,999. | Verifos tech/supplier marketplace counts. |
+| 3A | **ODO-Vehicles** | Vehicle listings published, HPG certify, unlocks, LTO checklist. | % of vehicle price. Hiding Property. RideVerified marketplace. |
 
 Property **and** Vehicles stay on ODO. This Phase 3 dashboard is the Vehicles lane only.
 
@@ -195,7 +195,7 @@ RECOMMENDED ACTIONS: Status is X. Action needed: Y. Owner: Z.
 ## Build this week (operating, not a new strategy)
 
 1. NPC / privacy gates before new station data collection. Founder owns filing.
-2. Verifos = marketplace loop + the price sheet above. Public URL verifos.co. Graduation, not a gate. Not Dipstify free tier. Do not build Garage.
+2. Verifos Stations = pain-first loop (tech + parts) + trust file; registry compounds. Public URL **verifos.co**. Graduation, not a gate. Not Dipstify free tier. Do not build Garage. Do not call it Station Rescue / SR in customer copy.
 3. Dipstify Station = Helium ops + Basic ₱9,999 · Staff+PnL ₱9,999. Not Verifos techs/suppliers. Quiz HOLD.
 4. Do not start RideVerified marketplace screens, Tandoc display-node build, or ODO-park work from v1.0. Phase 3 CEO = **ODO-Vehicles**. Franchise = later.
 

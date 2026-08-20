@@ -4,6 +4,7 @@ Persistent, dated implementation log for this repo. Read this first in any new s
 
 ---
 
+- **2026-08-21 (SR → Verifos master update):** Customer brand **Verifos** only in masterplan / portfolio / Ver / cockpit. **Station Rescue / SR** retired in product copy. **verifos.co** live. Landing pain-first (tech + parts); registry compounds. Files: `docs/MASTER_DIRECTION.md` §0, `docs/VERIFOS_OPERATING_LOCK.md`, `docs/PORTFOLIO_MAP.md`, `docs/ECOSYSTEM_REPO_TREE.md`, `docs/VER_BEHAVIOR.md`, `docs/ORG_CHART.md`, `index.html`, `api/ask-ver.js`. Repo still `station-rescue`.
 - **2026-08-20 (portfolio phase lock):** **1A** Verifos Stations → **1B** Verifos Vehicles → **2** Dipstify → **3A** ODO-Vehicles → **3B** ODO-Properties. Verifos = trust layer. ODO = marketplace. Cockpit still 3 CEOs; 1B and 3B roll under Verifos and ODO lanes until split.
 - **2026-08-20 (Verifos Stations / ODO split):** **Verifos** = trust/service layer (protect owners, guide techs). **Verifos Stations** = live product line. **Verifos Vehicles** = later — not ODO marketplace. **ODO Property + Vehicles** = marketplace unchanged.
 - **2026-08-20 (Verifos mailbox):** Product inbox **`support@verifos.co`**. Lens users still `support@dipstify.com`. Live station-rescue `5ddac2d`.

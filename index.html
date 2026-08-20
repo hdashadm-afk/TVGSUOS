@@ -2090,7 +2090,7 @@
         <div class="cockpit-row3">
           <div class="cockpit-panel">
             <h3>Decision Queue</h3>
-            <p class="kpi-sub" style="margin:-4px 0 10px;">Live items only — aligned to SR + Dipstify + Consolidated
+            <p class="kpi-sub" style="margin:-4px 0 10px;">Live items only — aligned to Verifos + Dipstify + Consolidated
               Platform focus. Stale items move to Archived (not deleted). Helium KOS ₱7k+₱1k pricing is archived.</p>
             <ul class="attention-list" id="decision-queue-list"></ul>
             <p class="attention-empty" id="decision-queue-empty" style="display:none;">No decisions waiting.</p>
@@ -2110,7 +2110,7 @@
       </div>
 
       <div class="cmd-panel" id="cmd-org" role="tabpanel">
-          <p class="ceo-dash-note">HMC is legal only. Three AI CEOs are dashboards, not companies. AI flags; a person stamps at the gates. Do not merge Rescue and Dipstify. No RV CEO.</p>
+          <p class="ceo-dash-note">HMC is legal only. Three AI CEOs are dashboards, not companies. AI flags; a person stamps at the gates. Do not merge Verifos and Dipstify. No RV CEO.</p>
           <p class="cockpit-label">Who reports</p>
           <ul class="org-tree">
             <li>HMC — legal / platform <span class="org-kind kind-legal">Legal</span>
@@ -2424,7 +2424,7 @@
         <div class="section-body expanded">
           <div class="cockpit-row2">
             <div class="cockpit-panel" id="sr-status-card">
-              <h3 id="sr-status-label">SR status</h3>
+              <h3 id="sr-status-label">Verifos status</h3>
               <p id="sr-status-text" style="font-size:14px; margin:0 0 8px; line-height:1.45;"></p>
               <p style="margin:0; font-size:12px;"><a id="sr-status-link" href="https://verifos.co/"
                   target="_blank" rel="noopener">Open verifos.co →</a></p>
@@ -3292,11 +3292,12 @@
     // When Notion MCP is available, prefer live Command Center text; until then keep this
     // object current by hand. Ver (api/ask-ver.js) and the Decision Queue both respect it.
     const FOUNDER_OS_COCKPIT = {
-      updatedAt: '2026-08-20',
-      activeFocus: ['StationRescue', 'Dipstify', 'ODO-Vehicles'],
+      updatedAt: '2026-08-21',
+      activeFocus: ['Verifos', 'Dipstify', 'ODO-Vehicles'],
       // Taxonomy (founder 2026-08-07): Gas Ops = Dipstify workstream; RV MVP under ODO umbrella;
       // Helium pricing = Dipstify commercial (Basic ₱9,999 · Staff+PnL ₱9,999, collect EOM).
       // 2026-08-18: Phase 3 CEO lane is ODO-Vehicles (not RideVerified marketplace).
+      // 2026-08-21: Customer brand Verifos — SR / Station Rescue retired in copy.
       ventureMap: {
         gasOps: 'Dipstify',
         rvMvp: 'ODO umbrella — franchise later, not a CEO dashboard',
@@ -3319,26 +3320,26 @@
       },
       // Chairman + 3 CEO briefing loop (FOS/Ver). Not a replacement of companies.
       chairman: {
-        weekOf: '2026-08-20',
+        weekOf: '2026-08-21',
         overall: 'At risk',
         identity: 'Briefing loop inside FOS/Ver. Not a new org chart. Ver, Lens, and Vera stay.',
         cadenceNote: 'Mon–Fri cadence and ₱50K auto-approve are proposals, not locks. Escalate all spend until the founder says yes.',
         brief: [
           {
-            lane: 'SR',
-            status: 'Verifos — public URL verifos.co (attach DNS on Vercel)',
-            action: 'Founder: point verifos.co at Vercel. Keep catalog → tech install. Do not build Garage. Do not score Dipstify conversion',
-            owner: 'SR CEO brief → Founder',
+            lane: 'Verifos',
+            status: 'verifos.co live · 1A Stations · pain-first landing',
+            action: 'Supabase Site URL → https://verifos.co. Helium field jobs. Do not build Garage. Do not score Dipstify conversion',
+            owner: 'Verifos CEO brief → Founder',
           },
           {
             lane: 'Dipstify',
             status: 'Phase 2 ops sibling; Basic ₱9,999 · Staff+PnL ₱9,999, collect EOM; quiz funnel HOLD',
-            action: 'Stations on ops (3 numbers). Quiz stays parked until founder unpauses. Owner funnel from Rescue is later, owners only — not SR’s KPI',
+            action: 'Stations on ops (3 numbers). Quiz stays parked until founder unpauses. Owner funnel from Verifos is later, owners only — not Verifos KPI',
             owner: 'Dipstify CEO brief → Founder',
           },
           {
             lane: 'ODO-Vehicles',
-            status: 'Phase 3 Vehicles lane; Property still exists; RV is not the market CEO',
+            status: 'Phase 3A Vehicles lane; 3B Properties still exists; RV is not the market CEO',
             action: 'Track listings, HPG, unlocks, LTO; no % of vehicle price; franchise later',
             owner: 'ODO-Vehicles CEO brief → Founder',
           },
@@ -3348,7 +3349,7 @@
       ceos: [
         {
           id: 'sr',
-          title: 'SR CEO',
+          title: 'Verifos CEO',
           phase: 'Phase 1A',
           product: 'Verifos Stations',
           href: 'https://verifos.co/',
@@ -3372,12 +3373,12 @@
           product: 'Dipstify Station',
           href: 'https://dipstify.com/',
           hrefLabel: 'Open dipstify.com →',
-          lock: 'Ops sibling. Separate DB. Helium commercial is this sheet, not SR.',
+          lock: 'Ops sibling. Separate DB. Helium commercial is this sheet, not Verifos.',
           kpis: [
             { name: 'Helium stations on ops', value: '—', sub: 'Stations running Dipstify ops', wired: false },
             { name: 'Commercial sheet', value: '₱9,999 + ₱9,999', sub: 'Basic · Staff+PnL — collect EOM — price sheet, not a live invoice count', wired: false, sheet: true },
             { name: 'Quiz funnel', value: 'HOLD', sub: 'Founder check later · dipstify.com/quiz · do not iterate until unpaused', wired: false, sheet: true },
-            { name: 'Owner funnel from Rescue', value: 'Later', sub: 'Owners only — not SR’s score', wired: false, sheet: true },
+            { name: 'Owner funnel from Verifos', value: 'Later', sub: 'Owners only — not Verifos score', wired: false, sheet: true },
           ],
         },
         {
@@ -3397,17 +3398,17 @@
           ],
         },
       ],
-      // Single source of truth for the SR status card — change text here, not in layout.
+      // Single source of truth for the Verifos status card — change text here, not in layout.
       srStatus: {
-        label: 'SR status',
-        text: 'Auth migration live; signup smoke blocked on profiles schema cache — deferred. Waitlist OK.',
+        label: 'Verifos status',
+        text: 'verifos.co live. Auth migration live; signup confirm needs Supabase Site URL = https://verifos.co. Waitlist OK.',
         href: 'https://verifos.co/',
         hrefLabel: 'Open verifos.co →',
       },
       // Title patterns → keep in live Decision Queue (masterplan-active).
       decisionKeep: [
         /field\s*kit/i,
-        /station\s*rescue.*phase\s*2|sr\s*phase\s*2|vendor\/tech marketplace|vendor.*marketplace/i,
+        /station\s*rescue.*phase\s*2|sr\s*phase\s*2|verifos.*phase|vendor\/tech marketplace|vendor.*marketplace/i,
         /kos\s*[→\-–].*dipstify|kos.*rename|dipstify.*rename/i,
         /helium.*(pricing|billing|collect)|₱\s*9,?999|basic.*staff.*pnl/i,
         /gas\s*ops/i,
@@ -5006,7 +5007,7 @@
       const textEl = document.getElementById('sr-status-text');
       const linkEl = document.getElementById('sr-status-link');
       if (!textEl) return;
-      if (labelEl) labelEl.textContent = s.label || 'SR status';
+      if (labelEl) labelEl.textContent = s.label || 'Verifos status';
       textEl.textContent = s.text || '';
       if (linkEl) {
         linkEl.href = s.href || 'https://verifos.co/';
@@ -5036,7 +5037,7 @@
             <span class="chairman-meta">Week of ${escapeHtml(ch.weekOf)} · ${escapeHtml(ch.overall)}</span>
           </div>
           <div class="chairman-risks">
-            <span class="chairman-risk ${riskClass(risks.sr)}">SR ${escapeHtml(risks.sr || '—')}</span>
+            <span class="chairman-risk ${riskClass(risks.sr)}">Verifos ${escapeHtml(risks.sr || '—')}</span>
             <span class="chairman-risk ${riskClass(risks.dipstify)}">Dipstify ${escapeHtml(risks.dipstify || '—')}</span>
             <span class="chairman-risk ${riskClass(risks.odoVehicles)}">ODO-Vehicles ${escapeHtml(risks.odoVehicles || '—')}</span>
           </div>

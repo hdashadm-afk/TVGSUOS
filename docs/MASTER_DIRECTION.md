@@ -1,40 +1,44 @@
 # TVGSUOS — Master Direction
 
-Last updated: 2026-08-20  
+Last updated: 2026-08-21  
 Status: Active — baseline source of truth for this repo  
 Owner: Edgardo Castro
 
-**Current operating masterplan (20 Aug 2026) sits in §0.** Sections 2–10 below are the July 18 repo-creation baseline (FOS as Layer 1). They are not deleted. Where they fight §0, **§0 wins.**
+**Current operating masterplan (20–21 Aug 2026) sits in §0.** Sections 2–10 below are the July 18 repo-creation baseline (FOS as Layer 1). They are not deleted. Where they fight §0, **§0 wins.**
+
+**Customer-facing name:** **Verifos** (Stations now). **Station Rescue / SR / Vero** are retired in product copy. Repo may still be `station-rescue`; that is engineering only.
 
 Tree: `docs/ECOSYSTEM_REPO_TREE.md`. Continuity log: `FOUNDER_OS.md`.
 
 ---
 
-## 0) Current masterplan — 20 Aug 2026
+## 0) Current masterplan — 21 Aug 2026
 
 HMC is legal. Founder OS (this repo / Ver) orchestrates. Ventures execute. Do not merge products.
 
 | Phase | Product | Public | Job |
 |---|---|---|---|
-| **1A** | **Verifos Stations** | **verifos.co** (deploy: station-rescue.vercel.app until DNS) | **Trust / service layer** for stations — protect owners, guide technicians. Pumps, verified tech, suppliers. Helium first. **Ship now.** |
+| **1A** | **Verifos Stations** | **verifos.co** (also station-rescue.vercel.app) | **Trust / service layer** for stations. Pain first: right tech + part when the pump is down. Every job builds registry and service history. Helium first. **Live.** |
 | **1B** | **Verifos Vehicles** | verifos.co (vehicles lane, later) | Same trust layer for vehicles — protect owners, guide technicians. **Not** the vehicle marketplace. **After 1A.** |
 | **2** | **Dipstify Station** | dipstify.com | Owner daily ops / books. Sibling. Not Verifos free tier. |
 | **3A** | **ODO-Vehicles** | ownerdirect.online | **Marketplace** — vehicle buyer/seller transactions. **Not Verifos.** |
 | **3B** | **ODO-Properties** | ownerdirect.online | **Marketplace** — property transactions. Mandatory `/` triage. **Not Verifos.** |
 
-**Verifos vs ODO (locked 20 Aug 2026):** **ODO** = marketplace (3A Vehicles, 3B Properties). **Verifos** = service and transaction **trust layer** — evidence, verified work, owner protection. **1A Stations** ships now. **1B Vehicles** = same trust layer for vehicles **after Stations** — does **not** replace ODO-Vehicles marketplace.
+**Verifos vs ODO (locked 20 Aug 2026):** **ODO** = marketplace (3A Vehicles, 3B Properties). **Verifos** = service and transaction **trust layer** — evidence, verified work, owner protection. **1A Stations** is live at verifos.co. **1B Vehicles** = same trust layer for vehicles **after Stations** — does **not** replace ODO-Vehicles marketplace.
 
 **Verifos locks**
 
 - Owners free. Tech ₱500/mo after first month free. Supplier ₱1,000/mo after L2. Assessment ₱500 (₱250 / ₱250). Txn ₱250. **No % of job value.** Pay placeholder.
 - **Graduation, not a gate:** accept the minimum. The standard is written once (`docs/VERIFOS_STANDARD.md`). Who follows it is rewarded (badge now; credits when named). Never fake Verified.
 - Phase A (now): **1A Verifos Stations** — Helium field jobs may save on symptom. Prompt serial, pre-service, work, post-test. Photos = Phase B. **1B Verifos Vehicles** = after Stations — do not build now. **3A ODO-Vehicles** / **3B ODO-Properties** = marketplaces — separate products.
-- Repo still `station-rescue`. DB `phqncq…` stays. Separate from Dipstify.
+- Public URL **verifos.co** (DNS live 20 Aug). Repo still `station-rescue`. DB `phqncq…` stays. Separate from Dipstify.
+- Product inbox **support@verifos.co**. Do not publish stationrescue.com support.
 - Do not score Verifos on Dipstify conversion.
+- Landing leads with repair/parts pain; registry compounds from the work.
 
 **Dipstify:** Basic ₱9,999 · Staff+PnL ₱9,999, collect EOM. Quiz HOLD until founder unpauses. Do not put the quiz on Verifos.
 
-**Assistants:** Ver (FOS) · Lens (Dipstify Station) · Vera (ODO). Chairman + 3 CEOs = briefing loop, not companies.
+**Assistants:** Ver (FOS) · Lens (Dipstify Station) · Vera (ODO). Chairman + 3 CEOs = briefing loop, not companies. CEO lanes: **Verifos** · **Dipstify** · **ODO** (not “SR”).
 
 **Full Verifos law:** `docs/VERIFOS_VERIFICATION_FRAMEWORK.md` · `docs/VERIFOS_OPERATING_LOCK.md` · `docs/VERIFOS_STANDARD.md`.
 

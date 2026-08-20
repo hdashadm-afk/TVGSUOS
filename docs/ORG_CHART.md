@@ -1,12 +1,12 @@
 # HMC / Founder OS — Org chart and workflows
 
-Locked: 20 Aug 2026  
+Locked: 21 Aug 2026  
 Owner: Edgar “Best” Dada  
 Status: Active — People/Admin org for Founder OS. Dashboards, not companies.
 
 HMC (Helium Marketing Corporation) is the **legal / platform**. It never owns stations, vehicles, or inventory.
 
-Three AI CEOs are **dashboards in Founder OS**, not companies. Do not merge Verifos and Dipstify. Phase 1 live product = **Verifos** (verifos.co). Do not add an RV CEO. RV franchise stays a later program in RV docs.
+Three AI CEOs are **dashboards in Founder OS**, not companies. Do not merge Verifos and Dipstify. Phase 1A live product = **Verifos Stations** (verifos.co). **Station Rescue / SR** retired in product copy. Do not add an RV CEO. RV franchise stays a later program in RV docs.
 
 ---
 
@@ -178,10 +178,10 @@ flowchart LR
 | A Chairman | Ver one-pager → Best decides | AI brief · Human decides |
 | A Chairman | Best decides → CTO/CMO/CFO/ops | Human |
 | A Chairman | Execute → KPIs update | Human work · AI refresh |
-| B SR | Owner pain → knowledge room | Human |
-| B SR | Knowledge → marketplace | AI |
-| B SR | Marketplace → field job | Human (L2 + WhatsApp) |
-| B SR | Field job → pay placeholder | Human (Helium floor) |
+| B Verifos | Owner pain → right tech / part | Human |
+| B Verifos | Job → evidence file (serial, protections) | AI product · Human tech |
+| B Verifos | Field job → pay placeholder | Human (Helium floor) |
+| B Verifos | Jobs → registry / history compounds | AI |
 | C Dipstify | Ops leak → Dipstify | Human |
 | C Dipstify | Dipstify → ₱9,999 Basic · ₱9,999 Staff+PnL | AI product · Human commercial |
 | C Dipstify | EOM → CFO collects | Human |
@@ -197,8 +197,8 @@ flowchart LR
 
 ## Hard stops
 
-- Do not merge SR and Dipstify.
+- Do not merge Verifos and Dipstify.
 - Do not add an RV CEO. Franchise program stays in RV docs.
-- Do not hire community manager, SR sales army, Dipstify CS, or RV franchise manager.
+- Do not hire community manager, Verifos sales army, Dipstify CS, or RV franchise manager.
 - HMC never owns stations, vehicles, or inventory.
 - Ver does not hire, spend, or replace companies.

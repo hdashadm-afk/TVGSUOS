@@ -1,6 +1,6 @@
 # TVGSUOS — Portfolio Map
 
-Last updated: 2026-08-20
+Last updated: 2026-08-21
 Status: Active
 Owner: Edgardo Castro
 
@@ -8,16 +8,18 @@ The real portfolio as it actually exists today — repos, domains, data stores, 
 
 **Operating masterplan:** `docs/MASTER_DIRECTION.md` §0. Tree: `docs/ECOSYSTEM_REPO_TREE.md`.
 
+**Naming:** Customer brand **Verifos**. **Station Rescue / SR** retired in product copy. Engineering repo may still be `station-rescue`.
+
 ---
 
-## 0) 2026 operating products (20 Aug)
+## 0) 2026 operating products (21 Aug)
 
 | Product | Public | Repo | Data store | Stage | Reports to |
 |---|---|---|---|---|---|
 | Founder OS / Ver | `tvgsuosweb.vercel.app` | `TVGSUOS` | Reads KOS Supabase (`jbhfd…`); no dedicated DB | Live cockpit | Founder |
-| **Verifos** (was Station Rescue / Vero) | **verifos.co** (DNS pending; deploy `station-rescue.vercel.app`) | `station-rescue` | `phqncq…` — stays separate | Phase 1 live marketplace. Graduation not a gate. Garage = 2027 | Verifos CEO brief → Founder |
+| **Verifos Stations** (1A) | **verifos.co** (alias `station-rescue.vercel.app`) | `station-rescue` | `phqncq…` — stays separate | Live trust layer. Pain: tech + parts. Registry compounds. Graduation not a gate. Garage = 2027 | Verifos CEO brief → Founder |
 | Dipstify Station | dipstify.com | `katiwala-owner-os-` | Station shared `jbhfd…` | Phase 2 ops sibling. Basic ₱9,999 · Staff+PnL ₱9,999 EOM. Quiz HOLD | Dipstify CEO brief → Founder |
-| ODO Vehicles (+ Property) | ownerdirect.online | ODO / OwnerDirect | `qhjhsd…` | Phase 3. Mandatory `/` triage. Not RideVerified marketplace | ODO-Vehicles CEO brief → Founder |
+| ODO Vehicles (+ Property) | ownerdirect.online | ODO / OwnerDirect | `qhjhsd…` | Phase 3A/3B. Mandatory `/` triage. Not RideVerified marketplace | ODO CEO brief → Founder |
 
 Do not merge Verifos and Dipstify DBs. Do not score Verifos on Dipstify conversion.
 

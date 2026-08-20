@@ -2,8 +2,10 @@
 
 Locked: 20 Aug 2026  
 Owner: Edgar “Best” Dada · HMC  
-Product: Verifos Station (live Verifos)  
+Product: Verifos Stations (live Verifos at verifos.co)  
 Parent: `docs/VERIFOS_VERIFICATION_FRAMEWORK.md` · `docs/VERIFOS_OPERATING_LOCK.md`
+
+**Customer name is Verifos.** Station Rescue / SR / Vero are retired in product copy.
 
 **The standard is written once. It does not shrink.**  
 **What we ask this month is phased.** Minimum is accepted. Who reaches the standard is rewarded (badge now; credits when the ledger is named). No hard gate. We never fake Verified.

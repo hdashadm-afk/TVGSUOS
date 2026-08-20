@@ -1,21 +1,22 @@
 ---
-description: Verifos venture gate — do not mix other brands into this marketplace
+description: Verifos venture gate — do not mix other brands into this product
 alwaysApply: true
 ---
 
 # Verifos gateway (from TVGSUOS)
 
-When the task is **Verifos** (was Station Rescue / Vero; verifos.co, station-rescue.vercel.app, `Desktop/.../station-rescue`, services / parts / contractors marketplace):
+When the task is **Verifos** (was Station Rescue / Vero; **verifos.co**, Vercel alias station-rescue.vercel.app, repo `station-rescue`):
 
 ## In
 
 - Three ICPs only: **station owners**, **technicians**, **suppliers**
-- Loop: parts/pumps on the catalog → technicians install
+- Pain first: pump down → right tech + part. Registry and service history compound from the work
 - Owners free and verified; supplier subscription + ads + appointment fees (not live checkout until built)
 - No cut of job value; gensets stay
 - **Dipstify** only as: ops sibling — not this product, do not merge
 - **Helium** as the first station cluster; **HMC** as legal/privacy operator
-- Public name **Verifos**. Public URL **verifos.co**. Graduation, not a gate: minimum accepted, standard rewarded.
+- Public name **Verifos**. Public URL **verifos.co**. Graduation, not a gate: minimum accepted, standard rewarded
+- Do not call the product Station Rescue / SR in customer copy
 
 ## Out (unless the founder named it in this thread)
 

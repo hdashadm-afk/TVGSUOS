@@ -1,10 +1,12 @@
 # FOS Ecosystem Repo Tree
 
-Last updated: 2026-08-20  
+Last updated: 2026-08-21  
 Status: Active — single map for Claude and Cursor  
 Owner: Edgardo Castro
 
 Canonical hierarchy under Founder OS (TVGSUOS / Ver). Docs and navigation align to this tree. Physical repo merges are **not** implied.
+
+**Naming:** Customer brand **Verifos**. Station Rescue / SR retired in product copy. Repo `station-rescue` = engineering only.
 
 ---
 
@@ -57,7 +59,7 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
 | OpsVerified | `fuel-ops` | Dipstify / Station / OpsVerified |
 | StaffVerified | `staffverified-app` | Dipstify / Station / StaffVerified |
 | PnLVerified | `pnlverified` | Dipstify / Station / PnLVerified |
-| Verifos | `station-rescue` · **verifos.co** (deploy: station-rescue.vercel.app) | Dipstify sibling / Verifos marketplace |
+| Verifos | `station-rescue` · **verifos.co** (live; alias station-rescue.vercel.app) | Dipstify sibling / Verifos Stations — trust layer |
 | Delivery | `dipstify-delivery-mvp` + `TVGSUOS/delivery-mvp.html` | Dipstify / Delivery |
 | Franchise | none yet | Dipstify / Franchise (docs-only) |
 | RideVerified | [hmcmarketing](https://github.com/hdashadm-afk/hmcmarketing) → `ride-verified-ph/` | FOS / RideVerified — **later** |
@@ -83,7 +85,7 @@ FOS  (TVGSUOS / Ver — Founder OS cockpit)
 ## Proceed sequence
 
 1. Keep this map + FOS UI / Notion aligned.
-2. **Verifos (20 Aug 2026):** registrar points **verifos.co** at the existing Vercel project. Do not build Verifos Garage.
+2. **Verifos (21 Aug 2026):** **verifos.co** live. Set Supabase Auth Site URL to `https://verifos.co`. Do not build Verifos Garage.
 3. Claude: Verifos Phase A + Dipstify Station ops. Do not merge. Do not start Garage.
 4. Parked: Delivery (supplier), Franchise (scope), RideVerified, ODO marketplace depth, Ops DB merge (own session).
 5. Unlock next pillar only when cash / GTM needs it.

@@ -13,11 +13,11 @@
 | Input | Where | Notes |
 |-------|--------|--------|
 | Chairman one-pager | `#chairman-strip` + Ver drawer **Chairman brief** | Weekly loop: 3 CEOs → Status / Action / Owner. Briefing loop, not a company. |
-| SR / Dipstify / ODO-Vehicles CEO KPIs | `#ceo-dashboard-grid` | Edit `FOUNDER_OS_COCKPIT.ceos`. Counts labeled **manual until wired**. |
+| Verifos / Dipstify / ODO CEO KPIs | `#ceo-dashboard-grid` | Edit `FOUNDER_OS_COCKPIT.ceos`. Counts labeled **manual until wired**. |
 | Active Decision Queue | `#decision-queue-list` | Live items only (archive filter applied) |
 | Archived decisions | `#decision-archive-list` | Historical — **not** top priority |
 | Topic action plans | Ver's Desk `[Plan] …` tasks | Per governance topic; Done removes |
-| SR status card | `FOUNDER_OS_COCKPIT.srStatus` | Edit text there; layout stays put |
+| Verifos status card | `FOUNDER_OS_COCKPIT.srStatus` (legacy key; label Verifos) | Edit text there; layout stays put |
 | Wired metrics | KPI strip | Open decisions, alerts, runway/burn (when wired), stages |
 | Security / risk | Security status KPI + Critical Alerts | Step 1 in prioritization |
 | Open Supabase decisions / signals | `api/ask-ver.js` live fetch | Same tables as Strategy / Intelligence |
@@ -40,7 +40,7 @@ Never “I think.” **“Status is X. Action needed: Y. Owner: Z.”**
 - Free-floating “RV MVP parked” framing — use **ODO umbrella**; Vehicles CEO is the Phase 3 dashboard
 - Old Helium “confirm KOS pricing tier” / ₱7k+₱1k EOM wording — superseded by Basic ₱9,999 · Staff+PnL ₱9,999
 - ODO umbrella as unresolved — umbrella placement is set; execute under it
-- Dipstify conversion as an SR KPI
+- Dipstify conversion as a Verifos KPI
 - ₱50K auto-approve as a lock — it is a **proposal**
 - Chairman + 3 CEOs as the companies (they are a FOS/Ver briefing loop)
 
