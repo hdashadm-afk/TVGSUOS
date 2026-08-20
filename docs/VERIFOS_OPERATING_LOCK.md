@@ -77,16 +77,17 @@ Masterplan: `docs/MASTER_DIRECTION.md` §0.
 
 | Framework | Live today | Gap this year |
 |---|---|---|
-| Asset identity | Helium station + nozzle label + brand + year | **Serial from the plate** |
-| Asset history | Field jobs list per tech/phone | Timeline on the **unit**, not only the job |
-| Event docs | Symptom, checks, error code, parts, quote, report | Pre photos (min 2) + after photos |
-| Compliance | Owner knowledge articles; Dipstify books | Do not duplicate BIR in Rescue. Point, don’t rebuild |
-| Chain of custody | Helium cluster seed | Owner name / tax / lease when a non-Helium station joins |
-| Pre-service state | Symptom details on arrival | Written **before anyone opened the head** |
-| Provider identity | L1/L2/L3 + logged-in tech | Already the right model. Referral ≠ verified |
+| Asset identity | Serial field on new job + diagnose screen; brand, station, unit | Install date optional; non-Helium custody fields |
+| Asset history | Owner history groups by serial; event count on diagnose | Full timeline UI per unit (Phase B) |
+| Event docs | Four protections tracked + progress bar; pre/post fields | Photos (Phase B) |
+| Compliance | Points to Dipstify books | Do not duplicate BIR in Verifos |
+| Chain of custody | Helium cluster seed | Owner name / tax / lease when others join |
+| Pre-service state | Dedicated `pre_service_note` — separate from symptom | Photos when Phase B |
+| Provider identity | L1/L2/L3 + logged-in tech on job | Already the right model |
 | Work + parts | `part_needed`, `work_report` | Part number / supplier when known |
-| Post-service test | Missing | Flow/cal/function note before handoff |
-| Transaction record | Assessment + quote + txn fee flags | Full §5 file comes job by job, not as one screen |
+| Post-service test | `post_test_note` on diagnose screen | — |
+| Trust explainer | `/trust` — 5 asset params + 4 protections + listing states | — |
+| Transaction record | Assessment + quote + txn fee flags | Full §5 file on one screen |
 
 ---
 
