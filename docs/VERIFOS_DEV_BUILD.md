@@ -36,7 +36,7 @@ Cite as **K#**.
 | **K7** | Supabase Auth + Postgres | Live | Keep email now; phone OTP = **D2** later |
 | **K8** | Graduation / never fake Verified | Locked in STANDARD | Keep |
 | **K9** | Facilitator-first for compliance | Live Compliance tab | Keep |
-| **K10** | **Suppliers** directory (was Parts+Tech) | Live `/app/discover` | **One tab** for **all suppliers**: techs · parts · oil · facilitators · fixers · trainers. Filter chips inside; no 6th tab. |
+| **K10** | **Suppliers** directory (was Parts+Tech) | Live `/app/discover` | **One tab** for **all suppliers**: techs · parts · **Gas & Dsl** · facilitators · fixers · trainers. Gas & Dsl = Premium/ULD/DSL quote on **WhatsApp** — **no price on app**. Directory + Claimed/Rated only (never fake Verified). |
 | **K11** | Request → apply → pick + fees | Live | Keep (not in Dev Build Week 1–4 — still ship path) |
 
 ---
@@ -53,7 +53,7 @@ Cite as **R#** (e.g. “don’t do R1”).
 | **R2** | **next-pwa** | Vite PWA already | Keep current PWA. **Founder: agree.** |
 | **R3** | ~~Phone OTP only~~ | **Retired → D2** (+ forever: no OTP-only cutover that drops email) | See defer. |
 | **R4** | **Account centered** in 5 tabs | Live Account last; center squeezes labels | **Account last.** **Founder: must keep.** |
-| **R5** | **Extra / split Suppliers tab** (6th tab that duplicates the directory) | One suppliers job already lives as **Suppliers** | **Objective (locked):** one lane for **all suppliers** — techs · parts · oil · facilitators · fixers · trainers. Live tab label = **Suppliers**. Do not add a second suppliers tab. **Founder: must keep.** |
+| **R5** | **Extra / split Suppliers tab** (6th tab that duplicates the directory) | One suppliers job already lives as **Suppliers** | **Objective (locked):** one lane — techs · parts · Gas & Dsl · facilitators · fixers · trainers. Gas & Dsl: WhatsApp quote only, no in-app price. **Founder: must keep.** |
 | **R6** | ~~Full L1–L4 RepairRecord schema now~~ | **Retired → D3** (gradual) | See defer. |
 | **R7** | **Gold / Verified badges on seed suppliers** | Never fake Verified | Claimed / seed only; no gold Verified. |
 | **R8** | **Mock-only then backend** | Backend already live | Improve UI on real Helium + local compliance. |
@@ -83,7 +83,7 @@ Cite as **R#** (e.g. “don’t do R1”).
 |-----|-------|-----|
 | Registry | `/app` | Assets: stations → units/nozzles, condition, history |
 | Knowledge | `/app/knowledge` | War stories / owner shares |
-| **Suppliers** | `/app/discover` | All suppliers: techs · parts · oil · facilitators · fixers · trainers |
+| **Suppliers** | `/app/discover` | All suppliers: techs · parts · Gas & Dsl (WA quote) · facilitators · fixers · trainers |
 | Compliance | `/app/compliance` | Pain calendar + facilitators (DOE · DENR · Fire · equipment · facility) |
 | Account | `/app/account` | Profile / settings |
 
