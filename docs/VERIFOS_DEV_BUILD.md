@@ -28,8 +28,8 @@ Cite as **K#**.
 | # | Dev Build idea | Live status | Action |
 |---|----------------|-------------|--------|
 | **K1** | 5-tab bottom nav | Live: Registry · Knowledge · Parts+Tech · Compliance · Account | Keep. Account **last** (not centered). |
-| **K2** | Registry = station assets | Live: Helium PMP units + condition + history | Upgrade UI: collapsible station → units/nozzles, “Brand not logged”, sticky “Open a request / Log repair” |
-| **K3** | Compliance calendar + colors | Live: DOE · DENR · Fire · equipment · facility calendar + facilitators | Polish status cards (overdue / due soon / upcoming) |
+| **K2** | Registry = station assets | Live: Helium PMP units + condition + history | **Done (22 Aug)** — collapsible nozzles, “Brand not logged”, sticky repair CTA |
+| **K3** | Compliance calendar + colors | Live: DOE · DENR · Fire · equipment · facility calendar + facilitators | **Done (22 Aug)** — status cards + pain score |
 | **K4** | Knowledge = owner shares | Live: `/app/knowledge` | Keep; no rewrite |
 | **K5** | Account tab | Live: `/app/account` | Keep |
 | **K6** | Mobile-first | Live PWA | Keep |
@@ -91,10 +91,12 @@ Cite as **R#** (e.g. “don’t do R1”).
 
 ## Build order (on Vite app)
 
-1. **Registry UX** — collapsible pumps/nozzles, education blurb, sticky repair CTA  
-2. **Compliance polish** — color status cards + score-ish progress on pain items  
-3. **Parts+Tech** — suppliers lane (parts · techs · providers); expand directory, don’t add a 6th tab  
-4. **Knowledge + Account** — already present; light polish only when asked  
+1. **Registry UX** — collapsible pumps/nozzles, education blurb, sticky repair CTA — **Done (22 Aug)**  
+2. **Compliance polish** — color status cards + score-ish progress on pain items — **Done (22 Aug)**  
+3. **Parts+Tech** — suppliers lane (parts · techs · providers); expand directory, don’t add a 6th tab — **live (K10); deepen later**  
+4. **Knowledge + Account** — already present; light polish only when asked — **live**  
+
+**Phase 1a reconcile + ship:** Done 22 Aug (`station-rescue` Registry/Compliance + masterfile K/R/D locks). Remaining gate: **#10** founder phone test with 3 Helium owners.
 
 ---
 
