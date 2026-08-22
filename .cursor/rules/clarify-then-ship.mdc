@@ -23,3 +23,12 @@ Do not polish or ship immediate changes without understanding the ask and checki
 ## When a project has its own masterplan rule
 
 That project rule wins on product identity. This framework still governs *how* you change things.
+
+## Numbered lock refs (standard practice)
+
+When writing or updating keep / reject / defer tables in master docs:
+
+- Assign stable codes: **K#** keep · **R#** reject · **D#** defer
+- Cite the code in chat and commits (“don’t do R1”), not only a long paraphrase
+- Never renumber silently — append new IDs; retire rows in place if needed
+- Verifos source of truth for current series: `docs/VERIFOS_DEV_BUILD.md` (K1–K11, R1–R11)

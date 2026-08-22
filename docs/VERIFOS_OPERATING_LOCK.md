@@ -112,5 +112,8 @@ Do not build Garage, buyer reports, or bank/insurance streams.
 
 ## Dev Build reconcile (22 Aug 2026)
 
-`docs/VERIFOS_DEV_BUILD.md` is the Cursor build order **mapped to live Vite**. Reject Next.js rewrite, Account-centered nav, fake Verified/gold, and full L1–L4 schema rewrite. Ship Registry UX + Compliance card polish on `station-rescue`.
+`docs/VERIFOS_DEV_BUILD.md` is the Cursor build order **mapped to live Vite**.
 
+**Standard practice:** keep/reject/defer rows use stable codes — **K#** keep, **R#** reject, **D#** defer. Cite codes in chat (“don’t do R1”, “ship K2”). Never renumber silently. Current reject list **R1–R11**; keep **K1–K11**.
+
+Ship on `station-rescue` against those codes — not a Next rewrite (R1).

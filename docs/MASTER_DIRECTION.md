@@ -42,7 +42,7 @@ HMC is legal. Founder OS (this repo / Ver) orchestrates. Ventures execute. Do no
 
 **Full Verifos law:** `docs/VERIFOS_VERIFICATION_FRAMEWORK.md` · `docs/VERIFOS_OPERATING_LOCK.md` · `docs/VERIFOS_STANDARD.md`.
 
-**Dev Build (22 Aug 2026):** Draft Next.js spec reconciled against live Vite app — see `docs/VERIFOS_DEV_BUILD.md`. **Do not** greenfield Next/Tailwind/shadcn. Ship UI on `station-rescue`. Account tab stays **last**. Parts+Tech = suppliers lane. Compliance = DOE · DENR · Fire · equipment · facility.
+**Dev Build (22 Aug 2026):** Draft Next.js spec reconciled against live Vite — `docs/VERIFOS_DEV_BUILD.md`. Cite **K#** / **R#** / **D#** (standard practice). Do not greenfield Next (R1). Account last (R4). Parts+Tech = suppliers lane (R5). Compliance = DOE · DENR · Fire · equipment · facility.
 
 ---
 
