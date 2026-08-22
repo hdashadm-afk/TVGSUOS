@@ -119,3 +119,5 @@ Do not build Garage, buyer reports, or bank/insurance streams.
 **K10 / R5:** One suppliers lane for **all** — techs · parts · oil · facilitators · fixers · trainers. Live tab = Suppliers. Reject only an extra/split 6th tab. **Founder: R4 + R5 must keep; R2 agree; D3 gradual; D4 later; D5 agree.**
 
 Ship on `station-rescue` against those codes — not a Next rewrite (R1).
+
+**ICP gap mitigations (direction-consistent):** `docs/VERIFOS_MITIGATE_ICP.md` (M1–M10). Priority: auth/pick truth → supplier lane honesty → compliance cloud.
