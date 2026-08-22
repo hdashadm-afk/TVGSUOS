@@ -15,7 +15,7 @@ Every keep / reject / defer table in Verifos master docs gets a **stable item nu
 |--------|---------|---------|
 | **K#** | Keep / implement | “Ship K2” |
 | **R#** | Reject / do not build as written | “Don’t do R1” |
-| **D#** | Defer (allowed later, not now) | “D3 = phone OTP later” |
+| **D#** | Defer (allowed later, not now) | “D2 = phone OTP later” |
 
 Rules: never renumber silently (append new IDs; mark old rows retired if needed). New reconcile tables continue the series or start a dated block (`R12+`, `D6+`). Forever reject = **R1, R2, R4, R5, R7, R8**. Phased = **D1–D5** (from retired R3/R6/R9–R11). Keep = **K1–K11**.
 

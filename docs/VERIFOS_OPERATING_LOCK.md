@@ -114,7 +114,7 @@ Do not build Garage, buyer reports, or bank/insurance streams.
 
 `docs/VERIFOS_DEV_BUILD.md` is the Cursor build order **mapped to live Vite**.
 
-**Standard practice:** keep/reject/defer rows use stable codes — **K#** keep, **R#** reject, **D#** defer. Cite codes in chat (“don’t do R1”, “ship K2”, “D1 = vehicles Phase 2”). Never renumber silently. Active reject **R1–R10** (R11 → **D1**). Keep **K1–K11**.
+**Standard practice:** keep/reject/defer rows use stable codes — **K#** keep, **R#** reject, **D#** defer. Cite codes in chat (“don’t do R1”, “ship K2”, “D1 = vehicles Phase 2”). Never renumber silently. Forever reject **R1, R2, R4, R5, R7, R8**. Defer **D1–D5**. Keep **K1–K11**.
 
 **K10 / R5:** One suppliers lane for **all** — parts · techs · providers. Live tab = Parts+Tech. Reject only an extra/split 6th tab.
 
