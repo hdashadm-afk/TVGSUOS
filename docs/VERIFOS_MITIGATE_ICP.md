@@ -23,8 +23,8 @@
 
 | # | Gap | Mitigation | Lock |
 |---|-----|------------|------|
-| **M1** | No role guards | Require auth on `/app` and `/provider`; route by profile role; block cross-shell | K7 · K11 |
-| **M2** | Walk-up fights owner-pick | Soft-gate: walk-up = draft only until owner links/picks; copy says covering tech | K11 |
+| **M1** | No role guards | **Done (22 Aug)** — `RequireShell` when Supabase configured; demo open if not | K7 · K11 |
+| **M2** | Walk-up fights owner-pick | **Done (22 Aug)** — walk-up = draft; no paid assessment / work-done until owner pick | K11 |
 | **M3** | Supplier = preview only | Keep **one** Suppliers directory for owners (K10). On `/provider`, `kind=supplier` home: My listing + inquiries — still same shell, no 6th tab | K10 · R5 |
 | **M4** | verify defaults to technician | Pass `?kind=` from signup / profile `provider_kind` | K10 |
 | **M5** | Issues buried for owners | Keep 5 tabs (R4). Add Registry + Account deep links only — or one “Requests” entry under Registry CTA (already sticky) | K1 · K2 · R4 |
