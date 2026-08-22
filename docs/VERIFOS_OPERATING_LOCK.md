@@ -116,6 +116,6 @@ Do not build Garage, buyer reports, or bank/insurance streams.
 
 **Standard practice:** keep/reject/defer rows use stable codes — **K#** keep, **R#** reject, **D#** defer. Cite codes in chat (“don’t do R1”, “ship K2”, “D1 = vehicles Phase 2”). Never renumber silently. Forever reject **R1, R2, R4, R5, R7, R8**. Defer **D1–D5**. Keep **K1–K11**.
 
-**K10 / R5:** One suppliers lane for **all** — parts · techs · providers. Live tab = Parts+Tech. Reject only an extra/split 6th tab. **Founder: R4 + R5 must keep; R2 agree; D3 gradual; D4 later; D5 agree.**
+**K10 / R5:** One suppliers lane for **all** — techs · parts · oil · facilitators · fixers · trainers. Live tab = Suppliers. Reject only an extra/split 6th tab. **Founder: R4 + R5 must keep; R2 agree; D3 gradual; D4 later; D5 agree.**
 
 Ship on `station-rescue` against those codes — not a Next rewrite (R1).

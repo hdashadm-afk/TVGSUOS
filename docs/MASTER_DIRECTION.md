@@ -42,7 +42,7 @@ HMC is legal. Founder OS (this repo / Ver) orchestrates. Ventures execute. Do no
 
 **Full Verifos law:** `docs/VERIFOS_VERIFICATION_FRAMEWORK.md` · `docs/VERIFOS_OPERATING_LOCK.md` · `docs/VERIFOS_STANDARD.md`.
 
-**Dev Build (22 Aug 2026):** `docs/VERIFOS_DEV_BUILD.md`. Cite **K#** / **R#** / **D#**. Forever reject R1/R2/R4/R5/R7/R8. Defer **D1** vehicles Phase 2 · **D2** phone OTP · **D3** L2–L4 · **D4** paid booking · **D5** Pro CTA. **K10/R5:** one suppliers lane = parts · techs · providers. Compliance = DOE · DENR · Fire · equipment · facility. **Phase 1a UI + locks: Done** (Registry/Compliance shipped; #10 Helium phone test still founder).
+**Dev Build (22 Aug 2026):** `docs/VERIFOS_DEV_BUILD.md`. Cite **K#** / **R#** / **D#**. Forever reject R1/R2/R4/R5/R7/R8. Defer **D1** vehicles Phase 2 · **D2** phone OTP · **D3** L2–L4 · **D4** paid booking · **D5** Pro CTA. **K10/R5:** one **Suppliers** tab = techs · parts · oil · facilitators · fixers · trainers. Compliance = DOE · DENR · Fire · equipment · facility. **Phase 1a UI + locks: Done** (Registry/Compliance/Suppliers shipped; #10 Helium phone test still founder).
 
 ---
 
