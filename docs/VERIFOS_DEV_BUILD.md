@@ -45,31 +45,35 @@ Cite as **K#**.
 
 Cite as **R#** (e.g. “don’t do R1”).
 
+**Founder confirm (22 Aug 2026):** **R2** keep · **R4** must keep · **R5** must keep. (R1/R7/R8 unchanged.)
+
 | # | Dev Build says | Why not | Lock instead |
 |---|----------------|---------|--------------|
 | **R1** | **Next.js 14 + Tailwind + shadcn + Zustand** | Live app is Vite + custom CSS. Greenfield rewrite kills verifos.co momentum. | Stay on **Vite + React Router**. |
-| **R2** | **next-pwa** | Vite PWA already | Keep current PWA. |
+| **R2** | **next-pwa** | Vite PWA already | Keep current PWA. **Founder: agree.** |
 | **R3** | ~~Phone OTP only~~ | **Retired → D2** (+ forever: no OTP-only cutover that drops email) | See defer. |
-| **R4** | **Account centered** in 5 tabs | Live Account last; center squeezes labels | **Account last.** |
-| **R5** | **Extra / split Suppliers tab** (6th tab that duplicates the directory) | One suppliers job already lives as Parts+Tech | **Objective (locked):** one lane for **all suppliers** — parts · techs · providers. Live tab label = Parts+Tech. Do not add a second suppliers tab. |
-| **R6** | ~~Full L1–L4 RepairRecord schema now~~ | **Retired → D3** | See defer. |
+| **R4** | **Account centered** in 5 tabs | Live Account last; center squeezes labels | **Account last.** **Founder: must keep.** |
+| **R5** | **Extra / split Suppliers tab** (6th tab that duplicates the directory) | One suppliers job already lives as Parts+Tech | **Objective (locked):** one lane for **all suppliers** — parts · techs · providers. Live tab label = Parts+Tech. Do not add a second suppliers tab. **Founder: must keep.** |
+| **R6** | ~~Full L1–L4 RepairRecord schema now~~ | **Retired → D3** (gradual) | See defer. |
 | **R7** | **Gold / Verified badges on seed suppliers** | Never fake Verified | Claimed / seed only; no gold Verified. |
 | **R8** | **Mock-only then backend** | Backend already live | Improve UI on real Helium + local compliance. |
-| **R9** | ~~Book a Supplier CTA / paid booking~~ | **Retired → D4** | See defer. |
-| **R10** | ~~Upgrade to Pro CTA~~ | **Retired → D5** | See defer. |
+| **R9** | ~~Book a Supplier CTA / paid booking~~ | **Retired → D4** (later) | See defer. |
+| **R10** | ~~Upgrade to Pro CTA~~ | **Retired → D5** | See defer. **Founder: agree.** |
 | **R11** | ~~Vehicle in RepairRecord now~~ | **Retired → D1** | See defer. |
 
 ---
 
 ## Defer — phase later (cite **D#**)
 
+**Founder confirm (22 Aug 2026):** **D3** gradual (was R6) · **D4** later (was R9) · **D5** agree (was R10).
+
 | # | Item | Phase | Lock |
 |---|------|-------|------|
 | **D1** | Vehicles in repair / registry (was R11 “now”) | **Phase 2 / 1B** after Stations 1A | Stations only until then. Same trust layer later — not ODO marketplace. |
 | **D2** | Phone OTP (was R3) | After email auth is stable | Add OTP; **do not** drop email for OTP-only. |
-| **D3** | L2–L4 photos / richer RepairRecord (was R6 “full schema now”) | After Phase A `tech_jobs` path is proven | Per `VERIFOS_STANDARD` — no full schema rewrite mid-flight. |
-| **D4** | Book / paid supplier booking (was R9) | When checkout is real | Until then: open request / call. Owner pick stays auth. |
-| **D5** | Upgrade to Pro CTA (was R10) | After owners-free Phase A | Soft “coming” only if needed — no fake paywall. |
+| **D3** | L2–L4 photos / richer RepairRecord (was R6) | **Gradual** after Phase A `tech_jobs` proven | Per `VERIFOS_STANDARD` — step by step, no big-bang schema rewrite. |
+| **D4** | Book / paid supplier booking (was R9) | **Later** — when checkout is real | Until then: open request / call. Owner pick stays auth. |
+| **D5** | Upgrade to Pro CTA (was R10) | After owners-free Phase A | Soft “coming” only if needed — no fake paywall. **Founder: agree.** |
 
 ---
 
