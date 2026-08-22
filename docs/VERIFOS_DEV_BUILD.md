@@ -17,7 +17,7 @@ Every keep / reject / defer table in Verifos master docs gets a **stable item nu
 | **R#** | Reject / do not build as written | “Don’t do R1” |
 | **D#** | Defer (allowed later, not now) | “D3 = phone OTP later” |
 
-Rules: never renumber silently (append new IDs; mark old rows retired if needed). New reconcile tables continue the series or start a dated block (`R12+`, `D2+`). Active reject list = **R1–R10** (R11 retired → **D1**). Keep list = **K1–K11**.
+Rules: never renumber silently (append new IDs; mark old rows retired if needed). New reconcile tables continue the series or start a dated block (`R12+`, `D6+`). Forever reject = **R1, R2, R4, R5, R7, R8**. Phased = **D1–D5** (from retired R3/R6/R9–R11). Keep = **K1–K11**.
 
 ---
 
@@ -33,7 +33,7 @@ Cite as **K#**.
 | **K4** | Knowledge = owner shares | Live: `/app/knowledge` | Keep; no rewrite |
 | **K5** | Account tab | Live: `/app/account` | Keep |
 | **K6** | Mobile-first | Live PWA | Keep |
-| **K7** | Supabase Auth + Postgres | Live | Keep (email auth now; phone OTP later) |
+| **K7** | Supabase Auth + Postgres | Live | Keep email now; phone OTP = **D2** later |
 | **K8** | Graduation / never fake Verified | Locked in STANDARD | Keep |
 | **K9** | Facilitator-first for compliance | Live Compliance tab | Keep |
 | **K10** | Parts + techs directory (= **Suppliers** objective) | Live Parts+Tech | Keep one lane for **all suppliers**: parts · techs · providers. Not a 6th tab. |
@@ -41,7 +41,7 @@ Cite as **K#**.
 
 ---
 
-## Not consistent — do **not** implement as written
+## Forever reject — do **not** implement as written
 
 Cite as **R#** (e.g. “don’t do R1”).
 
@@ -49,15 +49,15 @@ Cite as **R#** (e.g. “don’t do R1”).
 |---|----------------|---------|--------------|
 | **R1** | **Next.js 14 + Tailwind + shadcn + Zustand** | Live app is Vite + custom CSS. Greenfield rewrite kills verifos.co momentum. | Stay on **Vite + React Router**. |
 | **R2** | **next-pwa** | Vite PWA already | Keep current PWA. |
-| **R3** | **Phone OTP only** | Live email/password + confirm | Keep email; OTP = later. |
+| **R3** | ~~Phone OTP only~~ | **Retired → D2** (+ forever: no OTP-only cutover that drops email) | See defer. |
 | **R4** | **Account centered** in 5 tabs | Live Account last; center squeezes labels | **Account last.** |
 | **R5** | **Extra / split Suppliers tab** (6th tab that duplicates the directory) | One suppliers job already lives as Parts+Tech | **Objective (locked):** one lane for **all suppliers** — parts · techs · providers. Live tab label = Parts+Tech. Do not add a second suppliers tab. |
-| **R6** | **Full L1–L4 RepairRecord schema now** | Conflicts with Phase A tech_jobs (symptom → assess → quote) | Keep **tech_jobs** Phase A; L2–L4 photos later per STANDARD. |
+| **R6** | ~~Full L1–L4 RepairRecord schema now~~ | **Retired → D3** | See defer. |
 | **R7** | **Gold / Verified badges on seed suppliers** | Never fake Verified | Claimed / seed only; no gold Verified. |
 | **R8** | **Mock-only then backend** | Backend already live | Improve UI on real Helium + local compliance. |
-| **R9** | **Book a Supplier CTA / paid booking** | Checkout not live; owner pick is auth | CTA = open request / call facilitator. |
-| **R10** | **Upgrade to Pro CTA** | Owners free at Phase A | Soft “coming” only if needed — no fake paywall. |
-| **R11** | ~~Vehicle in RepairRecord now~~ | **Retired → D1** | See defer table. |
+| **R9** | ~~Book a Supplier CTA / paid booking~~ | **Retired → D4** | See defer. |
+| **R10** | ~~Upgrade to Pro CTA~~ | **Retired → D5** | See defer. |
+| **R11** | ~~Vehicle in RepairRecord now~~ | **Retired → D1** | See defer. |
 
 ---
 
@@ -66,6 +66,10 @@ Cite as **R#** (e.g. “don’t do R1”).
 | # | Item | Phase | Lock |
 |---|------|-------|------|
 | **D1** | Vehicles in repair / registry (was R11 “now”) | **Phase 2 / 1B** after Stations 1A | Stations only until then. Same trust layer later — not ODO marketplace. |
+| **D2** | Phone OTP (was R3) | After email auth is stable | Add OTP; **do not** drop email for OTP-only. |
+| **D3** | L2–L4 photos / richer RepairRecord (was R6 “full schema now”) | After Phase A `tech_jobs` path is proven | Per `VERIFOS_STANDARD` — no full schema rewrite mid-flight. |
+| **D4** | Book / paid supplier booking (was R9) | When checkout is real | Until then: open request / call. Owner pick stays auth. |
+| **D5** | Upgrade to Pro CTA (was R10) | After owners-free Phase A | Soft “coming” only if needed — no fake paywall. |
 
 ---
 

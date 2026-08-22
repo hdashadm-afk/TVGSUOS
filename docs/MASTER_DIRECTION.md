@@ -42,7 +42,7 @@ HMC is legal. Founder OS (this repo / Ver) orchestrates. Ventures execute. Do no
 
 **Full Verifos law:** `docs/VERIFOS_VERIFICATION_FRAMEWORK.md` · `docs/VERIFOS_OPERATING_LOCK.md` · `docs/VERIFOS_STANDARD.md`.
 
-**Dev Build (22 Aug 2026):** Draft Next.js spec reconciled against live Vite — `docs/VERIFOS_DEV_BUILD.md`. Cite **K#** / **R#** / **D#**. Do not greenfield Next (R1). Account last (R4). **K10/R5:** one suppliers lane = parts · techs · providers (Parts+Tech tab; no 6th tab). **D1:** vehicles Phase 2 / 1B (was R11). Compliance = DOE · DENR · Fire · equipment · facility.
+**Dev Build (22 Aug 2026):** `docs/VERIFOS_DEV_BUILD.md`. Cite **K#** / **R#** / **D#**. Forever reject R1/R2/R4/R5/R7/R8. Defer **D1** vehicles Phase 2 · **D2** phone OTP · **D3** L2–L4 · **D4** paid booking · **D5** Pro CTA. **K10/R5:** one suppliers lane = parts · techs · providers. Compliance = DOE · DENR · Fire · equipment · facility.
 
 ---
 
