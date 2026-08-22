@@ -109,3 +109,8 @@ That is Verifos Station. Not Garage. Not a new app. Customer name is **Verifos**
 **Still founder:** Supabase Auth Site URL / Redirect URLs → `https://verifos.co` (and `https://verifos.co/**`). Optional: redirect stationrescue.com → verifos.co.
 
 Do not build Garage, buyer reports, or bank/insurance streams.
+
+## Dev Build reconcile (22 Aug 2026)
+
+`docs/VERIFOS_DEV_BUILD.md` is the Cursor build order **mapped to live Vite**. Reject Next.js rewrite, Account-centered nav, fake Verified/gold, and full L1–L4 schema rewrite. Ship Registry UX + Compliance card polish on `station-rescue`.
+

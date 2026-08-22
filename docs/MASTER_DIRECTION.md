@@ -1,10 +1,10 @@
 # TVGSUOS — Master Direction
 
-Last updated: 2026-08-21  
+Last updated: 2026-08-22  
 Status: Active — baseline source of truth for this repo  
 Owner: Edgardo Castro
 
-**Current operating masterplan (20–21 Aug 2026) sits in §0.** Sections 2–10 below are the July 18 repo-creation baseline (FOS as Layer 1). They are not deleted. Where they fight §0, **§0 wins.**
+**Current operating masterplan (20–22 Aug 2026) sits in §0.** Sections 2–10 below are the July 18 repo-creation baseline (FOS as Layer 1). They are not deleted. Where they fight §0, **§0 wins.**
 
 **Customer-facing name:** **Verifos** (Stations now). **Station Rescue / SR / Vero** are retired in product copy. Repo may still be `station-rescue`; that is engineering only.
 
@@ -41,6 +41,8 @@ HMC is legal. Founder OS (this repo / Ver) orchestrates. Ventures execute. Do no
 **Assistants:** Ver (FOS) · Lens (Dipstify Station) · Vera (ODO). Chairman + 3 CEOs = briefing loop, not companies. CEO lanes: **Verifos** · **Dipstify** · **ODO** (not “SR”).
 
 **Full Verifos law:** `docs/VERIFOS_VERIFICATION_FRAMEWORK.md` · `docs/VERIFOS_OPERATING_LOCK.md` · `docs/VERIFOS_STANDARD.md`.
+
+**Dev Build (22 Aug 2026):** Draft Next.js spec reconciled against live Vite app — see `docs/VERIFOS_DEV_BUILD.md`. **Do not** greenfield Next/Tailwind/shadcn. Ship UI on `station-rescue`. Account tab stays **last**. Parts+Tech = suppliers lane. Compliance = DOE · DENR · Fire · equipment · facility.
 
 ---
 
