@@ -17,7 +17,8 @@ When the task is **Verifos** (was Station Rescue / Vero; **verifos.co**, Vercel 
 - **Helium** as the first station cluster; **HMC** as legal/privacy operator
 - Public name **Verifos**. Public URL **verifos.co**. Graduation, not a gate: minimum accepted, standard rewarded
 - Do not call the product Station Rescue / SR in customer copy
-- **Numbered lock refs (standard):** keep/reject/defer tables use stable **K#** / **R#** / **D#**. Cite codes in chat and commits (e.g. R1 = no Next rewrite). Source: `docs/VERIFOS_DEV_BUILD.md`. Never renumber silently.
+- **Numbered lock refs (standard):** keep/reject/defer tables use stable **K#** / **R#** / **D#**. Cite codes in chat and commits (e.g. R1 = no Next rewrite; D1 = vehicles Phase 2). Source: `docs/VERIFOS_DEV_BUILD.md`. Never renumber silently.
+- **Suppliers lane (K10 / R5):** one tab for **all suppliers** — parts · techs · providers. Live label Parts+Tech. No extra suppliers tab.
 
 ## Out (unless the founder named it in this thread)
 
