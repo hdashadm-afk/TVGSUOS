@@ -1,14 +1,111 @@
 # TVGSUOS — Master Direction
 
-Last updated: 2026-08-22  
+Last updated: 2026-10-28  
 Status: Active — baseline source of truth for this repo  
 Owner: Edgardo Castro
 
-**Current operating masterplan (20–22 Aug 2026) sits in §0.** Sections 2–10 below are the July 18 repo-creation baseline (FOS as Layer 1). They are not deleted. Where they fight §0, **§0 wins.**
+**Founder OS architecture (28 Oct 2026) sits in §A.** It governs how this app is built: its nodes, its data, its learning loop and its security gate. It does **not** replace any venture's own MASTER (ODO `docs/ODO_MASTER.md`, Dipstify `katiwala-owner-os-/docs/KATIWALA_GAS_STATION_MASTER_DIRECTION.md`, Fuel-ops, Verifos). Those still decide their own product rules.
+
+**Current operating masterplan (20–22 Aug 2026) sits in §0.** Sections 2–10 below are the July 18 repo-creation baseline (FOS as Layer 1). They are not deleted. Where they fight §0, **§0 wins.** Where §0–§10 fight §A on Founder OS architecture, **§A wins**. The conflicts known on 28 Oct are listed in §A.10 and are **open**, not resolved by this amendment.
 
 **Customer-facing name:** **Verifos** (Stations now). **Station Rescue / SR / Vero** are retired in product copy. Repo may still be `station-rescue`; that is engineering only.
 
 Tree: `docs/ECOSYSTEM_REPO_TREE.md`. Continuity log: `FOUNDER_OS.md`.
+
+---
+
+## A) Founder OS architecture — founder-approved 28 Oct 2026
+
+Scope: the TVGSUOS Founder OS app (`index.html` + `api/` in this repo, Supabase project `jbhfdmujqrtqkhacfegl`). One app. No replacement app.
+
+### A.1 UI baseline
+
+- The approved UI baseline is **mockup `a79c240`**.
+- **Source not located.** On 28 Oct, `a79c240` was not a commit in TVGSUOS, katiwala-owner-os-, odo or fuel-ops (GitHub `get_commit` returned "No commit found"), and not in the local clones. `hmcmarketing` was not reachable from the session.
+- Until the founder names where `a79c240` lives, no UI work may claim to match it.
+
+### A.2 Five nodes, one app
+
+TVGSUOS Founder OS is one app with five distinct nodes, in this order:
+
+| # | Node | Role | Status |
+|---|---|---|---|
+| 1 | **Helium Fuels** | Enabling energy and infrastructure layer: the stations, the yard, the floor the other nodes run on | active |
+| 2 | **Dipstify** | Station operating system (owner daily ops, variance, books) | active |
+| 3 | **ODO Vehicles** | Vehicle marketplace (ownerdirect.ph Vehicles door) | active |
+| 4 | **DinkKada** | HMC white-label Club OS for PH pickleball clubs | early |
+| 5 | **ODO Property** | Property marketplace | **parked** |
+
+- ODO Vehicles and ODO Property are **separate nodes**. ODO Property stays parked until the founder unparks it in ODO's own MASTER.
+- A node is a reporting and decision lane in Founder OS, not a merged product. Nothing here merges products, brands, databases or workflows.
+
+### A.3 The system learns; agents do not remember
+
+- No critical state may exist only in chat, an agent's context, a local machine, or an uncommitted branch.
+- Every decision, report, guardrail and direction change that matters is written to the repo (Markdown) or to the Founder OS tables (§A.5), with its date and source.
+- A fresh agent must be able to rebuild current state from the repo plus stored data alone. Conversation history is not an input.
+
+### A.4 What each layer keeps
+
+| Layer | Keeps | Does not keep |
+|---|---|---|
+| **Venture OSs** (Dipstify / Fuel-ops, ODO, DinkKada) | Operational evidence: shift logs, dips, listings, deals, payments, IDs, messages | Founder-level direction |
+| **Founder OS** (this app) | Executive reports, distilled learning, decisions, guardrails, playbooks, updated direction | Raw operational records, customer personal data |
+
+### A.5 The learning loop
+
+**Direction → Action → Signal → Review → Updated Direction.**
+
+| Step | Means | Stored in |
+|---|---|---|
+| Direction | What the founder set | This doc, venture MASTERs, `decisions` |
+| Action | What was done against it | Venture repos, PRs, `founder_tasks` |
+| Signal | What the venture reported back | Executive report rows (imported) |
+| Review | What the founder or Ver concluded | `decisions`, `improvement_signals` |
+| Updated Direction | The new rule, written down | This doc / venture MASTER, committed |
+
+- An updated direction only exists once committed. Approval in chat is not a write.
+- The reporting contract is mapped to the existing tables first (`decisions`, `decision_log`, `improvement_signals`, `weekly_updates`, `daily_baseline_checks`, `founder_tasks`, `projects`). A new table is proposed only where none fits, and only with founder approval (schema gate).
+
+### A.6 Data boundary
+
+- **Start with manual or imported reports.** A venture produces a report; Founder OS stores it.
+- **No live cross-Supabase service-role reads**, and no duplicated operational databases.
+- `api/odo-status.js` does that today: it reads ODO's database with ODO's service-role key. It is the first thing this rule retires (§A.10 #3).
+- HMC's data privacy policy governs any use of relationships across nodes. Each node's operational records stay in that node's own system.
+
+### A.7 Ver
+
+- Ver is **optional**. Ver reads stored reports and decisions; Ver is **not** the source of truth.
+- When Ver and a stored record disagree, the record wins.
+- Ver's answers are not decisions until written back (§A.5).
+
+### A.8 Approval is not execution
+
+- "Approved" means permission to do the work. It is not evidence the work happened.
+- A row is done only with its evidence: commit SHA, PR link, migration read-back or deployment ID.
+- Founder OS shows approved-but-not-executed as its own state. It never shows it as done.
+
+### A.9 Security gate before the domain
+
+- Every TVGSUOS API route must be secured before `os.hmcmarketing.tech` is connected. Secured means authentication, authorization, and positive and negative tests.
+- The order is: security merged → deployed → verified live (a logged-out call returns 401). Only then is the domain connected.
+- Status 28 Oct: PR #73 (founder-only check on all 7 routes, 53 tests) is **open, not merged**.
+
+### A.10 Open contradictions — flagged, not resolved here
+
+| # | Conflict | Where | Needs |
+|---|---|---|---|
+| 1 | §0 phases are Verifos 1A/1B → Dipstify → ODO-V → ODO-P. The five nodes leave out Verifos and add Helium Fuels and DinkKada. | §0 vs §A.2 | Founder: is Verifos a sixth node, folded into Helium/Dipstify, or out of Founder OS? |
+| 2 | §4 makes Ver chief of staff that owns governance; §A.7 makes Ver optional and not the source of truth | §4 vs §A.7 | Founder: retire §4's ownership wording |
+| 3 | `api/odo-status.js` reads ODO live with a service-role key | code vs §A.6 | Replace with an imported ODO report (implementation task 2–3) |
+| 4 | §2 domain is `theverifiedgroup.org`; the approved target is `os.hmcmarketing.tech` | §2 vs §A.9 | Founder: confirm one domain |
+| 5 | §10 says multi-step instructions go in an HTML artifact. That was superseded 23 Jul 2026 by the Standard Instruction Form (markdown table in chat). | §10 vs `katiwala-owner-os-/CLAUDE.md` | Update §10 |
+| 6 | No single HMC data privacy policy exists to point at. There are three per-brand policies (`docs/npc/`). | §A.6 | Founder: name the governing policy |
+| 7 | DinkKada has no doc in any repo; this row is the first written record. The 28 Oct chat spelled it "ddnkada" and called it a Founder OS doc gap. LA Pickleball Court is the design partner. | all repos (grep 28 Oct) | Founder: confirm the spelling; write a DinkKada one-pager |
+| 8 | Founder OS tables with open policies (read 28 Oct): `weekly_innovation_summary` (role `public`, `USING (true)`, read and write), `decision_log` (role `public`, write `true`). Plus `daily_baseline_checks`, `ver_queries`, `accepted_suggestions` and `odo_leads_snapshots`: any signed-in user, including `client_owner` / `client_staff`, can read and write. | Supabase `jbhfdmujqrtqkhacfegl` | Security task: founder-only RLS, after a "who goes dark" read |
+| 9 | `FOUNDER_OS.md` continuity log stops at 21 Aug 2026 | `FOUNDER_OS.md` | Resume the log (this PR adds 28 Oct) |
+| 10 | No schema files in this repo; tables exist only in Supabase | repo vs DB | Commit a schema snapshot (read-only dump of the tables above) |
 
 ---
 
