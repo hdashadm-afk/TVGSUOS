@@ -25,7 +25,7 @@ security sign-off, and not a production verification.
 | `docs/MASTER_DIRECTION.md`, `FOUNDER_OS.md` | `main` and PR #74 branch | read (structure + relevant sections) |
 | PR #73 branch `claude/secure-api-routes` | `0cac843` | diff vs `main`; `api/_founder-auth.js`; `tests/route-auth.test.js` |
 | PR #74 branch `claude/founder-os-amendment` | `2368d5b` | diff vs `main` |
-| PR list | GitHub API | numbers, state, branch, title |
+| PR list; PR #74 description | GitHub API | numbers, state, branch, title; PR #74's reported `pg_policies` read (cited, not re-run) |
 
 **Not inspected — see §10:** database tables, RLS policies and functions (no SQL was run);
 the Vercel project `tvgsuosweb` and any deployment; production HTTP behaviour; Notion and
@@ -79,8 +79,18 @@ Browser **writes**: `founder_tasks` (insert ×3, update, delete ×3), `improveme
 `decisions` (insert), `accepted_suggestions` (insert, update), `daily_baseline_checks` (upsert),
 `weekly_innovation_summary` (upsert), `weekly_updates` (upsert).
 
-**RLS evidence: none collected.** No policy was read and no SQL was run. The only RLS
-statements available are documentary and unverified:
+**RLS evidence: not collected by this audit** (no SQL run). One read of `pg_policies` exists
+in the repository record: **PR #74's description**, written by an earlier session on
+2026-10-28, reports for project `jbhf…`:
+
+| Table | Reported policy | Meaning if accurate |
+|---|---|---|
+| `weekly_innovation_summary` | role `public`, `USING (true)`, read and write | Anyone holding the anon key — which is published in `index.html` — can read and write it |
+| `decision_log` | role `public`, write `true` | Anyone holding the anon key can write to it |
+| `daily_baseline_checks`, `ver_queries`, `accepted_suggestions`, `odo_leads_snapshots` | role `authenticated`, `true` | Any signed-in user of the shared project (incl. KOS accounts) can reach every row |
+
+**Not re-read for this audit.** Treat as reported evidence pending a fresh read. Other
+documentary statements, also unverified:
 - `FOUNDER_OS.md` (2026-07-18 entry) states `projects`/`decisions` have "RLS open to any authenticated user".
 - The KOS/Fuel-ops repo instructions record (dated 2026-08-25) tables with `USING (true)` policies on a *different* project (Fuel-ops). That is not evidence about this project.
 - A Supabase advisor read on 2026-10-05 for the shared project listed 15 `SECURITY DEFINER`
@@ -104,7 +114,8 @@ Severity reflects what the code on `main` permits. "Reproduction" is the source 
 | F5 | High | `founder-os-notion` returns Notion Founder OS data to any caller and is an active Notion dependency | `api/founder-os-notion.js`; called at `index.html:4793` | Founder-only now; retire under the Notion legacy plan (§9) in a separate approved batch |
 | F6 | Medium | `generate-baseline-status` / `generate-repo-tree` act with the GitHub token and service-role key for any caller | route sources above | Founder-only |
 | F7 | Medium | No automated tests for any route on `main` | no test directory on `main` | Tests per §12 |
-| F8 | Unknown | RLS on the 18 browser-reached tables | not inspected | Read policies; reject `USING (true)` |
+| F8 | Critical (reported, not re-read) | `weekly_innovation_summary` read/write and `decision_log` write open to role `public`; four more tables open to every `authenticated` user | PR #74 description, `pg_policies` read 2026-10-28 by an earlier session | Re-read; replace `USING (true)` with founder/venture-scoped policies in an approved migration (founder confirms SQL ran before any dependent PR ships) |
+| F8b | Unknown | RLS on the other 12 browser-reached tables | not inspected | Read policies; reject `USING (true)` |
 | F9 | Historical (2026-10-05) | 15 anon-executable `SECURITY DEFINER` functions on the shared project | advisor read 2026-10-05, not rechecked | Re-run advisors; revoke `EXECUTE` from `anon` where unintended |
 
 ## 6. Current state vs target state
@@ -145,6 +156,9 @@ Target state as written in the founder's prompt of 2026-10-28 (attachments not r
 | C3 | **Notion.** PRs #70–#72 (merged 2026-08-04) made Notion the Founder OS data source; the new direction retires Notion. | merged PRs; `api/founder-os-notion.js`; prompt | Approved retirement batch |
 | C4 | **Live ODO read.** `api/odo-status.js` (and PR #73's version of it) does a live full-rights cross-project read; the direction forbids it. | code; prompt | Phase 1 |
 | C5 | **Requested files absent.** `ARCHITECTURE_OVERALL.md`, STATUS and QUEUE documents do not exist in TVGSUOS. Not created, not invented. | repo listing | Founder: confirm intended location (may live in another repo) |
+| C7 | **Domain.** PR #74 §A.10 records `theverifiedgroup.org` vs `os.hmcmarketing.tech`. The prompt names `os.hmcmarketing.tech` as intended and not to be connected. | PR #74 §A.10; prompt | Founder decision |
+| C8 | **Ver ownership.** PR #74 §A.10 records `main` MASTER §4 (Ver ownership) vs §A.7 (Ver optional, not source of truth). | PR #74 §A.10 | Founder decision |
+| C9 | **Privacy policy.** PR #74 §A.10: no single HMC privacy policy exists to point at. | PR #74 §A.10 | Founder decision |
 | C6 | **MASTER source.** The founder instructed MASTER to be replaced with an attachment that was not received. PR #74 currently carries §A written 28 Oct by an earlier session. | this session | Re-send attachments |
 
 ## 9. Legacy Notion / Google Drive register
@@ -161,7 +175,7 @@ No Notion or Google Drive content was accessed. Code and repo-document reference
 
 ## 10. Unknowns and inaccessible evidence
 
-1. RLS policies, functions and grants on every table in §4 — not read; no SQL run.
+1. RLS policies, functions and grants on every table in §4 — not read by this audit; no SQL run. Six tables have a reported `pg_policies` read from PR #74's description (2026-10-28), not re-verified.
 2. Whether `tvgsuosweb` currently deploys `main`, and with which environment variables set — Vercel not inspected.
 3. Production reachability of any route — no request sent.
 4. The 2026-10-05 advisor findings (F9) — not rechecked.
