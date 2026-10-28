@@ -5,6 +5,14 @@
 **Status of this document:** point-in-time evidence record. It is not an approval, not a
 security sign-off, and not a production verification.
 
+> **Addendum 2026-10-29.** The founder then issued a self-contained written direction (no
+> attachments). From it, `docs/MASTER_DIRECTION.md` was replaced (previous text preserved at
+> `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`) and
+> `docs/FOUNDER_OS_TARGET_ARCHITECTURE.md` was created. The founder's direction settles C2 (node
+> wording), C6 (MASTER source), C7 (domain: `os.hmcmarketing.tech`; `theverifiedgroup.org` not to
+> be substituted) and C8 (Ver is optional, never the source of truth). C1 (Verifos), C3–C5 and C9
+> (privacy, now a recorded governance blocker) remain open. The audit findings below are unchanged.
+>
 > **Source documents not received.** The founder's prompts of 2026-10-28 referred to two
 > attachments — "Founder OS Master Direction.md" and "HMC Founder OS Architecture.md".
 > Neither reached the executing session (not in the message, not on disk). Their contents
