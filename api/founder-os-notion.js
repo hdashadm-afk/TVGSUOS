@@ -34,6 +34,8 @@
 // which is what this workspace's multi-source-database model
 // actually expects.
 
+const { requireFounder } = require('./_founder-auth');
+
 const NOTION_VERSION = '2025-09-03';
 
 // Data source IDs (not the databases' own page-level IDs — see the
@@ -123,6 +125,10 @@ module.exports = async function handler(req, res) {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+
+  // Founder only (api/_founder-auth.js), checked before any credential or
+  // upstream call so an anonymous caller learns nothing, not even config.
+  if (!(await requireFounder(req, res))) return;
 
   const apiKey = process.env.NOTION_API_KEY;
   if (!apiKey) {

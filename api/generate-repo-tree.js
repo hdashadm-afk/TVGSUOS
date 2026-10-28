@@ -10,6 +10,8 @@
 // and friends) and in one-off Artifacts, not here, so this snapshot
 // can't silently go stale when a repo is added/renamed/removed.
 
+const { requireFounder } = require('./_founder-auth');
+
 const OWNER = 'hdashadm-afk';
 
 module.exports = async function handler(req, res) {
@@ -17,6 +19,10 @@ module.exports = async function handler(req, res) {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+
+  // Founder only (api/_founder-auth.js), checked before any credential or
+  // upstream call so an anonymous caller learns nothing, not even config.
+  if (!(await requireFounder(req, res))) return;
 
   const headers = { Accept: 'application/vnd.github+json' };
   if (process.env.GITHUB_TOKEN) {

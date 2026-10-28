@@ -19,6 +19,8 @@
 // Vercel project settings. Not configured until then — returns a
 // clear "not configured" error rather than crashing.
 
+const { requireFounder } = require('./_founder-auth');
+
 const PROJECT_REF = 'jbhfdmujqrtqkhacfegl';
 const MANAGEMENT_API = 'https://api.supabase.com/v1';
 
@@ -36,6 +38,10 @@ module.exports = async function handler(req, res) {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+
+  // Founder only (api/_founder-auth.js), checked before any credential or
+  // upstream call so an anonymous caller learns nothing, not even config.
+  if (!(await requireFounder(req, res))) return;
 
   const token = process.env.SUPABASE_MANAGEMENT_TOKEN;
   if (!token) {

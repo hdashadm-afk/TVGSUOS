@@ -17,6 +17,8 @@
 // founder adds it — returns a clear "not configured" error rather
 // than crashing.
 
+const { requireFounder } = require('./_founder-auth');
+
 const ODO_SUPABASE_URL = 'https://qhjhsdsluxgyjevbhfmk.supabase.co';
 const LOOKBACK_HOURS = 72;
 
@@ -25,6 +27,10 @@ module.exports = async function handler(req, res) {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+
+  // Founder only (api/_founder-auth.js), checked before any credential or
+  // upstream call so an anonymous caller learns nothing, not even config.
+  if (!(await requireFounder(req, res))) return;
 
   const serviceRoleKey = process.env.ODO_SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceRoleKey) {

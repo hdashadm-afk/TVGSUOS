@@ -11,6 +11,8 @@
 // project, never hardcode it here, and never expose it to client-side
 // code.
 
+const { requireFounder } = require('./_founder-auth');
+
 const CHECKLIST_SECTIONS = {
   coffeeshop: {
     businessNoun: 'coffee shop',
@@ -185,6 +187,10 @@ module.exports = async function handler(req, res) {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+
+  // Founder only (api/_founder-auth.js), checked before any credential or
+  // upstream call so an anonymous caller learns nothing, not even config.
+  if (!(await requireFounder(req, res))) return;
 
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   if (!RESEND_API_KEY) {

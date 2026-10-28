@@ -15,6 +15,8 @@
 // configured" error rather than crashing, same pattern as every
 // other credential-gated endpoint in this ecosystem.
 
+const { requireFounder } = require('./_founder-auth');
+
 const SUPABASE_URL = 'https://jbhfdmujqrtqkhacfegl.supabase.co';
 const REPO_OWNER = 'hdashadm-afk';
 const REPO_NAME = 'TVGSUOS';
@@ -68,6 +70,10 @@ module.exports = async function handler(req, res) {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+
+  // Founder only (api/_founder-auth.js), checked before any credential or
+  // upstream call so an anonymous caller learns nothing, not even config.
+  if (!(await requireFounder(req, res))) return;
 
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
