@@ -4,6 +4,25 @@ Persistent, dated implementation log for this repo. Read this first in any new s
 
 ---
 
+- **2026-10-29 (V-Loop health read + session lessons, docs only):**
+
+  **V-Loop read** on `jbhfdmujqrtqkhacfegl`, 29 Oct. The loop is not running:
+  1. `daily_baseline_checks`: 36 rows. The last row by the daily Ver task is 2026-09-24. The 2026-10-29 row was written by the founder's own Quick regenerate. The Ver task reports `SUCCEEDED` every day (last 28 Oct 23:01) but wrote nothing for 35 days. Its wake goes into persistent session `session_01CPL4rLU4bzkHfr6pUDqWgo`, and that same session carried the interactive PR #74 work.
+  2. `weekly_updates`: 4 rows, the last written 2026-07-12. The weekly market task also reports `SUCCEEDED` (23 Oct) and wrote nothing.
+  3. `decisions`: 5 rows, the last 2026-08-09; 0 have an `actual_outcome`. `decision_log`: 0 rows.
+  4. `improvement_signals`: 3 rows, the last 2026-07-08. `ver_queries`: last 2026-08-22.
+
+  Signal → Review → Updated Direction has no write path. Every direction change on 28–29 Oct was a hand-edited doc PR.
+
+  **Lessons from the 28–29 Oct Odo / TVGSUOS session.** Each is a class, its cause and its guard:
+  1. **A scheduled task's "succeeded" is not evidence.** Cause: the run status records that the wake was delivered, not that the work ran. Guard: judge a task by the row or email it should produce.
+  2. **A constant changed inside an unrelated fix.** Cause: Odo #261 replaced the yard pin with a retired one. Guard: Odo #267 pins `mER7HhbErKthtpr39` and fails on any second maps link.
+  3. **A counter reset that loops the bot.** Cause: the re-ask streak reset after each handoff, so the menu alternated with the handoff forever. Guard: Odo #267/#268 fixtures, menu once per thread.
+  4. **The matcher was right; the routing was wrong.** Cause: on ODO-0014 the FAQ matchers matched, but first-contact, buyer-price and no-saved-state routing ran first. Guard: Odo #275 tests the whole webhook per sender type, not one function.
+  5. **State quoted from memory.** Cause: TVGSUOS #73 and #74 were reported "open" after the founder had merged them. Guard: re-read PR state before stating it.
+  6. **A count stated before it was read.** Cause: 7 test rows were claimed; 6 existed, and the 7th was a real Toyota 86. Guard: read before any delete.
+  7. **A rule changed without saying so.** Cause: fixture 3 contradicted ODO MASTER §2.2 ("first contact gets only the welcome"). Guard: amend MASTER openly in the same PR and re-stamp `master_md_sha`.
+
 - **2026-10-29 (PR #74, docs only — MASTER replaced; review remediation):** `docs/MASTER_DIRECTION.md` is now the HMC Founder OS MASTER (§1–§14), with `docs/FOUNDER_OS_TARGET_ARCHITECTURE.md` and the Phase 0 audit `docs/audits/FOUNDER_OS_PHASE0_AUDIT_2026-10-28.md`. The earlier text, including the 28 Oct §A below, is kept at `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md` (branch text at `0eb9a4f`; §A never reached `main`). Grok's initial independent review returned **CHANGES REQUESTED**; four documentation findings were remediated in one commit (audit §14). **Independent re-review is still required** before founder release. Open decisions: MASTER §3 (Verifos), architecture §14 (Dipstify canonical MASTER, STATUS/QUEUE location), MASTER §10 (no canonical privacy policy). PR #73 is still open and unremediated.
 - **2026-10-28 (Founder OS architecture amendment, docs only):** `docs/MASTER_DIRECTION.md` gained §A on the PR #74 branch (never on `main`; superseded 29 Oct — text now in `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md` §A):
   - UI baseline: mockup `a79c240`; source not located.
