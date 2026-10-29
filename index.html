@@ -3218,7 +3218,7 @@
           <p class="sub">Answers with your top 3 actions for today — not a long report.</p>
           <form id="ask-ver-form" class="strategy-form" style="margin:0;">
             <label for="ask-ver-question" style="position:absolute; left:-9999px;">Question for Ver</label>
-            <input type="text" id="ask-ver-question" required placeholder="Ask Ver: what should I do first?"
+            <input type="text" id="ask-ver-question" required maxlength="500" placeholder="Ask Ver: what should I do first?"
               value="What should I do first today?" style="margin-bottom:10px;" />
             <button type="submit" id="ask-ver-btn" style="width:100%;">Ask Ver: what should I do first?</button>
             <p id="ask-ver-status"></p>
@@ -4677,17 +4677,15 @@
               const res = await authFetch('/api/send-pos-checklist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                // The server reads the recipient from this stored lead and stamps
+                // pos_checklist_sent_at itself (api/send-pos-checklist.js).
                 body: JSON.stringify({
-                  email: btn.dataset.email,
-                  businessName: btn.dataset.business,
-                  ownerName: btn.dataset.owner,
-                  leadType: btn.dataset.leadType,
+                  leadTable: btn.dataset.table,
+                  leadId: btn.dataset.id,
                 }),
               });
               const data = await res.json();
               if (!res.ok) throw new Error(data.error || 'Send failed');
-              const { error } = await sb.from(btn.dataset.table).update({ pos_checklist_sent_at: new Date().toISOString() }).eq('id', btn.dataset.id);
-              if (error) throw error;
               loadKosLeads();
             } catch (err) {
               console.error('[send-pos-checklist] failed:', err);
@@ -6033,7 +6031,7 @@
         const veraStatus = formatVeraStatusForBaseline(veraStatusRes);
         const governanceRiskNote = formatGovernanceRiskNoteForBaseline(governanceRes);
         const skippedNotes = [];
-        if (veraStatusRes && veraStatusRes.notConfigured) skippedNotes.push('Vera signal (needs ODO_SUPABASE_SERVICE_ROLE_KEY)');
+        if (veraStatusRes && (veraStatusRes.notConfigured || veraStatusRes.manualImportRequired)) skippedNotes.push('Vera signal (ODO is manual/import-only; no imported report yet)');
         if (governanceRes && governanceRes.notConfigured) skippedNotes.push('governance risk (needs SUPABASE_MANAGEMENT_TOKEN)');
 
         const loggedFromVera = await checkVeraSignalPatterns(veraStatusRes);

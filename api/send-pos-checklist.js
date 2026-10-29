@@ -1,15 +1,33 @@
 // Vercel serverless function — ported from katiwala-owner-os-
 // 2026-07-19 along with KOS Leads (see index.html's Marketing section
 // comment for the full reasoning). Sends the Simple POS setup
-// checklist email to a converted lead (coffee shop, hotel, or gas
-// station) via Resend. No npm dependencies (this repo has no build
-// step / package.json); uses the global fetch available in Vercel's
-// Node.js runtime.
+// checklist email to a lead (coffee shop, hotel, or gas station) via
+// Resend. No npm dependencies; uses the global fetch of Vercel's Node runtime.
 //
-// Requires a RESEND_API_KEY environment variable set on this Vercel
-// project (tvgsuosweb) — a separate copy from katiwala-owner-os-'s own
-// project, never hardcode it here, and never expose it to client-side
-// code.
+// RECIPIENTS (2026-10-29, PR #73 remediation). The caller no longer names
+// the recipient. It sends a stored-lead reference — { leadTable, leadId } —
+// and the server reads that lead's own email with the service-role key.
+// leadTable must be one of LEAD_TABLES; anything else is refused. A missing,
+// unknown or malformed stored email is refused. No address in the request is
+// ever used, so the route cannot be pointed at an arbitrary inbox.
+//
+// ABUSE CONTROLS — durable, in the shared Supabase project, not an
+// instance-local counter (serverless instances do not share memory):
+//   1. Per lead: at most one send per COOLDOWN_HOURS. Enforced by a
+//      conditional update of that lead's pos_checklist_sent_at (the
+//      existing column the page already showed), which succeeds for one
+//      request only; a second request in the window gets 429.
+//   2. Global: at most DAILY_CAP sends in 24h across the three lead tables,
+//      counted from the same column. If the count cannot be read the route
+//      fails closed (503) and sends nothing.
+// DEPENDENCY (checked 2026-10-29 against information_schema): the column
+// pos_checklist_sent_at does NOT exist on any of the three lead tables, so
+// the ledger these controls need is missing. Until the founder-approved SQL
+// in docs/SECURITY_PRIVILEGE_INVENTORY.md §3 runs, every read of it fails and
+// this route FAILS CLOSED (503, nothing sent). This PR changes no schema.
+//
+// Auth decision: founder only (api/_founder-auth.js), checked first.
+// Requires RESEND_API_KEY and SUPABASE_SERVICE_ROLE_KEY on this project.
 
 const { requireFounder } = require('./_founder-auth');
 
@@ -182,56 +200,144 @@ function checklistEmailHtml({ leadType, businessName, ownerName }) {
   `;
 }
 
+const SUPABASE_URL = 'https://jbhfdmujqrtqkhacfegl.supabase.co';
+const LEAD_TABLES = { leads_coffeeshop: 'coffeeshop', leads_hotel: 'hotel', leads_gas_station: 'gas_station' };
+const COOLDOWN_HOURS = 24;
+const DAILY_CAP = 25;
+const EMAIL_RE = /^[^\s@<>",;]{1,64}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,24}$/;
+const LEDGER_MISSING = 'Checklist sending is paused: the send-limit ledger (pos_checklist_sent_at) is not in the database yet. Nothing was sent. See docs/SECURITY_PRIVILEGE_INVENTORY.md §3.';
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function sbHeaders(key, extra = {}) {
+  return { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', ...extra };
+}
+
+// Sends in the last 24h across all lead tables, or null when unreadable.
+async function sentLastDay(key, sinceIso) {
+  let total = 0;
+  for (const table of Object.keys(LEAD_TABLES)) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=id&pos_checklist_sent_at=gte.${encodeURIComponent(sinceIso)}&limit=${DAILY_CAP}`, { headers: sbHeaders(key) });
+    if (!r.ok) return null;
+    const rows = await r.json();
+    if (!Array.isArray(rows)) return null;
+    total += rows.length;
+  }
+  return total;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
-  // Founder only (api/_founder-auth.js), checked before any credential or
-  // upstream call so an anonymous caller learns nothing, not even config.
   if (!(await requireFounder(req, res))) return;
 
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
-  if (!RESEND_API_KEY) {
-    res.status(500).json({ error: 'Email service is not configured (missing RESEND_API_KEY on this Vercel project).' });
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!RESEND_API_KEY || !serviceKey) {
+    res.status(500).json({ error: 'Email service is not configured on this deployment.' });
     return;
   }
 
-  const { email, businessName, ownerName, leadType } = req.body || {};
-  if (!email || typeof email !== 'string') {
-    res.status(400).json({ error: 'Missing recipient email.' });
+  const body = req.body && typeof req.body === 'object' ? req.body : {};
+  if ('email' in body || 'to' in body) {
+    res.status(400).json({ error: 'Recipients are not accepted. Send leadTable and leadId.' });
     return;
   }
-  const resolvedLeadType = CHECKLIST_SECTIONS[leadType] ? leadType : 'coffeeshop';
-
-  const fromEmail = process.env.POS_CHECKLIST_FROM_EMAIL || 'onboarding@resend.dev';
+  const { leadTable, leadId } = body;
+  if (typeof leadTable !== 'string' || !Object.prototype.hasOwnProperty.call(LEAD_TABLES, leadTable)) {
+    res.status(400).json({ error: 'Unknown lead table.' });
+    return;
+  }
+  if (typeof leadId !== 'string' || !UUID_RE.test(leadId)) {
+    res.status(400).json({ error: 'Invalid lead id.' });
+    return;
+  }
 
   try {
-    const resendRes = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: `Katiwala AI <${fromEmail}>`,
-        to: [email],
-        subject: `Setting up your Simple POS${businessName ? ` — ${businessName}` : ''}`,
-        html: checklistEmailHtml({ leadType: resolvedLeadType, businessName, ownerName }),
-      }),
-    });
-
-    const data = await resendRes.json();
-    if (!resendRes.ok) {
-      console.error('[Resend] send failed:', data);
-      res.status(502).json({ error: data.message || 'Email provider rejected the request.' });
+    const read = await fetch(`${SUPABASE_URL}/rest/v1/${leadTable}?id=eq.${leadId}&select=id,email,business_name,owner_name,pos_checklist_sent_at`, { headers: sbHeaders(serviceKey) });
+    if (!read.ok) {
+      res.status(503).json({ error: LEDGER_MISSING });
+      return;
+    }
+    const rows = await read.json();
+    const lead = Array.isArray(rows) ? rows[0] : null;
+    if (!lead) {
+      res.status(404).json({ error: 'Lead not found.' });
+      return;
+    }
+    const email = typeof lead.email === 'string' ? lead.email.trim() : '';
+    if (!email || !EMAIL_RE.test(email)) {
+      res.status(422).json({ error: 'This lead has no valid email on file.' });
       return;
     }
 
-    res.status(200).json({ ok: true, id: data.id });
+    const now = new Date();
+    const cutoff = new Date(now.getTime() - COOLDOWN_HOURS * 60 * 60 * 1000).toISOString();
+    const sent = await sentLastDay(serviceKey, cutoff);
+    if (sent == null) {
+      res.status(503).json({ error: LEDGER_MISSING });
+      return;
+    }
+    if (sent >= DAILY_CAP) {
+      res.status(429).json({ error: `Daily limit reached (${DAILY_CAP} checklist emails in 24 hours).` });
+      return;
+    }
+
+    // Claim: stamps this lead only if it was not sent within the cooldown.
+    const claim = await fetch(
+      `${SUPABASE_URL}/rest/v1/${leadTable}?id=eq.${leadId}&or=(pos_checklist_sent_at.is.null,pos_checklist_sent_at.lt.${encodeURIComponent(cutoff)})&select=id`,
+      { method: 'PATCH', headers: sbHeaders(serviceKey, { Prefer: 'return=representation' }), body: JSON.stringify({ pos_checklist_sent_at: now.toISOString() }) }
+    );
+    if (!claim.ok) {
+      res.status(503).json({ error: LEDGER_MISSING });
+      return;
+    }
+    const claimed = await claim.json();
+    if (!Array.isArray(claimed) || claimed.length !== 1) {
+      res.status(429).json({ error: `This lead already got the checklist in the last ${COOLDOWN_HOURS} hours.` });
+      return;
+    }
+
+    const resolvedLeadType = LEAD_TABLES[leadTable];
+    const fromEmail = process.env.POS_CHECKLIST_FROM_EMAIL || 'onboarding@resend.dev';
+    const businessName = lead.business_name ? escapeHtml(lead.business_name).slice(0, 120) : '';
+    const ownerName = lead.owner_name ? escapeHtml(lead.owner_name).slice(0, 80) : '';
+    const resendRes = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: `Katiwala AI <${fromEmail}>`,
+        to: [email],
+        subject: `Setting up your Simple POS${lead.business_name ? ` — ${String(lead.business_name).replace(/[\r\n]/g, ' ').slice(0, 120)}` : ''}`,
+        html: checklistEmailHtml({ leadType: resolvedLeadType, businessName, ownerName }),
+      }),
+    });
+    if (!resendRes.ok) {
+      // Give the lead back its previous stamp so a failed send does not block a retry.
+      await fetch(`${SUPABASE_URL}/rest/v1/${leadTable}?id=eq.${leadId}`, {
+        method: 'PATCH',
+        headers: sbHeaders(serviceKey, { Prefer: 'return=minimal' }),
+        body: JSON.stringify({ pos_checklist_sent_at: lead.pos_checklist_sent_at || null }),
+      }).catch(() => {});
+      console.error('[send-pos-checklist] provider rejected the send:', resendRes.status);
+      res.status(502).json({ error: 'Email provider rejected the request.' });
+      return;
+    }
+    const data = await resendRes.json();
+    res.status(200).json({ ok: true, id: data.id, sentAt: now.toISOString() });
   } catch (err) {
-    console.error('[send-pos-checklist] error:', err);
+    console.error('[send-pos-checklist] failed');
     res.status(500).json({ error: 'Failed to send email.' });
   }
 };
+
+module.exports.LEAD_TABLES = LEAD_TABLES;
+module.exports.DAILY_CAP = DAILY_CAP;
+module.exports.LEDGER_MISSING = LEDGER_MISSING;

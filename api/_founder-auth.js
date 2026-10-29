@@ -44,11 +44,36 @@ function bearerToken(req) {
   return String(raw).replace(/^Bearer\s+/i, '').trim();
 }
 
+const EXPECTED_ISSUER = SUPABASE_URL + '/auth/v1';
+
+// Claims read from the token BEFORE any network call. This is not the
+// signature check — /auth/v1/user below is — it only refuses, offline and
+// cheaply, a token that is expired or was issued by another Supabase
+// project, so neither ever reaches Supabase or an upstream.
+//   'expired'       exp missing or in the past
+//   'wrong-project' iss is not this project's auth issuer
+//   'malformed'     not a three-part JWT with a JSON payload
+function tokenClaimProblem(token, nowMs = Date.now()) {
+  const parts = String(token).split('.');
+  if (parts.length !== 3) return 'malformed';
+  let claims;
+  try {
+    claims = JSON.parse(Buffer.from(parts[1].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8'));
+  } catch {
+    return 'malformed';
+  }
+  if (!claims || typeof claims !== 'object') return 'malformed';
+  if (typeof claims.exp !== 'number' || claims.exp * 1000 <= nowMs) return 'expired';
+  if (claims.iss !== EXPECTED_ISSUER) return 'wrong-project';
+  return null;
+}
+
 // The caller's Supabase auth user, or null. Never throws.
 async function resolveCaller(req) {
   try {
     const token = bearerToken(req);
     if (!token) return null;
+    if (tokenClaimProblem(token)) return null;
     const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
       headers: { Authorization: 'Bearer ' + token, apikey: anonKey() },
     });
@@ -99,4 +124,4 @@ async function requireFounder(req, res) {
   return true;
 }
 
-module.exports = { requireFounder, resolveCaller, callerRole, SUPABASE_URL };
+module.exports = { requireFounder, resolveCaller, callerRole, tokenClaimProblem, SUPABASE_URL, EXPECTED_ISSUER };

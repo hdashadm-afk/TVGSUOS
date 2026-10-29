@@ -15,7 +15,65 @@
 // configured" error rather than crashing, same pattern as every
 // other credential-gated endpoint in this ecosystem.
 
+// CONSTRAINTS (2026-10-29, PR #73 remediation). One fixed operation:
+// answer one founder question. The caller supplies only `question`
+// (string, 1–MAX_QUESTION chars, no other fields). It cannot choose a
+// model, token budget, table, query or tool. Spend is bounded by a fixed
+// MODEL and MAX_TOKENS, grounding docs capped at MAX_DOC_CHARS each, and a
+// durable hourly limit counted from ver_queries in the shared Supabase
+// project (not an instance-local counter). If that count cannot be read the
+// route fails closed (503) and Anthropic is not called. Service-role use is
+// limited to: read open decisions/signals (fixed columns), insert one
+// ver_queries row, insert at most one validated founder_tasks row.
+// Ver is optional and never the source of truth (MASTER §9).
+
 const { requireFounder } = require('./_founder-auth');
+
+const MODEL = 'claude-sonnet-5';
+const MAX_TOKENS = 600;
+const MAX_QUESTION = 500;
+const MAX_DOC_CHARS = 12000;
+const HOURLY_LIMIT = 20;
+const MAX_TASKS = 1;
+const TASK_ENUMS = {
+  ecosystem: ['FOUNDER', 'KOS', 'ODO'],
+  priority: ['high', 'medium', 'low'],
+  phase: ['mvp', 'phase2', 'phase3'],
+};
+
+// { question } or { status, error }. Strict: unknown fields are refused.
+function validateRequest(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return { status: 400, error: 'Send a JSON body with a question.' };
+  const extra = Object.keys(body).filter((key) => key !== 'question');
+  if (extra.length) return { status: 400, error: 'Only "question" is accepted.' };
+  if (typeof body.question !== 'string') return { status: 400, error: 'question must be text.' };
+  const question = body.question.trim();
+  if (!question) return { status: 400, error: 'question is required.' };
+  if (question.length > MAX_QUESTION) return { status: 413, error: `question is too long (max ${MAX_QUESTION} characters).` };
+  return { question };
+}
+
+// Answers saved in the last hour, or null when unreadable.
+async function answeredLastHour(headers, nowMs = Date.now()) {
+  const since = new Date(nowMs - 60 * 60 * 1000).toISOString();
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/ver_queries?select=id&status=eq.answered&answered_at=gte.${encodeURIComponent(since)}&limit=${HOURLY_LIMIT}`, { headers });
+  if (!r.ok) return null;
+  const rows = await r.json();
+  return Array.isArray(rows) ? rows.length : null;
+}
+
+function validTask(input) {
+  if (!input || typeof input !== 'object') return null;
+  const { ecosystem, title, priority, phase, notes } = input;
+  if (!TASK_ENUMS.ecosystem.includes(ecosystem) || !TASK_ENUMS.priority.includes(priority) || !TASK_ENUMS.phase.includes(phase)) return null;
+  if (typeof title !== 'string' || !title.trim()) return null;
+  return {
+    ecosystem, priority, phase,
+    title: title.trim().slice(0, 120),
+    notes: typeof notes === 'string' && notes.trim() ? notes.trim().slice(0, 300) : null,
+    status: 'not_done',
+  };
+}
 
 const SUPABASE_URL = 'https://jbhfdmujqrtqkhacfegl.supabase.co';
 const REPO_OWNER = 'hdashadm-afk';
@@ -62,7 +120,8 @@ async function fetchDoc(path, headers) {
     headers: { ...headers, Accept: 'application/vnd.github.raw' },
   });
   if (!res.ok) return null;
-  return res.text();
+  const text = await res.text();
+  return text.length > MAX_DOC_CHARS ? `${text.slice(0, MAX_DOC_CHARS)}\n(truncated)` : text;
 }
 
 module.exports = async function handler(req, res) {
@@ -85,13 +144,29 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const { question } = req.body || {};
-  if (!question || !question.trim()) {
-    res.status(400).json({ error: 'question is required.' });
+  const checked = validateRequest(req.body);
+  if (checked.error) {
+    res.status(checked.status).json({ error: checked.error });
     return;
   }
+  const { question } = checked;
 
   const sbHeaders = { apikey: serviceRoleKey, Authorization: `Bearer ${serviceRoleKey}`, 'Content-Type': 'application/json' };
+
+  let used;
+  try {
+    used = await answeredLastHour(sbHeaders);
+  } catch {
+    used = null;
+  }
+  if (used == null) {
+    res.status(503).json({ error: 'Ask Ver is unavailable: its usage limit could not be checked. Nothing was sent to the model.' });
+    return;
+  }
+  if (used >= HOURLY_LIMIT) {
+    res.status(429).json({ error: `Ask Ver limit reached (${HOURLY_LIMIT} answers per hour).` });
+    return;
+  }
   const ghHeaders = { Accept: 'application/vnd.github+json' };
   if (process.env.GITHUB_TOKEN) ghHeaders.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
 
@@ -122,8 +197,8 @@ module.exports = async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-5',
-        max_tokens: 600,
+        model: MODEL,
+        max_tokens: MAX_TOKENS,
         output_config: { effort: 'low' },
         system: `You are Ver, the founder-level chief of staff for Founder OS (TVGSUOS) — cockpit for Verifos, Dipstify, and ODO. Chairman + 3 CEOs is a briefing loop you run, not the companies. The founder is asking what to do first today.
 
@@ -163,8 +238,7 @@ ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
     });
 
     if (!anthropicRes.ok) {
-      const body = await anthropicRes.text();
-      console.error('[ask-ver] Anthropic API error:', anthropicRes.status, body);
+      console.error('[ask-ver] Anthropic API error:', anthropicRes.status);
       res.status(502).json({ error: `Anthropic API returned ${anthropicRes.status}.` });
       return;
     }
@@ -173,7 +247,7 @@ ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
     const content = anthropicData.content || [];
     const answer = content.filter(b => b.type === 'text').map(b => b.text || '').join('').trim() || 'No answer text returned.';
     if (answer === 'No answer text returned.') {
-      console.error('[ask-ver] empty answer, raw response:', JSON.stringify(anthropicData));
+      console.error('[ask-ver] empty answer');
     }
 
     // Fire-and-forget: Ver identified a real follow-up via the tool
@@ -182,17 +256,18 @@ ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
     // best-effort; a failure here shouldn't fail the whole answer.
     const loggedTasks = [];
     for (const block of content) {
+      if (loggedTasks.length >= MAX_TASKS) break;
       if (block.type !== 'tool_use' || block.name !== 'log_follow_up_task') continue;
-      const { ecosystem, title, priority, phase, notes } = block.input || {};
-      if (!ecosystem || !title || !priority || !phase) continue;
+      const task = validTask(block.input);
+      if (!task) continue;
       try {
         const taskRes = await fetch(`${SUPABASE_URL}/rest/v1/founder_tasks`, {
           method: 'POST',
           headers: { ...sbHeaders, Prefer: 'return=minimal' },
-          body: JSON.stringify({ ecosystem, title, priority, phase, notes: notes || null, status: 'not_done' }),
+          body: JSON.stringify(task),
         });
-        if (taskRes.ok) loggedTasks.push(title);
-        else console.error('[ask-ver] Could not log follow-up task:', await taskRes.text());
+        if (taskRes.ok) loggedTasks.push(task.title);
+        else console.error('[ask-ver] Could not log follow-up task:', taskRes.status);
       } catch (err) {
         console.error('[ask-ver] log_follow_up_task error:', err);
       }
@@ -203,11 +278,14 @@ ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
       headers: { ...sbHeaders, Prefer: 'return=minimal' },
       body: JSON.stringify({ question, status: 'answered', answer, answered_at: new Date().toISOString() }),
     });
-    if (!insertRes.ok) console.error('[ask-ver] Could not save to ver_queries:', await insertRes.text());
+    if (!insertRes.ok) console.error('[ask-ver] Could not save to ver_queries:', insertRes.status);
 
     res.status(200).json({ answer, loggedTasks });
   } catch (err) {
-    console.error('[ask-ver] error:', err);
-    res.status(500).json({ error: err.message || 'Failed to answer the question.' });
+    console.error('[ask-ver] failed');
+    res.status(500).json({ error: 'Failed to answer the question.' });
   }
 };
+
+module.exports.validateRequest = validateRequest;
+module.exports.LIMITS = { MODEL, MAX_TOKENS, MAX_QUESTION, MAX_DOC_CHARS, HOURLY_LIMIT, MAX_TASKS };
