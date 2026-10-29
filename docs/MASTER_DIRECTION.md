@@ -5,8 +5,14 @@ Status: Active — current founder direction for TVGSUOS
 Owner: Edgardo Castro
 
 **Source:** authored from the founder's self-contained written direction of 2026-10-29 (PR #74).
-**Supersedes:** the previous `docs/MASTER_DIRECTION.md` (§A of 2026-10-28 and §0–§10), preserved
-unchanged at [`docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`](history/MASTER_DIRECTION_superseded_2026-10-28.md).
+**Supersedes:** the previous MASTER text, kept at
+[`docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`](history/MASTER_DIRECTION_superseded_2026-10-28.md).
+**Provenance (exact):** that file preserves `docs/MASTER_DIRECTION.md` as it stood on **this PR's
+branch at commit `0eb9a4f`**, not as it stands on `main`. Compared with `main`'s MASTER (`1f75dcb`,
+§0–§10), `git diff` shows **107 inserted lines** in the history file: an 8-line history header,
+plus 99 lines from the branch — §A (dated 2026-10-28) and 2 rewritten preamble lines that replace
+`main`'s "Last updated: 2026-08-22" line and its §0 note. **§A never reached `main`.** Below the
+header, the file matches `0eb9a4f` byte for byte.
 Where the two conflict, this document wins. Where this document is silent, the history file is
 reference only.
 
@@ -43,8 +49,16 @@ stay in force for that venture's product.
 Rules:
 - **ODO Vehicles** retains its operational flywheel: **Sangla → Restore → Buy & Sell → Recovery**, around **Helium Yard**.
 - **ODO Vehicles and ODO Property never share performance metrics.** Each is measured on its own evidence.
-- **Helium Fuels does not borrow ODO Vehicles economics or operating signals.**
-- **ODO Property stays parked:** no activation, no advertising, no spend, no invented performance. Future plans may be drafted; nothing is launched or claimed while parked.
+- **Helium Fuels does not borrow ODO Vehicles economics or operating signals.** Helium reports on its own evidence.
+- **Universal separation (every node: Helium Fuels, Dipstify, ODO Vehicles, DinkKada, ODO Property).**
+  No metric, cash figure, customer outcome, performance claim, or evidence from one node is
+  attributed to another node unless **both** exist: (a) a validated source for the figure, and
+  (b) an explicitly recorded relationship between the two nodes (what links them, who recorded it,
+  when). Without both, each node's numbers stay on that node. A shared customer, shared
+  infrastructure or shared ownership is not by itself a recorded relationship. The two rules above
+  are instances of this one.
+- **ODO Property stays parked:** it carries no vehicle-derived performance (no ODO Vehicles listings,
+  deals, leads or cash shown as Property results). no activation, no advertising, no spend, no invented performance. Future plans may be drafted; nothing is launched or claimed while parked.
 
 ## 3. Verifos — open classification decision
 

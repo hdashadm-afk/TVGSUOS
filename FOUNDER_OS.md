@@ -4,7 +4,8 @@ Persistent, dated implementation log for this repo. Read this first in any new s
 
 ---
 
-- **2026-10-28 (Founder OS architecture amendment, docs only):** `docs/MASTER_DIRECTION.md` gains §A:
+- **2026-10-29 (PR #74, docs only — MASTER replaced; review remediation):** `docs/MASTER_DIRECTION.md` is now the HMC Founder OS MASTER (§1–§14), with `docs/FOUNDER_OS_TARGET_ARCHITECTURE.md` and the Phase 0 audit `docs/audits/FOUNDER_OS_PHASE0_AUDIT_2026-10-28.md`. The earlier text, including the 28 Oct §A below, is kept at `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md` (branch text at `0eb9a4f`; §A never reached `main`). Grok's initial independent review returned **CHANGES REQUESTED**; four documentation findings were remediated in one commit (audit §14). **Independent re-review is still required** before founder release. Open decisions: MASTER §3 (Verifos), architecture §14 (Dipstify canonical MASTER, STATUS/QUEUE location), MASTER §10 (no canonical privacy policy). PR #73 is still open and unremediated.
+- **2026-10-28 (Founder OS architecture amendment, docs only):** `docs/MASTER_DIRECTION.md` gained §A on the PR #74 branch (never on `main`; superseded 29 Oct — text now in `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md` §A):
   - UI baseline: mockup `a79c240`; source not located.
   - Five nodes: Helium Fuels → Dipstify → ODO Vehicles → DinkKada → ODO Property (parked).
   - The system learns; agents do not remember.
@@ -15,7 +16,7 @@ Persistent, dated implementation log for this repo. Read this first in any new s
   - Approval is not execution.
   - All API routes secured before `os.hmcmarketing.tech` is connected.
 
-  Venture MASTERs are not replaced. 10 open contradictions are listed in §A.10 and are not resolved. Security PR #73 is still open. Next: implementation task 1 (secure the routes), after founder approval.
+  Venture MASTERs are not replaced. 10 open contradictions were listed in §A.10 (now in `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`); the live register is the audit's §8, with current open decisions in architecture §14. Security PR #73 is still open. Next: implementation task 1 (secure the routes), after founder approval.
 - **2026-08-21 (SR → Verifos master update):** Customer brand **Verifos** only in masterplan / portfolio / Ver / cockpit. **Station Rescue / SR** retired in product copy. **verifos.co** live. Landing pain-first (tech + parts); registry compounds. Files: `docs/MASTER_DIRECTION.md` §0, `docs/VERIFOS_OPERATING_LOCK.md`, `docs/PORTFOLIO_MAP.md`, `docs/ECOSYSTEM_REPO_TREE.md`, `docs/VER_BEHAVIOR.md`, `docs/ORG_CHART.md`, `index.html`, `api/ask-ver.js`. Repo still `station-rescue`.
 - **2026-08-20 (portfolio phase lock):** **1A** Verifos Stations → **1B** Verifos Vehicles → **2** Dipstify → **3A** ODO-Vehicles → **3B** ODO-Properties. Verifos = trust layer. ODO = marketplace. Cockpit still 3 CEOs; 1B and 3B roll under Verifos and ODO lanes until split.
 - **2026-08-20 (Verifos Stations / ODO split):** **Verifos** = trust/service layer (protect owners, guide techs). **Verifos Stations** = live product line. **Verifos Vehicles** = later — not ODO marketplace. **ODO Property + Vehicles** = marketplace unchanged.

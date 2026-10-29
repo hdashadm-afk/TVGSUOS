@@ -6,12 +6,15 @@
 security sign-off, and not a production verification.
 
 > **Addendum 2026-10-29.** The founder then issued a self-contained written direction (no
-> attachments). From it, `docs/MASTER_DIRECTION.md` was replaced (previous text preserved at
-> `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`) and
+> attachments). From it, `docs/MASTER_DIRECTION.md` was replaced (previous text kept at
+> `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md` — the branch text at `0eb9a4f`, whose §A
+> never reached `main`; see MASTER provenance note) and
 > `docs/FOUNDER_OS_TARGET_ARCHITECTURE.md` was created. The founder's direction settles C2 (node
 > wording), C6 (MASTER source), C7 (domain: `os.hmcmarketing.tech`; `theverifiedgroup.org` not to
 > be substituted) and C8 (Ver is optional, never the source of truth). C1 (Verifos), C3–C5 and C9
 > (privacy, now a recorded governance blocker) remain open. The audit findings below are unchanged.
+> References to "PR #74 §A" / "§A.10" were repointed on 2026-10-29 to the history file and the
+> current MASTER sections (§8 register); §A itself was not recreated.
 >
 > **Source documents not received.** The founder's prompts of 2026-10-28 referred to two
 > attachments — "Founder OS Master Direction.md" and "HMC Founder OS Architecture.md".
@@ -133,7 +136,7 @@ Target state as written in the founder's prompt of 2026-10-28 (attachments not r
 | Target (prompt) | Current (code on `main`) | Gap |
 |---|---|---|
 | TVGSUOS is the single Founder OS; HMC is the holding company | TVGSUOS exists; MASTER on `main` is titled "TVGSUOS — Master Direction" | MASTER replacement pending attachment |
-| Five nodes: Helium Fuels, Dipstify, ODO Vehicles, DinkKada, ODO Property (parked) | PR #74 §A lists the five; `main` §0 lists Verifos 1A, Dipstify, ODO-V, ODO-P | Verifos classification open (§8 C1) |
+| Five nodes: Helium Fuels, Dipstify, ODO Vehicles, DinkKada, ODO Property (parked) | the 28 Oct §A (now in `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`) listed the five; current MASTER §2 lists them; `main` §0 lists Verifos 1A, Dipstify, ODO-V, ODO-P | Verifos classification open (§8 C1) |
 | Reporting manual/imported; **no live cross-project service-role aggregation** | `api/odo-status.js` does exactly that | F3 |
 | Notion/Drive retired from active operations | `api/founder-os-notion.js` live in code; PRs #70–#72 (2026-08-04) wired Notion in | §9 |
 | System owns durable memory; scheduled V-Loops run without agent prompting | No scheduler in code; no schedule/run/evidence tables found in repo | Not started; out of scope for Phase 0/1 |
@@ -159,15 +162,15 @@ Target state as written in the founder's prompt of 2026-10-28 (attachments not r
 
 | ID | Contradiction | Sources | Needs |
 |---|---|---|---|
-| C1 | **Verifos.** `main` MASTER §0 classifies Verifos as Phase 1A and live (verifos.co). The five-node Founder OS presentation does not include it. PR #74 §A flags the same question. Operational status (live product, per MASTER) is distinct from Founder OS presentation membership. | `main` `docs/MASTER_DIRECTION.md` §0; PR #74 §A | Founder decision |
-| C2 | **Node wording.** Prompt: Dipstify "operations and P&L discipline", DinkKada "membership, participation, and retention learning". PR #74 §A: Dipstify "station operating system", DinkKada "white-label Club OS for PH pickleball clubs". | prompt; PR #74 §A | Founder decision |
+| C1 | **Verifos.** `main` MASTER §0 classifies Verifos as Phase 1A and live (verifos.co). The five-node Founder OS presentation does not include it. the 28 Oct §A (now in `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`) flagged the same question; current MASTER §3 keeps it open. Operational status (live product, per MASTER) is distinct from Founder OS presentation membership. | `main` `docs/MASTER_DIRECTION.md` §0; history §A; MASTER §3 | Founder decision (open) |
+| C2 | **Node wording.** Prompt: Dipstify "operations and P&L discipline", DinkKada "membership, participation, and retention learning". the 28 Oct §A (now in `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`): Dipstify "station operating system", DinkKada "white-label Club OS for PH pickleball clubs". | prompt; history §A; MASTER §2 | Settled 29 Oct (MASTER §2) |
 | C3 | **Notion.** PRs #70–#72 (merged 2026-08-04) made Notion the Founder OS data source; the new direction retires Notion. | merged PRs; `api/founder-os-notion.js`; prompt | Approved retirement batch |
 | C4 | **Live ODO read.** `api/odo-status.js` (and PR #73's version of it) does a live full-rights cross-project read; the direction forbids it. | code; prompt | Phase 1 |
 | C5 | **Requested files absent.** `ARCHITECTURE_OVERALL.md`, STATUS and QUEUE documents do not exist in TVGSUOS. Not created, not invented. | repo listing | Founder: confirm intended location (may live in another repo) |
-| C7 | **Domain.** PR #74 §A.10 records `theverifiedgroup.org` vs `os.hmcmarketing.tech`. The prompt names `os.hmcmarketing.tech` as intended and not to be connected. | PR #74 §A.10; prompt | Founder decision |
-| C8 | **Ver ownership.** PR #74 §A.10 records `main` MASTER §4 (Ver ownership) vs §A.7 (Ver optional, not source of truth). | PR #74 §A.10 | Founder decision |
-| C9 | **Privacy policy.** PR #74 §A.10: no single HMC privacy policy exists to point at. | PR #74 §A.10 | Founder decision |
-| C6 | **MASTER source.** The founder instructed MASTER to be replaced with an attachment that was not received. PR #74 currently carries §A written 28 Oct by an earlier session. | this session | Re-send attachments |
+| C7 | **Domain.** the 28 Oct §A.10 (now in `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`) recorded `theverifiedgroup.org` vs `os.hmcmarketing.tech`. The prompt names `os.hmcmarketing.tech` as intended and not to be connected. | history §A.10; MASTER §12 | Settled 29 Oct (MASTER §12: intended, not connected) |
+| C8 | **Ver ownership.** the 28 Oct §A.10 (now in `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`) recorded `main` MASTER §4 (Ver ownership) vs §A.7 (Ver optional, not source of truth). | history §A.10; MASTER §9 | Settled 29 Oct (MASTER §9: Ver optional) |
+| C9 | **Privacy policy.** the 28 Oct §A.10 (now in `docs/history/MASTER_DIRECTION_superseded_2026-10-28.md`): no single HMC privacy policy exists to point at. | history §A.10; MASTER §10 | Open — governance blocker (MASTER §10) |
+| C6 | **MASTER source.** The founder instructed MASTER to be replaced with an attachment that was not received. §A was written 28 Oct by an earlier session (now in the history file). | this session | Settled 29 Oct: MASTER authored from the founder's self-contained direction |
 
 ## 9. Legacy Notion / Google Drive register
 
@@ -241,6 +244,34 @@ Route-specific:
    route on the live deployment returns 401, recorded with timestamp. Until then, production
    is **unverified**.
 7. A re-read of the shared project's advisors (F9) and RLS policies for the §4 tables.
+
+## 14. Independent review record
+
+### 14.1 Grok — initial review of PR #74 at `998f490`
+
+- **Verdict: CHANGES REQUESTED.**
+- **Source:** relayed by the founder on 2026-10-29. The review text is not in this repository and
+  was not posted on PR #74 (the PR's only comment is the Vercel bot; there are no GitHub reviews).
+  This section records the findings as relayed. It is not a copy of the review.
+- **Documentation findings and their state:**
+
+| # | Finding | State at `998f490` | Remediation (this commit) |
+|---|---|---|---|
+| G1 | History-base wording: MASTER claimed the previous text was "preserved unchanged". The history file is the branch text at `0eb9a4f`, whose §A was never on `main` | Not met | MASTER header: exact provenance note |
+| G2 | Stale §A / §A.10 references in `FOUNDER_OS.md` and in this audit ("PR #74 §A.10") | Not met | `FOUNDER_OS.md` 28 Oct entry and new 29 Oct entry; this audit §1 addendum, §6 row, §8 C1–C9. Repointed to the history file and current sections; §A not recreated |
+| G3 | Metric separation applied only to ODO Vehicles↔ODO Property and Helium↛ODO | Not met | MASTER §2: universal rule across all five nodes |
+| G4 | `os.hmcmarketing.tech` must read as gated, not connected | Already met (MASTER §12; architecture §12 step 3) | None needed |
+| G5 | Dipstify canonical-MASTER conflict recorded as an open decision | Already met (architecture §14) | None needed |
+| G6 | Record the review itself accurately, without claiming approval | Not met | This section |
+
+### 14.2 Status
+
+- Remediation for G1, G2, G3 and G6 is applied in the commit that adds this section.
+- **Grok has not re-reviewed it and has not approved PR #74.** Independent re-review is required
+  before founder release.
+- Still open and not resolved by this remediation: Verifos classification (MASTER §3), Dipstify
+  canonical MASTER (architecture §14), no canonical HMC privacy policy (MASTER §10), STATUS/QUEUE
+  location (architecture §14; the files are not created).
 
 ---
 
