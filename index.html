@@ -3218,7 +3218,7 @@
           <p class="sub">Answers with your top 3 actions for today — not a long report.</p>
           <form id="ask-ver-form" class="strategy-form" style="margin:0;">
             <label for="ask-ver-question" style="position:absolute; left:-9999px;">Question for Ver</label>
-            <input type="text" id="ask-ver-question" required placeholder="Ask Ver: what should I do first?"
+            <input type="text" id="ask-ver-question" required maxlength="500" placeholder="Ask Ver: what should I do first?"
               value="What should I do first today?" style="margin-bottom:10px;" />
             <button type="submit" id="ask-ver-btn" style="width:100%;">Ask Ver: what should I do first?</button>
             <p id="ask-ver-status"></p>
@@ -3285,6 +3285,17 @@
 
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Every /api/ call goes through authFetch: the routes are founder-only
+    // (api/_founder-auth.js) and verify this session's access token, so a
+    // plain fetch() would be answered 401. The token is the signed-in
+    // user's own; no shared key is ever sent from the browser.
+    async function authFetch(url, opts = {}) {
+      const { data } = await sb.auth.getSession();
+      const token = data && data.session ? data.session.access_token : '';
+      const headers = { ...(opts.headers || {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+      return fetch(url, { ...opts, headers });
+    }
 
     // === Founder OS cockpit SoT (edit here; Notion Command Center is portfolio SoT) ===
     // 2026-08-20: Verifos public brand + §0 masterplan. Notion Command Center still has a May 2026
@@ -3909,7 +3920,7 @@
       statusEl.textContent = '';
       listEl.innerHTML = '';
       try {
-        const res = await fetch('/api/security-check', { method: 'POST' });
+        const res = await authFetch('/api/security-check', { method: 'POST' });
         const body = await res.json();
         if (body.notConfigured) {
           statusEl.textContent = body.error;
@@ -4663,20 +4674,18 @@
             const originalText = btn.textContent;
             btn.textContent = 'Sending…';
             try {
-              const res = await fetch('/api/send-pos-checklist', {
+              const res = await authFetch('/api/send-pos-checklist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                // The server reads the recipient from this stored lead and stamps
+                // pos_checklist_sent_at itself (api/send-pos-checklist.js).
                 body: JSON.stringify({
-                  email: btn.dataset.email,
-                  businessName: btn.dataset.business,
-                  ownerName: btn.dataset.owner,
-                  leadType: btn.dataset.leadType,
+                  leadTable: btn.dataset.table,
+                  leadId: btn.dataset.id,
                 }),
               });
               const data = await res.json();
               if (!res.ok) throw new Error(data.error || 'Send failed');
-              const { error } = await sb.from(btn.dataset.table).update({ pos_checklist_sent_at: new Date().toISOString() }).eq('id', btn.dataset.id);
-              if (error) throw error;
               loadKosLeads();
             } catch (err) {
               console.error('[send-pos-checklist] failed:', err);
@@ -4790,7 +4799,7 @@
       try {
         const venture = VENTURE_FILTER_TO_NOTION_VALUE[selectedVenture];
         const qs = new URLSearchParams({ tile, ...(venture ? { venture } : {}) });
-        const res = await fetch(`/api/founder-os-notion?${qs}`);
+        const res = await authFetch(`/api/founder-os-notion?${qs}`);
         const body = await res.json();
         if (body.error) return { count: 0, items: [], notConnected: true };
         return { count: body.count || 0, items: body.items || [] };
@@ -5533,7 +5542,7 @@
         tasks.push((async () => {
           const odoEl = document.getElementById('odo-update-body');
           try {
-            const res = await fetch('/api/odo-status');
+            const res = await authFetch('/api/odo-status');
             const body = await res.json();
             if (body.notConfigured || body.error) {
               odoEl.innerHTML = `<p class="cockpit-not-connected">${escapeHtml(body.error)}</p>`;
@@ -5786,7 +5795,7 @@
       statusEl.textContent = '';
       answerEl.style.display = 'none';
       try {
-        const res = await fetch('/api/ask-ver', {
+        const res = await authFetch('/api/ask-ver', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question }),
@@ -6005,10 +6014,10 @@
       if (statusEl) statusEl.textContent = '';
       try {
         const [appStatusRes, decisionsRes, veraStatusRes, governanceRes] = await Promise.all([
-          fetch('/api/generate-baseline-status').then(r => r.json()).catch(() => ({ error: 'request failed' })),
+          authFetch('/api/generate-baseline-status').then(r => r.json()).catch(() => ({ error: 'request failed' })),
           sb.from('decisions').select('title, created_at').neq('status', 'open').order('created_at', { ascending: false }).limit(1),
-          fetch('/api/odo-status').then(r => r.json()).catch(() => ({ error: 'request failed' })),
-          fetch('/api/security-check').then(r => r.json()).catch(() => ({ error: 'request failed' })),
+          authFetch('/api/odo-status').then(r => r.json()).catch(() => ({ error: 'request failed' })),
+          authFetch('/api/security-check').then(r => r.json()).catch(() => ({ error: 'request failed' })),
         ]);
 
         let appStatus = appStatusRes.appStatus || null;
@@ -6022,7 +6031,7 @@
         const veraStatus = formatVeraStatusForBaseline(veraStatusRes);
         const governanceRiskNote = formatGovernanceRiskNoteForBaseline(governanceRes);
         const skippedNotes = [];
-        if (veraStatusRes && veraStatusRes.notConfigured) skippedNotes.push('Vera signal (needs ODO_SUPABASE_SERVICE_ROLE_KEY)');
+        if (veraStatusRes && (veraStatusRes.notConfigured || veraStatusRes.manualImportRequired)) skippedNotes.push('Vera signal (ODO is manual/import-only; no imported report yet)');
         if (governanceRes && governanceRes.notConfigured) skippedNotes.push('governance risk (needs SUPABASE_MANAGEMENT_TOKEN)');
 
         const loggedFromVera = await checkVeraSignalPatterns(veraStatusRes);
@@ -6080,7 +6089,7 @@
       const btn = document.getElementById('ver-repo-tree-regenerate-btn');
       if (btn) { btn.disabled = true; btn.textContent = 'Loading…'; }
       try {
-        const res = await fetch('/api/generate-repo-tree');
+        const res = await authFetch('/api/generate-repo-tree');
         const body = await res.json();
         if (body.error) {
           el.innerHTML = `<p class="cockpit-not-connected">${escapeHtml(body.error)}</p>`;

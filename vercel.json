@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": null,
+  "buildCommand": "node --test tests/route-auth.test.js",
   "installCommand": null,
   "outputDirectory": "."
 }

@@ -34,6 +34,8 @@
 // which is what this workspace's multi-source-database model
 // actually expects.
 
+const { requireFounder } = require('./_founder-auth');
+
 const NOTION_VERSION = '2025-09-03';
 
 // Data source IDs (not the databases' own page-level IDs — see the
@@ -78,7 +80,8 @@ async function notionQueryAll(dataSourceId, filter, apiKey, { maxPages = 5 } = {
     });
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      throw new Error(`Notion API ${res.status}: ${text.slice(0, 300)}`);
+      console.error('[founder-os-notion] Notion API error:', res.status);
+      throw new Error('upstream');
     }
     const body = await res.json();
     results.push(...(body.results || []));
@@ -124,6 +127,10 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  // Founder only (api/_founder-auth.js), checked before any credential or
+  // upstream call so an anonymous caller learns nothing, not even config.
+  if (!(await requireFounder(req, res))) return;
+
   const apiKey = process.env.NOTION_API_KEY;
   if (!apiKey) {
     res.status(200).json({ error: 'not_configured', message: 'Not connected — missing NOTION_API_KEY on Vercel.' });
@@ -168,6 +175,6 @@ module.exports = async function handler(req, res) {
     res.status(400).json({ error: `Unknown or unwired tile "${tile}". Only critical-alerts and open-decisions are wired to Notion — see the header comment in this file for why the other tiles aren't.` });
   } catch (err) {
     console.error('[founder-os-notion] error:', err);
-    res.status(502).json({ error: 'Failed to query Notion.', detail: String(err.message || err) });
+    res.status(502).json({ error: 'Failed to query Notion.' });
   }
 };

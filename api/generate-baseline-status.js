@@ -23,6 +23,8 @@
 // SUPABASE_SERVICE_ROLE_KEY (same shared project ask-ver.js already
 // uses) — no new credential needed.
 
+const { requireFounder } = require('./_founder-auth');
+
 const REPOS = [
   { owner: 'hdashadm-afk', name: 'TVGSUOS', label: 'TVGSUOS' },
   { owner: 'hdashadm-afk', name: 'katiwala-owner-os-', label: 'KOS' },
@@ -71,6 +73,10 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  // Founder only (api/_founder-auth.js), checked before any credential or
+  // upstream call so an anonymous caller learns nothing, not even config.
+  if (!(await requireFounder(req, res))) return;
+
   const since = new Date(Date.now() - LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
   const headers = { Accept: 'application/vnd.github+json' };
   if (process.env.GITHUB_TOKEN) {
@@ -81,7 +87,7 @@ module.exports = async function handler(req, res) {
     const [firstResult, ...rest] = await Promise.all(REPOS.map(r => fetchRecentTitles(r.owner, r.name, headers, since)));
 
     if (!firstResult.ok) {
-      res.status(502).json({ error: `GitHub API error fetching ${REPOS[0].name}. If this repo is private, set a GITHUB_TOKEN environment variable on Vercel.` });
+      res.status(502).json({ error: 'The repository check could not be completed.' });
       return;
     }
 

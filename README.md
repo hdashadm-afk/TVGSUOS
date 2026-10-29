@@ -8,7 +8,7 @@ Layer 1 of The Verified Group's three-layer ecosystem. Founder-only. No public p
 
 | Layer | System | Domain | Role |
 |---|---|---|---|
-| 1 | **TVGSUOS** (this repo) | `theverifiedgroup.org` | Umbrella governance — strategy, security, continuity, cross-venture command. Includes Founder's Space (Ver, Daily Baseline Check) as one of its 9 governance areas, not a separate layer. |
+| 1 | **TVGSUOS** (this repo) | `tvgsuosweb.vercel.app` (live) · `os.hmcmarketing.tech` (intended Founder OS domain — gated, not connected) | Umbrella governance — strategy, security, continuity, cross-venture command. Includes Founder's Space (Ver, Daily Baseline Check) as one of its 9 governance areas, not a separate layer. |
 | 2 | Katiwala AI / KOS | `katiwalaai.app` | Gas station SME operating system |
 | 3 | ODO / OwnerDirect Online | `ownerdirect.online` | Property/vehicle trust marketplace |
 
@@ -43,7 +43,7 @@ Kath and Vera report to Ver. Full role spec: `docs/GOVERNANCE_MODEL.md` (this re
 - Single-file `index.html` — same pattern as the KOS MVP (`katiwala-owner-os.vercel.app`), no build step.
 - Same Supabase project as `katiwala-owner-os-` (project ref `jbhfdmujqrtqkhacfegl`) — no new database, this reads/writes the existing one.
 - Vercel serverless functions under `api/*.js` where server-side logic is needed (credential-gated, same graceful-degradation pattern as `katiwala-owner-os-`'s `api/` directory).
-- Deploy target: Vercel project `tvgsuosweb` → `theverifiedgroup.org` (DNS not wired yet — live today at `tvgsuosweb.vercel.app`, GitHub-connected, auto-deploys from `main`). Two earlier orphaned deployments (`tvgsuos-hdashadm-afks-projects.vercel.app`, `tvg-founder-os-hdashadm-afks-projects.vercel.app`) exist from a direct file-deploy tool and should be ignored — `tvgsuosweb` is the real one.
+- Deploy target: Vercel project `tvgsuosweb`, live today at `tvgsuosweb.vercel.app` (GitHub-connected, auto-deploys from `main`). Intended Founder OS domain: `os.hmcmarketing.tech` — gated, not connected; it is connected only after the Phase 1 and Phase 6 gates (HMC Founder OS MASTER §12–§13, PR #74). `theverifiedgroup.org` is not the Founder OS domain and is not substituted. Two earlier orphaned deployments (`tvgsuos-hdashadm-afks-projects.vercel.app`, `tvg-founder-os-hdashadm-afks-projects.vercel.app`) exist from a direct file-deploy tool and should be ignored — `tvgsuosweb` is the real one.
 
 **Current phase: Phase 4 — all 9 governance areas live.** Real app code exists: a login-gated `index.html` (Founder Cockpit dashboard, all 9 governance-area sections, floating Ver assistant) plus `api/ask-ver.js`, `api/security-check.js`, `api/odo-status.js`, and `vercel.json`. Deployed to `tvgsuosweb.vercel.app` (GitHub-connected, auto-deploys from `main`). See `FOUNDER_OS.md` for the full dated build log — including what's verified live vs. shipped-but-not-yet-confirmed — and `docs/PORTFOLIO_MAP.md` for build status per area.
 
