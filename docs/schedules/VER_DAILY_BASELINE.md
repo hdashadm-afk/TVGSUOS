@@ -26,6 +26,13 @@ Schedule record, per MASTER §7. Founder order 29 Oct 2026: "fix ver task".
   - The API that created it could not attach connectors, so on its own it runs **without Supabase or Gmail**. Each run then comes back as FAILURE and is pushed to the founder's phone.
   - It must be re-created from the claude.ai routines screen with Supabase + Gmail attached, using the prompt below verbatim.
   - Once that version exists, disable `trig_01FP8z4s6c8KNGCBkeKQuAeW`.
+- 29 Oct 2026: the founder created `trig_01R8ThHaqmXMtmZ5AmDJ7YMH` from the routines screen, with Supabase + Gmail and a fresh session per run. Read-back found four problems, which were then corrected:
+  1. Cron was 09:50 → set to 07:00 Manila.
+  2. Its prompt named a table `daily_baseline` and columns that don't exist → replaced with the prompt below.
+  3. It named no project id → the prompt names `jbhfdmujqrtqkhacfegl`.
+  4. It named no recipient address → the prompt names `edc.helium@gmail.com`.
+
+  The connector-less `trig_01FP8z4s6c8KNGCBkeKQuAeW` was disabled at the same time.
 
 ## Prompt (verbatim)
 
@@ -96,5 +103,5 @@ Use Gmail send_message to edc.helium@gmail.com ONLY.
 - If the send fails, say so in your final reply with the error.
 
 ## Final reply
-The same table. Never call the run successful unless Step 4 passed. Scheduling authorizes no deploy, merge, migration, deletion or spend: do none.
+The same table. Never call the run successful unless Step 4 passed. Scheduling authorizes no deploy, merge, migration, deletion or spend: do none. Never create or alter a table. The last line of the reply is the evidence: today's check_date, the read-back updated_at, and the email subject sent.
 ```
