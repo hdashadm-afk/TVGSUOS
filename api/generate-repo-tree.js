@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
     if (!ghRes.ok) {
       const body = await ghRes.text();
       console.error('[generate-repo-tree] GitHub API error:', ghRes.status, body);
-      res.status(502).json({ error: `GitHub API returned ${ghRes.status}. If repos are private, set a GITHUB_TOKEN environment variable on Vercel.` });
+      res.status(502).json({ error: 'The repository list could not be loaded.' });
       return;
     }
 

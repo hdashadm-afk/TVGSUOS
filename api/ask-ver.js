@@ -19,12 +19,20 @@
 // answer one founder question. The caller supplies only `question`
 // (string, 1–MAX_QUESTION chars, no other fields). It cannot choose a
 // model, token budget, table, query or tool. Spend is bounded by a fixed
-// MODEL and MAX_TOKENS, grounding docs capped at MAX_DOC_CHARS each, and a
-// durable hourly limit counted from ver_queries in the shared Supabase
-// project (not an instance-local counter). If that count cannot be read the
-// route fails closed (503) and Anthropic is not called. Service-role use is
-// limited to: read open decisions/signals (fixed columns), insert one
-// ver_queries row, insert at most one validated founder_tasks row.
+// MODEL and MAX_TOKENS, grounding docs capped at MAX_DOC_CHARS each, live
+// decision/signal text capped per field (L2), and an hourly limit enforced
+// by an ATOMIC RESERVATION taken BEFORE the paid call (M1, re-review
+// 2026-10-29): one call to the database function ver_reserve_call, which
+// locks, counts and inserts a ledger row in one transaction. Two parallel
+// requests cannot both take the last slot. A failed, missing or malformed
+// reservation returns 503 and Anthropic is never called.
+// DEPENDENCY: ver_reserve_call and its ledger do NOT exist yet (checked
+// 2026-10-29: no reservation function in public). Until the founder-approved
+// SQL in docs/SECURITY_PRIVILEGE_INVENTORY.md §3.2 runs, Ask Ver is
+// effectively DISABLED (every request fails closed). No SQL is run here.
+// Service-role use: the reservation RPC; read open decisions/signals (fixed
+// columns, capped); insert one ver_queries row; insert at most one validated
+// founder_tasks row.
 // Ver is optional and never the source of truth (MASTER §9).
 
 const { requireFounder } = require('./_founder-auth');
@@ -35,6 +43,11 @@ const MAX_QUESTION = 500;
 const MAX_DOC_CHARS = 12000;
 const HOURLY_LIMIT = 20;
 const MAX_TASKS = 1;
+// L2: caps on text read from the database before it reaches the prompt,
+// and on task fields from the model. Oversized task fields are rejected.
+const FIELD_CAPS = { decisionTitle: 200, decisionContext: 500, signalScope: 60, signalSummary: 500, taskTitle: 120, taskNotes: 300 };
+const MAX_LIVE_CHARS = 8000;
+const RESERVATION_UNAVAILABLE = 'Ask Ver is unavailable: its spending limit could not be reserved. Nothing was sent to the model.';
 const TASK_ENUMS = {
   ecosystem: ['FOUNDER', 'KOS', 'ODO'],
   priority: ['high', 'medium', 'low'],
@@ -53,24 +66,41 @@ function validateRequest(body) {
   return { question };
 }
 
-// Answers saved in the last hour, or null when unreadable.
-async function answeredLastHour(headers, nowMs = Date.now()) {
-  const since = new Date(nowMs - 60 * 60 * 1000).toISOString();
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/ver_queries?select=id&status=eq.answered&answered_at=gte.${encodeURIComponent(since)}&limit=${HOURLY_LIMIT}`, { headers });
-  if (!r.ok) return null;
-  const rows = await r.json();
-  return Array.isArray(rows) ? rows.length : null;
+// One atomic reservation (database function ver_reserve_call). Returns
+// 'reserved' | 'limit' | null (null = could not be enforced → fail closed).
+async function reserveCall(headers) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/ver_reserve_call`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ p_hourly_limit: HOURLY_LIMIT }),
+    });
+    if (!r.ok) return null;
+    const out = await r.json();
+    if (!out || typeof out !== 'object' || typeof out.reserved !== 'boolean') return null;
+    if (out.reserved && typeof out.reservation_id !== 'string') return null;
+    return out.reserved ? 'reserved' : 'limit';
+  } catch {
+    return null;
+  }
+}
+
+function cap(value, max) {
+  if (typeof value !== 'string') return '';
+  const text = value.replace(/\s+/g, ' ').trim();
+  return text.length > max ? `${text.slice(0, max)}…` : text;
 }
 
 function validTask(input) {
   if (!input || typeof input !== 'object') return null;
   const { ecosystem, title, priority, phase, notes } = input;
   if (!TASK_ENUMS.ecosystem.includes(ecosystem) || !TASK_ENUMS.priority.includes(priority) || !TASK_ENUMS.phase.includes(phase)) return null;
-  if (typeof title !== 'string' || !title.trim()) return null;
+  if (typeof title !== 'string' || !title.trim() || title.trim().length > FIELD_CAPS.taskTitle) return null;
+  if (notes != null && (typeof notes !== 'string' || notes.trim().length > FIELD_CAPS.taskNotes)) return null;
   return {
     ecosystem, priority, phase,
-    title: title.trim().slice(0, 120),
-    notes: typeof notes === 'string' && notes.trim() ? notes.trim().slice(0, 300) : null,
+    title: title.trim(),
+    notes: typeof notes === 'string' && notes.trim() ? notes.trim() : null,
     status: 'not_done',
   };
 }
@@ -153,17 +183,13 @@ module.exports = async function handler(req, res) {
 
   const sbHeaders = { apikey: serviceRoleKey, Authorization: `Bearer ${serviceRoleKey}`, 'Content-Type': 'application/json' };
 
-  let used;
-  try {
-    used = await answeredLastHour(sbHeaders);
-  } catch {
-    used = null;
-  }
-  if (used == null) {
-    res.status(503).json({ error: 'Ask Ver is unavailable: its usage limit could not be checked. Nothing was sent to the model.' });
+  // M1: reserve before any paid call. No reservation, no Anthropic request.
+  const reservation = await reserveCall(sbHeaders);
+  if (reservation == null) {
+    res.status(503).json({ error: RESERVATION_UNAVAILABLE });
     return;
   }
-  if (used >= HOURLY_LIMIT) {
+  if (reservation === 'limit') {
     res.status(429).json({ error: `Ask Ver limit reached (${HOURLY_LIMIT} answers per hour).` });
     return;
   }
@@ -182,12 +208,13 @@ module.exports = async function handler(req, res) {
     let liveContext = '';
     if (decisionsRes.ok) {
       const decisions = await decisionsRes.json();
-      if (decisions.length) liveContext += `\n\n## Open Strategy decisions right now\n${decisions.map(d => `- ${d.title}${d.context ? ` — ${d.context}` : ''}`).join('\n')}`;
+      if (Array.isArray(decisions) && decisions.length) liveContext += `\n\n## Open Strategy decisions right now\n${decisions.map(d => { const title = cap(d && d.title, FIELD_CAPS.decisionTitle); const context = cap(d && d.context, FIELD_CAPS.decisionContext); return `- ${title}${context ? ` — ${context}` : ''}`; }).join('\n')}`;
     }
     if (signalsRes.ok) {
       const signals = await signalsRes.json();
-      if (signals.length) liveContext += `\n\n## Open Intelligence signals right now\n${signals.map(s => `- [${s.project_scope || 'unscoped'}] ${s.signal_summary}${s.bottleneck_flag ? ' (BOTTLENECK)' : ''}`).join('\n')}`;
+      if (Array.isArray(signals) && signals.length) liveContext += `\n\n## Open Intelligence signals right now\n${signals.map(s => `- [${cap(s && s.project_scope, FIELD_CAPS.signalScope) || 'unscoped'}] ${cap(s && s.signal_summary, FIELD_CAPS.signalSummary)}${s && s.bottleneck_flag === true ? ' (BOTTLENECK)' : ''}`).join('\n')}`;
     }
+    if (liveContext.length > MAX_LIVE_CHARS) liveContext = `${liveContext.slice(0, MAX_LIVE_CHARS)}\n(truncated)`;
 
     const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -239,7 +266,7 @@ ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
 
     if (!anthropicRes.ok) {
       console.error('[ask-ver] Anthropic API error:', anthropicRes.status);
-      res.status(502).json({ error: `Anthropic API returned ${anthropicRes.status}.` });
+      res.status(502).json({ error: 'Ver could not answer right now.' });
       return;
     }
 
@@ -288,4 +315,5 @@ ${MASTERPLAN_CONTEXT}${docsContext}${liveContext}`,
 };
 
 module.exports.validateRequest = validateRequest;
-module.exports.LIMITS = { MODEL, MAX_TOKENS, MAX_QUESTION, MAX_DOC_CHARS, HOURLY_LIMIT, MAX_TASKS };
+module.exports.LIMITS = { MODEL, MAX_TOKENS, MAX_QUESTION, MAX_DOC_CHARS, HOURLY_LIMIT, MAX_TASKS, FIELD_CAPS, MAX_LIVE_CHARS };
+module.exports.RESERVATION_UNAVAILABLE = RESERVATION_UNAVAILABLE;

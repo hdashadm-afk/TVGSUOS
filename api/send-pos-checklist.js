@@ -11,20 +11,21 @@
 // unknown or malformed stored email is refused. No address in the request is
 // ever used, so the route cannot be pointed at an arbitrary inbox.
 //
-// ABUSE CONTROLS — durable, in the shared Supabase project, not an
-// instance-local counter (serverless instances do not share memory):
-//   1. Per lead: at most one send per COOLDOWN_HOURS. Enforced by a
-//      conditional update of that lead's pos_checklist_sent_at (the
-//      existing column the page already showed), which succeeds for one
-//      request only; a second request in the window gets 429.
-//   2. Global: at most DAILY_CAP sends in 24h across the three lead tables,
-//      counted from the same column. If the count cannot be read the route
-//      fails closed (503) and sends nothing.
-// DEPENDENCY (checked 2026-10-29 against information_schema): the column
-// pos_checklist_sent_at does NOT exist on any of the three lead tables, so
-// the ledger these controls need is missing. Until the founder-approved SQL
-// in docs/SECURITY_PRIVILEGE_INVENTORY.md §3 runs, every read of it fails and
-// this route FAILS CLOSED (503, nothing sent). This PR changes no schema.
+// ABUSE CONTROLS (M2, re-review 2026-10-29) — ONE atomic database call.
+// The database function claim_checklist_send takes a lock and, in a single
+// transaction: (1) refuses if this lead was sent within COOLDOWN_HOURS,
+// (2) refuses if DAILY_CAP sends were reserved in the last 24h overall,
+// (3) otherwise inserts one ledger row and returns the lead's stored email.
+// Either refusal rolls the transaction back; nothing is half-claimed. A
+// failed, missing or malformed claim returns 503 and Resend is never called.
+// There is no separate count-then-update step any more, so two parallel
+// requests cannot both take the last slot (once the function exists).
+// A provider failure after a claim does NOT release it: the slot stays used
+// (fails toward fewer emails); the founder can resend after the cooldown.
+// DEPENDENCY: claim_checklist_send and its ledger do NOT exist yet (checked
+// 2026-10-29). Until the founder-approved SQL in
+// docs/SECURITY_PRIVILEGE_INVENTORY.md §3.1 runs, checklist email is PAUSED:
+// every request fails closed (503, nothing sent). No SQL is run here.
 //
 // Auth decision: founder only (api/_founder-auth.js), checked first.
 // Requires RESEND_API_KEY and SUPABASE_SERVICE_ROLE_KEY on this project.
@@ -205,7 +206,7 @@ const LEAD_TABLES = { leads_coffeeshop: 'coffeeshop', leads_hotel: 'hotel', lead
 const COOLDOWN_HOURS = 24;
 const DAILY_CAP = 25;
 const EMAIL_RE = /^[^\s@<>",;]{1,64}@[A-Za-z0-9.-]{1,190}\.[A-Za-z]{2,24}$/;
-const LEDGER_MISSING = 'Checklist sending is paused: the send-limit ledger (pos_checklist_sent_at) is not in the database yet. Nothing was sent. See docs/SECURITY_PRIVILEGE_INVENTORY.md §3.';
+const LEDGER_MISSING = 'Checklist sending is paused: the atomic send-limit claim (claim_checklist_send) is not in the database yet. Nothing was sent. See docs/SECURITY_PRIVILEGE_INVENTORY.md §3.1.';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function escapeHtml(value) {
@@ -217,17 +218,23 @@ function sbHeaders(key, extra = {}) {
   return { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', ...extra };
 }
 
-// Sends in the last 24h across all lead tables, or null when unreadable.
-async function sentLastDay(key, sinceIso) {
-  let total = 0;
-  for (const table of Object.keys(LEAD_TABLES)) {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=id&pos_checklist_sent_at=gte.${encodeURIComponent(sinceIso)}&limit=${DAILY_CAP}`, { headers: sbHeaders(key) });
+// One atomic claim. Returns { status: 'claimed', email } | { status: 'cooldown' | 'cap' } | null.
+async function claimSend(key, leadTable, leadId) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/claim_checklist_send`, {
+      method: 'POST',
+      headers: sbHeaders(key),
+      body: JSON.stringify({ p_lead_table: leadTable, p_lead_id: leadId, p_cooldown_hours: COOLDOWN_HOURS, p_daily_cap: DAILY_CAP }),
+    });
     if (!r.ok) return null;
-    const rows = await r.json();
-    if (!Array.isArray(rows)) return null;
-    total += rows.length;
+    const out = await r.json();
+    if (!out || typeof out !== 'object') return null;
+    if (out.status === 'cooldown' || out.status === 'cap') return { status: out.status };
+    if (out.status === 'claimed' && typeof out.email === 'string' && typeof out.claim_id === 'string') return { status: 'claimed', email: out.email.trim() };
+    return null;
+  } catch {
+    return null;
   }
-  return total;
 }
 
 module.exports = async function handler(req, res) {
@@ -261,9 +268,11 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const read = await fetch(`${SUPABASE_URL}/rest/v1/${leadTable}?id=eq.${leadId}&select=id,email,business_name,owner_name,pos_checklist_sent_at`, { headers: sbHeaders(serviceKey) });
+    // Read-only pre-check so a missing lead or bad address is refused before
+    // any slot is reserved. The recipient used is the one the claim returns.
+    const read = await fetch(`${SUPABASE_URL}/rest/v1/${leadTable}?id=eq.${leadId}&select=id,email,business_name,owner_name`, { headers: sbHeaders(serviceKey) });
     if (!read.ok) {
-      res.status(503).json({ error: LEDGER_MISSING });
+      res.status(503).json({ error: 'Lead lookup is unavailable. Nothing was sent.' });
       return;
     }
     const rows = await read.json();
@@ -272,38 +281,31 @@ module.exports = async function handler(req, res) {
       res.status(404).json({ error: 'Lead not found.' });
       return;
     }
-    const email = typeof lead.email === 'string' ? lead.email.trim() : '';
-    if (!email || !EMAIL_RE.test(email)) {
+    const stored = typeof lead.email === 'string' ? lead.email.trim() : '';
+    if (!stored || !EMAIL_RE.test(stored)) {
       res.status(422).json({ error: 'This lead has no valid email on file.' });
       return;
     }
 
-    const now = new Date();
-    const cutoff = new Date(now.getTime() - COOLDOWN_HOURS * 60 * 60 * 1000).toISOString();
-    const sent = await sentLastDay(serviceKey, cutoff);
-    if (sent == null) {
+    const claim = await claimSend(serviceKey, leadTable, leadId);
+    if (!claim) {
       res.status(503).json({ error: LEDGER_MISSING });
       return;
     }
-    if (sent >= DAILY_CAP) {
-      res.status(429).json({ error: `Daily limit reached (${DAILY_CAP} checklist emails in 24 hours).` });
-      return;
-    }
-
-    // Claim: stamps this lead only if it was not sent within the cooldown.
-    const claim = await fetch(
-      `${SUPABASE_URL}/rest/v1/${leadTable}?id=eq.${leadId}&or=(pos_checklist_sent_at.is.null,pos_checklist_sent_at.lt.${encodeURIComponent(cutoff)})&select=id`,
-      { method: 'PATCH', headers: sbHeaders(serviceKey, { Prefer: 'return=representation' }), body: JSON.stringify({ pos_checklist_sent_at: now.toISOString() }) }
-    );
-    if (!claim.ok) {
-      res.status(503).json({ error: LEDGER_MISSING });
-      return;
-    }
-    const claimed = await claim.json();
-    if (!Array.isArray(claimed) || claimed.length !== 1) {
+    if (claim.status === 'cooldown') {
       res.status(429).json({ error: `This lead already got the checklist in the last ${COOLDOWN_HOURS} hours.` });
       return;
     }
+    if (claim.status === 'cap') {
+      res.status(429).json({ error: `Daily limit reached (${DAILY_CAP} checklist emails in 24 hours).` });
+      return;
+    }
+    const email = claim.email;
+    if (email !== stored || !EMAIL_RE.test(email)) {
+      res.status(409).json({ error: 'The lead changed while sending. Nothing was sent.' });
+      return;
+    }
+    const now = new Date();
 
     const resolvedLeadType = LEAD_TABLES[leadTable];
     const fromEmail = process.env.POS_CHECKLIST_FROM_EMAIL || 'onboarding@resend.dev';
@@ -320,12 +322,7 @@ module.exports = async function handler(req, res) {
       }),
     });
     if (!resendRes.ok) {
-      // Give the lead back its previous stamp so a failed send does not block a retry.
-      await fetch(`${SUPABASE_URL}/rest/v1/${leadTable}?id=eq.${leadId}`, {
-        method: 'PATCH',
-        headers: sbHeaders(serviceKey, { Prefer: 'return=minimal' }),
-        body: JSON.stringify({ pos_checklist_sent_at: lead.pos_checklist_sent_at || null }),
-      }).catch(() => {});
+      // The claim is not released: a failed send still uses its slot (fails toward fewer emails).
       console.error('[send-pos-checklist] provider rejected the send:', resendRes.status);
       res.status(502).json({ error: 'Email provider rejected the request.' });
       return;

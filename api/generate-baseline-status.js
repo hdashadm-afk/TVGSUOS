@@ -87,7 +87,7 @@ module.exports = async function handler(req, res) {
     const [firstResult, ...rest] = await Promise.all(REPOS.map(r => fetchRecentTitles(r.owner, r.name, headers, since)));
 
     if (!firstResult.ok) {
-      res.status(502).json({ error: `GitHub API error fetching ${REPOS[0].name}. If this repo is private, set a GITHUB_TOKEN environment variable on Vercel.` });
+      res.status(502).json({ error: 'The repository check could not be completed.' });
       return;
     }
 

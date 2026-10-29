@@ -80,7 +80,8 @@ async function notionQueryAll(dataSourceId, filter, apiKey, { maxPages = 5 } = {
     });
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      throw new Error(`Notion API ${res.status}: ${text.slice(0, 300)}`);
+      console.error('[founder-os-notion] Notion API error:', res.status);
+      throw new Error('upstream');
     }
     const body = await res.json();
     results.push(...(body.results || []));
@@ -174,6 +175,6 @@ module.exports = async function handler(req, res) {
     res.status(400).json({ error: `Unknown or unwired tile "${tile}". Only critical-alerts and open-decisions are wired to Notion — see the header comment in this file for why the other tiles aren't.` });
   } catch (err) {
     console.error('[founder-os-notion] error:', err);
-    res.status(502).json({ error: 'Failed to query Notion.', detail: String(err.message || err) });
+    res.status(502).json({ error: 'Failed to query Notion.' });
   }
 };

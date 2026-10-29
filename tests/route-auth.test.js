@@ -129,7 +129,9 @@ function installFakeFetch({ authDown = false, over = null } = {}) {
     if (u.includes('/rest/v1/leads_') && (opts.method || 'GET') === 'GET' && u.includes('id=eq.')) {
       return json(200, [{ id: LEAD_ID, email: LEAD_EMAIL, business_name: 'Helium <b>Station</b>', owner_name: 'Ana Cruz', pos_checklist_sent_at: null }]);
     }
-    if (u.includes('/rest/v1/leads_') && opts.method === 'PATCH') return json(200, [{ id: LEAD_ID }]);
+    // The reservation functions in docs/SECURITY_PRIVILEGE_INVENTORY.md §3.1–§3.2, played as installed.
+    if (u.endsWith('/rest/v1/rpc/ver_reserve_call')) return json(200, { reserved: true, reservation_id: 'r-1' });
+    if (u.endsWith('/rest/v1/rpc/claim_checklist_send')) return json(200, { status: 'claimed', claim_id: 'c-1', email: LEAD_EMAIL });
     return json(200, []);
   };
   return calls;
@@ -272,17 +274,22 @@ test('odo-status: no ODO fetch even with ODO credentials configured; honest manu
 // ── send-pos-checklist: recipients and abuse controls ────────────────────────
 const POS = ROUTES['send-pos-checklist'];
 
-test('send-pos-checklist: approved recipient is the stored lead email, never the request', async () => {
+const resendCalls = (calls) => calls.requests.filter((q) => q.url.includes('api.resend.com'));
+const NO_FUNCTION = () => json(404, { code: 'PGRST202', message: 'Could not find the function public.claim_checklist_send' });
+
+test('send-pos-checklist: approved recipient comes from the atomic claim, never the request', async () => {
   const calls = installFakeFetch();
   const r = await call('send-pos-checklist', { token: FOUNDER, env: POS.env });
   assert.equal(r.statusCode, 200, JSON.stringify(r.body));
-  const sent = calls.requests.filter((q) => q.url.includes('api.resend.com'));
+  const sent = resendCalls(calls);
   assert.equal(sent.length, 1);
   assert.deepEqual(sent[0].body.to, [LEAD_EMAIL]);
   assert.match(sent[0].body.html, /Helium &lt;b&gt;Station&lt;\/b&gt;/, 'stored lead text is escaped in the email');
-  const claim = calls.requests.find((q) => q.method === 'PATCH');
-  assert.ok(claim, 'the lead is stamped by the server');
-  assert.match(claim.url, /or=\(pos_checklist_sent_at\.is\.null,pos_checklist_sent_at\.lt\./);
+  const claims = calls.requests.filter((q) => q.url.endsWith('/rpc/claim_checklist_send'));
+  assert.equal(claims.length, 1, 'one atomic claim, no separate count or update');
+  assert.deepEqual(claims[0].body, { p_lead_table: 'leads_gas_station', p_lead_id: LEAD_ID, p_cooldown_hours: 24, p_daily_cap: 25 });
+  assert.equal(calls.requests.some((q) => q.method === 'PATCH'), false);
+  assert.ok(calls.upstream.indexOf(claims[0].url) < calls.upstream.findIndex((u) => u.includes('api.resend.com')), 'claim before send');
 });
 
 test('send-pos-checklist: a recipient in the request is refused, nothing sent', async () => {
@@ -303,7 +310,7 @@ test('send-pos-checklist: unknown table, bad id and missing body are refused bef
   }
 });
 
-test('send-pos-checklist: missing lead, missing and malformed stored email are refused', async () => {
+test('send-pos-checklist: missing lead, missing and malformed stored email are refused before any claim', async () => {
   const cases = [
     { rows: [], status: 404 },
     { rows: [{ id: LEAD_ID, email: null }], status: 422 },
@@ -314,44 +321,76 @@ test('send-pos-checklist: missing lead, missing and malformed stored email are r
     const calls = installFakeFetch({ over: (u, o) => (u.includes('/rest/v1/leads_') && (o.method || 'GET') === 'GET' && u.includes('id=eq.') ? json(200, c.rows) : undefined) });
     const r = await call('send-pos-checklist', { token: FOUNDER, env: POS.env });
     assert.equal(r.statusCode, c.status, JSON.stringify(c.rows));
-    assert.equal(calls.upstream.some((u) => u.includes('api.resend.com')), false);
+    assert.equal(calls.upstream.some((u) => u.includes('/rpc/claim_checklist_send')), false);
+    assert.equal(resendCalls(calls).length, 0);
   }
 });
 
-test('send-pos-checklist: per-lead cooldown — second send in 24h is 429, nothing sent', async () => {
-  const calls = installFakeFetch({ over: (u, o) => (o.method === 'PATCH' ? json(200, []) : undefined) });
-  const r = await call('send-pos-checklist', { token: FOUNDER, env: POS.env });
-  assert.equal(r.statusCode, 429);
-  assert.equal(calls.upstream.some((u) => u.includes('api.resend.com')), false);
+test('send-pos-checklist: cooldown and daily-cap refusals from the claim are 429, nothing sent', async () => {
+  for (const status of ['cooldown', 'cap']) {
+    const calls = installFakeFetch({ over: (u) => (u.endsWith('/rpc/claim_checklist_send') ? json(200, { status }) : undefined) });
+    const r = await call('send-pos-checklist', { token: FOUNDER, env: POS.env });
+    assert.equal(r.statusCode, 429, status);
+    assert.equal(resendCalls(calls).length, 0);
+  }
 });
 
-test('send-pos-checklist: daily cap — 25 sends in 24h is 429, nothing sent', async () => {
-  const { DAILY_CAP } = load('send-pos-checklist');
-  const full = Array.from({ length: DAILY_CAP }, (_, i) => ({ id: String(i) }));
-  const calls = installFakeFetch({ over: (u) => (u.includes('pos_checklist_sent_at=gte.') && u.includes('leads_coffeeshop') ? json(200, full) : undefined) });
-  const r = await call('send-pos-checklist', { token: FOUNDER, env: POS.env });
-  assert.equal(r.statusCode, 429);
-  assert.equal(calls.requests.some((q) => q.method === 'PATCH'), false);
-  assert.equal(calls.upstream.some((u) => u.includes('api.resend.com')), false);
-});
-
-test('send-pos-checklist: missing send ledger (column absent today) fails closed 503, nothing sent', async () => {
-  const missing = json(400, { code: '42703', message: 'column leads_gas_station.pos_checklist_sent_at does not exist' });
-  const calls = installFakeFetch({ over: (u) => (u.includes('/rest/v1/leads_') ? missing : undefined) });
+test('send-pos-checklist: claim function missing (the state today) fails closed 503, nothing sent', async () => {
+  const calls = installFakeFetch({ over: (u) => (u.endsWith('/rpc/claim_checklist_send') ? NO_FUNCTION() : undefined) });
   const r = await call('send-pos-checklist', { token: FOUNDER, env: POS.env });
   assert.equal(r.statusCode, 503);
-  assert.match(r.body.error, /send-limit ledger/);
-  assert.equal(calls.upstream.some((u) => u.includes('api.resend.com')), false);
+  assert.match(r.body.error, /paused/);
+  assert.equal(resendCalls(calls).length, 0);
 });
 
-test('send-pos-checklist: provider failure is 502 and the lead stamp is given back', async () => {
+test('send-pos-checklist: failed, thrown or malformed claims fail closed 503, nothing sent', async () => {
+  const bad = [
+    () => json(500, { message: 'db down' }),
+    () => { throw new Error('network'); },
+    () => json(200, null),
+    () => json(200, { status: 'claimed' }),
+    () => json(200, { status: 'claimed', claim_id: 'c-1', email: 42 }),
+    () => json(200, { status: 'maybe' }),
+  ];
+  for (const answer of bad) {
+    const calls = installFakeFetch({ over: (u) => (u.endsWith('/rpc/claim_checklist_send') ? answer() : undefined) });
+    const r = await call('send-pos-checklist', { token: FOUNDER, env: POS.env });
+    assert.equal(r.statusCode, 503);
+    assert.equal(resendCalls(calls).length, 0);
+  }
+});
+
+test('send-pos-checklist: a claim returning a different address than the stored lead is refused', async () => {
+  const calls = installFakeFetch({ over: (u) => (u.endsWith('/rpc/claim_checklist_send') ? json(200, { status: 'claimed', claim_id: 'c-1', email: 'swapped@evil.test' }) : undefined) });
+  const r = await call('send-pos-checklist', { token: FOUNDER, env: POS.env });
+  assert.equal(r.statusCode, 409);
+  assert.equal(resendCalls(calls).length, 0);
+});
+
+test('send-pos-checklist: competing requests — only the request the database grants reaches Resend', async () => {
+  // Simulates the function's lock: the first claim gets the last slot, the second gets 'cap'.
+  let slots = 1;
+  const calls = installFakeFetch({ over: (u) => {
+    if (!u.endsWith('/rpc/claim_checklist_send')) return undefined;
+    if (slots > 0) { slots -= 1; return json(200, { status: 'claimed', claim_id: 'c-1', email: LEAD_EMAIL }); }
+    return json(200, { status: 'cap' });
+  } });
+  for (const k of ENV_KEYS) delete process.env[k];
+  Object.assign(process.env, POS.env);
+  const handler = load('send-pos-checklist');
+  const mk = () => ({ method: 'POST', headers: { authorization: 'Bearer ' + FOUNDER }, query: {}, body: POS.body });
+  const [a, b] = [fakeRes(), fakeRes()];
+  await Promise.all([handler(mk(), a), handler(mk(), b)]);
+  assert.deepEqual([a.statusCode, b.statusCode].sort(), [200, 429]);
+  assert.equal(resendCalls(calls).length, 1);
+});
+
+test('send-pos-checklist: provider failure is a generic 502 and the claim is not released', async () => {
   const calls = installFakeFetch({ over: (u) => (u.includes('api.resend.com') ? json(422, { message: 'internal provider detail' }) : undefined) });
   const r = await call('send-pos-checklist', { token: FOUNDER, env: POS.env });
   assert.equal(r.statusCode, 502);
-  assert.equal(r.body.error.includes('internal provider detail'), false);
-  const patches = calls.requests.filter((q) => q.method === 'PATCH');
-  assert.equal(patches.length, 2);
-  assert.deepEqual(patches[1].body, { pos_checklist_sent_at: null });
+  assert.doesNotMatch(JSON.stringify(r.body), /internal provider detail|422/);
+  assert.equal(calls.requests.filter((q) => q.url.includes('/rpc/')).length, 1, 'no release call');
 });
 
 // ── ask-ver: validation, bounds, abuse control ───────────────────────────────
@@ -386,20 +425,92 @@ test('ask-ver: fixed model and token budget; grounding docs are capped', async (
   assert.ok(req.body.system.length < 7 * (LIMITS.MAX_DOC_CHARS + 200) + 10000, 'system prompt stays bounded');
 });
 
-test('ask-ver: hourly limit reached is 429, model not called', async () => {
-  const { LIMITS } = load('ask-ver');
-  const full = Array.from({ length: LIMITS.HOURLY_LIMIT }, (_, i) => ({ id: String(i) }));
-  const calls = installFakeFetch({ over: (u, o) => (u.includes('/rest/v1/ver_queries') && (o.method || 'GET') === 'GET' ? json(200, full) : undefined) });
+const reserveCalls = (calls) => calls.requests.filter((q) => q.url.endsWith('/rpc/ver_reserve_call'));
+
+test('ask-ver: the reservation is taken before the paid call', async () => {
+  const calls = installFakeFetch();
+  const r = await call('ask-ver', { token: FOUNDER, env: VER.env });
+  assert.equal(r.statusCode, 200);
+  assert.equal(reserveCalls(calls).length, 1);
+  assert.deepEqual(reserveCalls(calls)[0].body, { p_hourly_limit: 20 });
+  const reserveAt = calls.upstream.findIndex((u) => u.endsWith('/rpc/ver_reserve_call'));
+  const paidAt = calls.upstream.findIndex((u) => u.includes('api.anthropic.com'));
+  assert.ok(reserveAt >= 0 && reserveAt < paidAt);
+  assert.equal(calls.upstream.some((u) => u.includes('/rest/v1/ver_queries') && !u.includes('rpc')) , true, 'answer is still saved');
+});
+
+test('ask-ver: limit reached at reservation is 429, model not called', async () => {
+  const calls = installFakeFetch({ over: (u) => (u.endsWith('/rpc/ver_reserve_call') ? json(200, { reserved: false }) : undefined) });
   const r = await call('ask-ver', { token: FOUNDER, env: VER.env });
   assert.equal(r.statusCode, 429);
   assert.equal(anthropicCalls(calls).length, 0);
 });
 
-test('ask-ver: unreadable usage count fails closed 503, model not called', async () => {
-  const calls = installFakeFetch({ over: (u, o) => (u.includes('/rest/v1/ver_queries') && (o.method || 'GET') === 'GET' ? json(500, {}) : undefined) });
+test('ask-ver: reservation function missing (the state today), failed, thrown or malformed — 503, model never called', async () => {
+  const bad = [
+    () => json(404, { code: 'PGRST202', message: 'Could not find the function public.ver_reserve_call' }),
+    () => json(500, {}),
+    () => { throw new Error('network'); },
+    () => json(200, null),
+    () => json(200, { reserved: 'yes' }),
+    () => json(200, { reserved: true }),
+  ];
+  for (const answer of bad) {
+    const calls = installFakeFetch({ over: (u) => (u.endsWith('/rpc/ver_reserve_call') ? answer() : undefined) });
+    const r = await call('ask-ver', { token: FOUNDER, env: VER.env });
+    assert.equal(r.statusCode, 503);
+    assert.equal(anthropicCalls(calls).length, 0);
+    assert.equal(calls.upstream.some((u) => u.includes('/contents/')), false, 'not even grounding is fetched');
+  }
+});
+
+test('ask-ver: competing requests — only reservations the database grants reach Anthropic', async () => {
+  let slots = 2;
+  const calls = installFakeFetch({ over: (u) => {
+    if (!u.endsWith('/rpc/ver_reserve_call')) return undefined;
+    if (slots > 0) { slots -= 1; return json(200, { reserved: true, reservation_id: `r-${slots}` }); }
+    return json(200, { reserved: false });
+  } });
+  for (const k of ENV_KEYS) delete process.env[k];
+  Object.assign(process.env, VER.env);
+  const handler = load('ask-ver');
+  const mk = () => ({ method: 'POST', headers: { authorization: 'Bearer ' + FOUNDER }, query: {}, body: VER.body });
+  const results = Array.from({ length: 5 }, () => fakeRes());
+  await Promise.all(results.map((res) => handler(mk(), res)));
+  assert.deepEqual(results.map((r) => r.statusCode).sort(), [200, 200, 429, 429, 429]);
+  assert.equal(anthropicCalls(calls).length, 2);
+});
+
+test('ask-ver: oversized decision and signal text is capped before the prompt (L2)', async () => {
+  const huge = 'z'.repeat(20000);
+  const calls = installFakeFetch({ over: (u) => {
+    if (u.includes('/rest/v1/decisions')) return json(200, [{ title: huge, context: huge }]);
+    if (u.includes('/rest/v1/improvement_signals')) return json(200, [{ project_scope: huge, signal_summary: huge, bottleneck_flag: 'yes' }]);
+    return undefined;
+  } });
   const r = await call('ask-ver', { token: FOUNDER, env: VER.env });
-  assert.equal(r.statusCode, 503);
-  assert.equal(anthropicCalls(calls).length, 0);
+  assert.equal(r.statusCode, 200);
+  const { LIMITS } = load('ask-ver');
+  const system = anthropicCalls(calls)[0].body.system;
+  const caps = LIMITS.FIELD_CAPS;
+  assert.ok(system.includes(`- ${'z'.repeat(caps.decisionTitle)}… — ${'z'.repeat(caps.decisionContext)}…`), 'title and context each cut at their own cap');
+  assert.ok(system.includes(`- [${'z'.repeat(caps.signalScope)}…] ${'z'.repeat(caps.signalSummary)}…`), 'scope and summary each cut at their own cap');
+  assert.equal(system.includes('z'.repeat(Math.max(caps.decisionContext, caps.signalSummary) + 1)), false, 'no field longer than its cap');
+  assert.equal(system.includes('(BOTTLENECK)'), false, 'a non-boolean flag is not trusted');
+});
+
+test('ask-ver: oversized task title or notes from the model are rejected, not truncated (L2)', async () => {
+  const content = [
+    { type: 'text', text: '1. A — b' },
+    { type: 'tool_use', name: 'log_follow_up_task', input: { ecosystem: 'ODO', title: 't'.repeat(121), priority: 'high', phase: 'mvp' } },
+    { type: 'tool_use', name: 'log_follow_up_task', input: { ecosystem: 'ODO', title: 'ok', priority: 'high', phase: 'mvp', notes: 'n'.repeat(301) } },
+    { type: 'tool_use', name: 'log_follow_up_task', input: { ecosystem: 'ODO', title: 'ok', priority: 'high', phase: 'mvp', notes: 7 } },
+  ];
+  const calls = installFakeFetch({ over: (u) => (u.includes('api.anthropic.com') ? json(200, { content }) : undefined) });
+  const r = await call('ask-ver', { token: FOUNDER, env: VER.env });
+  assert.equal(r.statusCode, 200);
+  assert.deepEqual(r.body.loggedTasks, []);
+  assert.equal(calls.requests.filter((q) => q.url.includes('/rest/v1/founder_tasks')).length, 0);
 });
 
 test('ask-ver: logs at most one validated task; bad tool input is dropped', async () => {
@@ -418,11 +529,24 @@ test('ask-ver: logs at most one validated task; bad tool input is dropped', asyn
   assert.deepEqual(Object.keys(inserts[0].body).sort(), ['ecosystem', 'notes', 'phase', 'priority', 'status', 'title']);
 });
 
-test('ask-ver: an upstream failure does not leak its text', async () => {
-  installFakeFetch({ over: (u) => (u.includes('api.anthropic.com') ? json(500, { error: 'secret upstream detail' }) : undefined) });
-  const r = await call('ask-ver', { token: FOUNDER, env: VER.env });
-  assert.equal(r.statusCode, 502);
-  assert.equal(JSON.stringify(r.body).includes('secret upstream detail'), false);
+// ── L1: no upstream status codes or internal detail in any error ─────────────
+test('upstream failures return generic errors with no status code or upstream text (L1)', async () => {
+  const cases = [
+    ['ask-ver', (u) => (u.includes('api.anthropic.com') ? json(529, { error: 'secret upstream detail' }) : undefined)],
+    ['generate-repo-tree', (u) => (u.includes('api.github.com') ? json(403, { message: 'secret upstream detail' }) : undefined)],
+    ['generate-baseline-status', (u) => (u.includes('api.github.com') ? json(451, { message: 'secret upstream detail' }) : undefined)],
+    ['founder-os-notion', (u) => (u.includes('api.notion.com') ? json(418, { message: 'secret upstream detail' }) : undefined)],
+    ['security-check', (u) => (u.includes('/advisors/') ? json(401, { message: 'secret upstream detail' }) : undefined)],
+    ['send-pos-checklist', (u) => (u.includes('api.resend.com') ? json(422, { message: 'secret upstream detail' }) : undefined)],
+  ];
+  for (const [name, over] of cases) {
+    installFakeFetch({ over });
+    const r = await call(name, { token: FOUNDER, env: ROUTES[name].env });
+    assert.ok(r.statusCode >= 500, `${name} ${r.statusCode}`);
+    const text = JSON.stringify(r.body);
+    assert.doesNotMatch(text, /secret upstream detail/, name);
+    assert.doesNotMatch(text, /\b(529|403|451|418|401|422)\b/, name);
+  }
 });
 
 // ── security-check: restrictive treatment ────────────────────────────────────
@@ -499,6 +623,20 @@ test('no browser service-role exposure: every key in a page is the anon key; no 
     assert.doesNotMatch(html, /\bsk-ant-[A-Za-z0-9-]{10,}/, `${page} contains an Anthropic key`);
     assert.doesNotMatch(html, /\bre_[A-Za-z0-9]{20,}/, `${page} contains a Resend key`);
   }
+});
+
+// ── L3: theverifiedgroup.org is never presented as the Founder OS domain ─────
+test('docs never present theverifiedgroup.org as the Founder OS domain (L3)', () => {
+  for (const file of ['README.md', 'docs/PORTFOLIO_MAP.md']) {
+    const lines = fs.readFileSync(path.join(ROOT, file), 'utf8').split('\n');
+    for (const [i, line] of lines.entries()) {
+      if (!line.includes('theverifiedgroup.org')) continue;
+      assert.match(line, /is \*{0,2}not\*{0,2} the Founder OS domain/, `${file}:${i + 1} names theverifiedgroup.org without saying it is not the Founder OS domain`);
+    }
+  }
+  const readme = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
+  assert.match(readme, /os\.hmcmarketing\.tech/);
+  assert.match(readme, /gated, not connected/);
 });
 
 test('send-pos-checklist page sends a lead reference, not an address', () => {
